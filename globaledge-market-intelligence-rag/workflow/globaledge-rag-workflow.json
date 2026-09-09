@@ -1,0 +1,775 @@
+{
+  "name": "GlobalEdge Brokerage",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2848,
+        192
+      ],
+      "id": "d4ba847f-dffc-45a2-b584-0b60bdb6222e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/global_news.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2320,
+        -48
+      ],
+      "id": "49f09e86-4aac-4ff5-a9fe-0b7c652a9d55",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "globaledge-brokerage-vector-db",
+          "mode": "list",
+          "cachedResultName": "globaledge-brokerage-vector-db"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -1952,
+        208
+      ],
+      "id": "70f1dbf6-071e-4fb0-a28c-1e1c227ecbb5",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "qCj1RN8wdqVtJY4C",
+          "name": "PineconeApi account 855"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1952,
+        400
+      ],
+      "id": "339f0d50-ca4a-414c-aca9-c56db6dec50c",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -1712,
+        512
+      ],
+      "id": "7fc2da40-58ba-4e2a-ae78-fbb628bbea3f",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 400,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        688
+      ],
+      "id": "da63b745-6ae4-469f-b8a3-31aaa898f4d3",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1584,
+        -288
+      ],
+      "id": "570bf32a-930e-4bb9-ac15-fbc00760dd06",
+      "name": "When chat message received",
+      "webhookId": "f665a0b0-9ecd-429c-9be0-4a6461b66a36"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemPromptTemplate": "=To make this prompt more concise while maintaining accuracy, I have consolidated the instructions, merged redundant rules, and sharpened the formatting requirements. This version reduces the token count by roughly 40% while keeping the core logic intact.\n\n### Optimized RAG Prompt\n\n**Role:** Internal Knowledge Assistant for support staff on LIVE calls.\n**Tone:** Direct, technical, and precise. No customer-facing disclaimers or soft language.\n\n---\n\n### 1. Knowledge Sources\nRefer to these tags in the `<context>`:\n* **[GLOBALNEWS]**:global_news\n* **[SEC_FILINGS]**: sec_filings_10q\n* **[STOCK_PRICE]**: stock_price_details\n---\n\n### 2. Strict Constraints\n* **No Guessing:** If info is missing, reply: \"Not in documents — escalate to [team/contact].\"\n* **Proactive Exclusions:** For every coverage query, you **must** check `[GLOBALNEWS]` and `[SEC_FILINGS]`and ‘[STOCK_PRICE]’. Flag waiting periods or partial coverage immediately.\n* **Clarity:** Use one-line bullets. No paragraphs. No [SOURCE TAGS] inside the \"Answer\" section.\n* **Ambiguity:** If chunks are partial, state: \"Partial match — verify global news, stock price, and sec_filings before confirming.\"\n\n---\n\n### 3. Output Format\nFollow this structure exactly. Skip sections that do not apply.\n\n**Answer**\n\n**Sources:** [TAGS USED]\n\n---\n**Context:**\n{context}\n\n### Key Improvements Made:\n* **Redundancy Removal:** Merged \"Operating Rules\" and \"What You Must Never Do\" into a single **Strict Constraints** section.\n* **Formatting:** Converted the source table into a concise list.\n* **Logic Density:** Shortened the instructions for each section of the output format while keeping the \"read aloud\" and \"paste-ready\" requirements.\n* **Instructional Clarity:** Placed the `{context}` variable at the bottom to ensure the model focuses on the instructions first, then applies them to the data.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.7,
+      "position": [
+        -1152,
+        -256
+      ],
+      "id": "41e8fb26-3182-40b0-86f6-2a95f2695c79",
+      "name": "Question and Answer Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.8,
+          "topP": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1248,
+        -48
+      ],
+      "id": "516ea8b9-567e-46b0-b9da-e9a32b9f0820",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topK": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        -64
+      ],
+      "id": "a336db6b-1767-4774-936e-11c41dd48446",
+      "name": "Vector Store Retriever"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "globaledge-brokerage-vector-db",
+          "mode": "list",
+          "cachedResultName": "globaledge-brokerage-vector-db"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -1040,
+        112
+      ],
+      "id": "9752835a-8a31-44ea-93b2-d230ef5cf9eb",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "qCj1RN8wdqVtJY4C",
+          "name": "PineconeApi account 855"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1056,
+        272
+      ],
+      "id": "18f9465a-7f2e-4a73-bd73-a24c0fe8ce2d",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -544,
+        -368
+      ],
+      "id": "18b088eb-5312-40db-8eec-26b16a7680ee",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/sec_filings_10q.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2320,
+        192
+      ],
+      "id": "15fb0a05-a2ea-4236-9373-4587c8976e94",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/stock_price_details.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2320,
+        448
+      ],
+      "id": "6862f475-9275-438c-b749-99a572854219",
+      "name": "Read/Write Files from Disk2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1152,
+        -448
+      ],
+      "id": "f2654b4c-7da9-4d02-b1eb-348572509f29",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a RAG evaluation judge for a Brokerage advisor customer support system.\nYou will be given three inputs and must score the quality of a retrieval-augmented \ngeneration response across four dimensions.\n\nDo not use any outside knowledge. Base all scores strictly on what is provided.\n\n---\n\n### INPUTS YOU WILL RECEIVE\n\n- QUERY: The question the support agent typed\n- RETRIEVED_CHUNKS: The document chunks retrieved from the vector store, \n  each tagged with its source [GLOBALNEWS] / [SEC_FILINGS] / [STOCK_PRICE]\n- ANSWER: The response generated by the RAG system\n---\n\n### EVALUATION DIMENSIONS\n\nScore each dimension from 1 to 5 using the rubrics below.\nBe strict. Reserve 5 for genuinely excellent responses.\n\n---\n\n#### 1. RELEVANCE (1–5)\nDoes the ANSWER actually address what the QUERY is asking?\nPenalise answers that are technically accurate but answer a different question,\nor that bury the actual answer under excessive background.\n\n5 — Answer directly and fully addresses the query. Nothing irrelevant included.\n4 — Answer addresses the query well. Minor tangential detail included.\n3 — Answer partially addresses the query. Key part of the question left vague or incomplete.\n2 — Answer is loosely related but misses the core of what was asked.\n1 — Answer does not address the query at all, or answers a different question.\n\n---\n\n#### 2. GROUNDEDNESS (1–5)\nIs every claim in the ANSWER supported by content in RETRIEVED_CHUNKS?\nPenalise any claim that is not traceable to the provided chunks — even if the \nclaim is factually correct in the real world.\n\n5 — Every claim in the answer is directly supported by the retrieved chunks. \n    No information introduced from outside the context.\n4 — Nearly all claims are grounded. One minor detail may be inferred but not hallucinated.\n3 — Most claims are grounded but one claim is unsupported or loosely inferred.\n2 — Multiple claims are not present in the retrieved chunks. Significant hallucination risk.\n1 — Answer contains claims that directly contradict the chunks, or are fabricated.\n\n---\n\n#### 3. CONTEXT PRECISION (1–5)\nOf the chunks that were retrieved, how many were actually useful for answering \nthe query? This measures retrieval signal-to-noise ratio.\nHigh precision = most retrieved chunks contributed to the answer.\nLow precision = many retrieved chunks were irrelevant and cluttered the context window.\n\n5 — All or nearly all retrieved chunks were relevant and used in the answer.\n4 — Most chunks were relevant. One chunk was tangential but not harmful.\n3 — Roughly half the chunks were relevant. Noticeable noise in the retrieval.\n2 — Only a minority of chunks were relevant. The answer had to filter out significant noise.\n1 — Retrieved chunks were almost entirely irrelevant to the query.\n\n---\n\n#### 4. CONTEXT RECALL (1–5)\nDid the retrieved chunks contain all the information needed to fully answer the query?\nThis measures whether the retrieval missed anything important.\nHigh recall = everything needed was retrieved.\nLow recall = the answer is incomplete because key information was not in the chunks.\n5 — Retrieved chunks contained all information needed for a complete answer.\n4 — Chunks covered the query well. One minor relevant detail may have been absent.\n3 — Chunks covered the main point but missed one important detail \n    (e.g. a waiting period, sub-limit, or claim step).\n2 — Chunks were significantly incomplete. The answer is materially weaker \n    because of missing context.\n1 — Retrieved chunks did not contain the information needed to answer the query.\n    A complete answer was impossible from what was retrieved.\n\n---\n\n### OUTPUT FORMAT\n\nReturn your evaluation as valid JSON only.\nNo preamble, no explanation outside the JSON block.\n\nReturn output ONLY in the following JSON format:\n\n{\n\"relevance\": <score>,\n\"groundedness\": <score>,\n\"context_precision\": <score>,\n\"context_recall\": <score>,\n\"final_verdict\": \"PASS | FAIL\"\n}\n\n---\n\n### VERDICT THRESHOLDS\n\nVerdict Rules:\n- FAIL if relevance <= 3\n- FAIL if groundedness <= 3\n- FAIL if context_precision <= 3\n- FAIL if context_recall <= 3\n- Otherwise PASS\n\nGroundedness has a hard floor: a score of 1 or 2 on groundedness always results in FAIL regardless of other scores. An agent sharing hallucinated policy details on a live call is a compliance and misselling risk — it overrides all other dimensions.\n\n---\n\n### EVALUATION INPUT\n\nQUERY:\n {{ $('When chat message received').item.json.chatInput }}\n\nRETRIEVED_CHUNKS:\n{{ $('Retrieved_chunks').item.json.document.pageContent }}\n\n\n\nANSWER:\n{{ $('Question and Answer Chain').item.json.response }}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 3000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        -368
+      ],
+      "id": "12db3b7c-522b-4762-b0a7-d48b6589bb42",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "globaledge-brokerage-vector-db",
+          "mode": "list",
+          "cachedResultName": "globaledge-brokerage-vector-db"
+        },
+        "prompt": "={{ $json.chatInput }}",
+        "topK": 15,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -1136,
+        -592
+      ],
+      "id": "58557202-a806-4172-afb7-636b7baa1835",
+      "name": "Retrieved_chunks",
+      "credentials": {
+        "pineconeApi": {
+          "id": "qCj1RN8wdqVtJY4C",
+          "name": "PineconeApi account 855"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7a4d0cfe-8374-4629-9f42-04211c66fd79",
+              "name": "chatInput",
+              "value": "={{ $('When chat message received').item.json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "fe808f1c-723a-4c02-ba92-d52d78377bd8",
+              "name": "response",
+              "value": "={{ $('Merge1').item.json.response }}",
+              "type": "string"
+            },
+            {
+              "id": "cf1ed22f-1da7-4294-a957-218fb1ff826f",
+              "name": "Relevance",
+              "value": "={{ JSON.parse($json.output[0].content[0].text).relevance }}",
+              "type": "string"
+            },
+            {
+              "id": "6b20a7c1-a1fd-4806-8bf7-f55fbac2a148",
+              "name": "Groundedness",
+              "value": "={{ JSON.parse($json.output[0].content[0].text).groundedness }}",
+              "type": "string"
+            },
+            {
+              "id": "802a4c38-b224-40f5-b0bf-1b0cb23eeeae",
+              "name": "Context_precision",
+              "value": "={{ JSON.parse($json.output[0].content[0].text).context_precision }}",
+              "type": "string"
+            },
+            {
+              "id": "33cf2ed7-ef5b-45e3-995c-aa6c1b941027",
+              "name": "Context_recall",
+              "value": "={{ JSON.parse($json.output[0].content[0].text).context_recall }}",
+              "type": "string"
+            },
+            {
+              "id": "7e06786f-688b-40a7-b841-fc1549bb886f",
+              "name": "Final_verdict",
+              "value": "={{ JSON.parse($json.output[0].content[0].text).final_verdict }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -368
+      ],
+      "id": "cdcb68c5-4897-473d-8196-1533a2011c8a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "YpwOflbicqSSldQu",
+          "mode": "list",
+          "cachedResultName": "GlobalEdge_Brokerage_Evaluation_tbl",
+          "cachedResultUrl": "/projects/deb7d0fd-57d6-4125-8fd9-d540c97d36c1/datatables/YpwOflbicqSSldQu"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chatInput": "={{ $json.chatInput }}",
+            "Answer": "={{ $json.response }}",
+            "Relevance": "={{ $json.Relevance }}",
+            "Groundedness": "={{ $json.Groundedness }}",
+            "Context_Precision": "={{ $json.Context_precision }}",
+            "Context_recall": "={{ $json.Context_recall }}",
+            "Final_Verdict": "={{ $json.Final_verdict }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chatInput",
+              "displayName": "chatInput",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Answer",
+              "displayName": "Answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Relevance",
+              "displayName": "Relevance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Groundedness",
+              "displayName": "Groundedness",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Context_Precision",
+              "displayName": "Context_Precision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Context_recall",
+              "displayName": "Context_recall",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Final_Verdict",
+              "displayName": "Final_Verdict",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -368
+      ],
+      "id": "ba7b9be7-1a9f-4c1e-a109-2330c6a18d5a",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf48f64c-cd13-413b-b547-ea63bd44e3e7",
+              "name": "response",
+              "value": "={{ $json.response }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        -48
+      ],
+      "id": "42115434-05ce-4255-aecc-03df98cea77f",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read/Write Files from Disk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Retrieved_chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Question and Answer Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Question and Answer Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk2": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Retrieved_chunks",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieved_chunks": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "75759541-4ad0-45d5-a183-2004d6c5d363",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "E_isnSPgrxtosQ4GlZKbL",
+  "tags": []
+}
