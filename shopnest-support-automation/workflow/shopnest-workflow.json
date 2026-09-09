@@ -1,0 +1,415 @@
+{
+  "name": "ShopNest",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        -240
+      ],
+      "id": "c06a99f8-2fc2-46fd-b917-c575ee79d0fe",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/support_ticket_data.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1488,
+        -240
+      ],
+      "id": "e0d85fc6-88a5-4e5d-ae67-d71eb34da2e8",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1280,
+        -240
+      ],
+      "id": "26571d09-593d-4970-aa95-9c66decc8881",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        -240
+      ],
+      "id": "9bbb31b2-ed07-43c0-a2c6-57517f8884c9",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Ticket details: {{ $json.support_ticket_desc }}.\nYou are an AI-powered intelligence ticketing system. \n-\tSummarize each ticket description into a clean and concise individual summary that can support the agent with an accurate understanding of the customer's issue on first read. Clearly label it as \"ticket_summary\" for every individual summary. \n-\tReturn only valid JSON and no markdown fences.\n\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 1000,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          },
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1104,
+        -240
+      ],
+      "id": "5e210718-f243-4d47-a4cb-114be5135b7b",
+      "name": "Summary Generator",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Summary Evaluation Prompt:\nEvaluate how good the summary is to the original description:\n\nOriginal_Desc: {{ $('Extract from File').item.json.support_ticket_desc }}\nSummary:{{ $json.output[0].content[0].text.ticket_summary }}\n\n1.\tSummary_Groundedness (0.1-1.0): How well is the Summary factually supported by the Original_Desc?\nScore close to 1 = all facts accurate and derived from Original_Desc.\nScore close to 0 = hallucination, guesswork, or fabricated information.\n2.\tSummary_Precision (0.1-1.0): How directly and accurately does the Summary summarize the Original_Desc?\nScore close to 1 = concise, focused, answers the exact Original_Desc.\nScore close to 0 = irrelevant details or misses the main point.\n\nReturn ONLY valid JSON, no markdown fences:\n{\"Summary_Groundedness\": float, \"Summary_Precision\": float}\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -816,
+        -240
+      ],
+      "id": "f11bf08b-397d-4d00-b0bd-9031ac67ab8b",
+      "name": "Summary Evaluator",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Ticket details: {{ $('Extract from File').item.json.support_ticket_desc }}\nYou are an AI-powered intelligence ticketing system. \n- Generate individual professional, empathetic, and concise response for each ticket_detail acknowledging the customer issue and communicating clear next steps, enabling the human agent to draft a response with a consistent professional tone for review. Clearly label it as “ticket_response”. \n\nPolicies: \nUtilize the policies listed below for response generation \n“”” Include the policies below in your system message \n“”” \n1. Refund & Return Policy \n- Customers are eligible for a full refund or replacement within 10 days of delivery \n- Refund requests raised after 10 days will be reviewed on a case by case basis \n- Refunds are processed within 5 to 7 business days after the return is picked up and verified \n- Digital payments are refunded to the original payment source \n- Cash on delivery orders are refunded via bank transfer within 7 business days \n2. Delivery Delay Compensation Policy \n- If an order is delayed beyond the promised delivery date by more than 3 days, the customer is eligible for a ShopNest voucher of Rs 100\n- If the order is delayed beyond 7 days with no resolution, the customer may request a full refund without returning the item \n- Customers must be informed of the revised delivery date proactively once a delay is identified \n3. Wrong Item / Damaged Item Policy \n- If a wrong item or damaged item is delivered, the customer is eligible for a free replacement or full refund \n- A pickup of the wrong or damaged item will be arranged within 2 business days of the complaint being raised \n- No return shipping cost is charged to the customer in these cases \n- Photographic evidence may be requested for damaged item claims before \nreplacement or refund is processed \n4. Payment Failure Policy \n- If payment is deducted but the order is not confirmed, the amount will be automatically reversed within 3 to 5 business days \n- If the reversal does not reflect after 5 business days, the customer should  share the transaction reference number for manual investigation \n- Customers are advised not to retry payment until the previous deduction  is reversed to avoid duplicate charges \n“”” \n- Return only valid JSON and no markdown fences.\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 1000,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          },
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        -240
+      ],
+      "id": "7069c803-528b-4d66-98a9-d1d794db7f2a",
+      "name": "Response Generator",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Response Evaluation Prompt:\nEvaluate how good the response is for the human agent:\n\nOriginal_Desc: {{ $('Extract from File').item.json.support_ticket_desc }}\nAgent_Response: {{ $json.output[0].content[0].text.ticket_response }}\n\n1. Response_Groundedness (0.0-1.0): How well is the response factually grounded by the Original_Desc?\nScore close to 1 = all facts accurate and derived from Original_Desc.\nScore close to 0 = hallucination, guesswork, or fabricated information.\n2. Response_Precision (0.0 – 1.0): How directly and accurately does the Response address Original_Desc?\nScore close to 1 = concise, focused, answers the exact Original_Desc.\nScore close to 0 = irrelevant details or misses the main point.\n\nReturn ONLY valid JSON, no markdown fences:\n{\"Response_groundedness\": float, \"Response_precision\": float}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -240,
+        -240
+      ],
+      "id": "427e72b7-e08d-45a9-ac87-2deaa4b6ea77",
+      "name": "Response Evaluator",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0171e792-a9a7-4497-9c12-0ce82c3606c4",
+              "name": "TicketID",
+              "value": "={{ $('Extract from File').item.json['﻿support_ticket_id'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ac315122-297e-418f-90c3-0f7d5603e820",
+              "name": "Original_Desc",
+              "value": "={{ $('Extract from File').item.json.support_ticket_desc }}",
+              "type": "string"
+            },
+            {
+              "id": "2c701472-7c01-446f-91d7-87c16c32fabc",
+              "name": "Summary",
+              "value": "={{ $('Summary Generator').item.json.output[0].content[0].text.ticket_summary }}",
+              "type": "string"
+            },
+            {
+              "id": "d94930f7-90c6-4cd9-986d-31f476b85403",
+              "name": "Summary_Groundedness",
+              "value": "={{ $('Summary Evaluator').item.json.output[0].content[0].text.Summary_Groundedness }}",
+              "type": "number"
+            },
+            {
+              "id": "d44f4c40-b848-4195-92d1-00aeaa47f37c",
+              "name": "Summary_Precision",
+              "value": "={{ $('Summary Evaluator').item.json.output[0].content[0].text.Summary_Precision }}",
+              "type": "number"
+            },
+            {
+              "id": "71a0aeb8-737b-4ce2-acf5-a1cb0d70b0cb",
+              "name": "Response",
+              "value": "={{ $('Response Generator').item.json.output[0].content[0].text.ticket_response }}",
+              "type": "string"
+            },
+            {
+              "id": "ace362a6-3c5f-42b3-85ef-01607af0f804",
+              "name": "Response_groundedness",
+              "value": "={{ $json.output[0].content[0].text.Response_groundedness }}",
+              "type": "number"
+            },
+            {
+              "id": "804e9f43-4ef0-4765-bc91-04470f50f9bd",
+              "name": "Response_precision",
+              "value": "={{ $json.output[0].content[0].text.Response_precision }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -240
+      ],
+      "id": "344525e9-26e4-406c-839f-f65f25d0c885",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/shared/ShopNestOutput.csv",
+        "dataPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -240
+      ],
+      "id": "3c26c4ca-9fb7-4e85-8c14-3e59770e8f34",
+      "name": "Read/Write Files from Disk1",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Summary Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary Generator": {
+      "main": [
+        [
+          {
+            "node": "Summary Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary Evaluator": {
+      "main": [
+        [
+          {
+            "node": "Response Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Generator": {
+      "main": [
+        [
+          {
+            "node": "Response Evaluator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Evaluator": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2a1578c6-0bef-4443-8aa9-4298a8aeefc1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "HsTVJyh_Uq4-NIlGDdKqY",
+  "tags": []
+}
