@@ -18,6 +18,7 @@ used, the full exported n8n workflow, and results.
 | [AI Helpdesk Copilot (Multi-Agent)](./ai-helpdesk-copilot-multiagent) | Manual support ticket triage is slow and inconsistent; responses risk hallucinating unsupported claims | Four-agent pipeline (triage → draft → critic) grounded in historical tickets via RAG, with prompt-injection detection and confidence/policy gating at every stage |
 | [Shipment Disruption Router](./shipment-disruption-router) | Manual dispatcher review of shipment disruptions causes latency, misrouting, and no audit trail | Three-agent pipeline (classify → route → audit) grounded in a logistics policy rulebook, benchmarked by a separate offline evaluation harness |
 | [Last-Mile Delivery Exception Handler](./last-mile-delivery-exception-handler) | Manual triage of delivery exceptions is slow, inconsistent, and costly at ~10% of shipment volume | Multi-agent pipeline (resolution agent + critic, communication agent + critic) grounded in a RAG policy playbook, with tier-aware messaging and its own evaluation harness |
+| [Lifecycle Delinquency Comms Engine](./lifecycle-delinquency-comms-engine) | Compliant, personalized collections communications at scale require constant re-evaluation of consent, risk, and behavior signals | Dynamic-adaptive comms architecture (8-layer design) + working n8n proof-of-concept generating FDCPA-compliant, tone-calibrated email/SMS by DPD stage |
 
 More projects coming soon.
 
