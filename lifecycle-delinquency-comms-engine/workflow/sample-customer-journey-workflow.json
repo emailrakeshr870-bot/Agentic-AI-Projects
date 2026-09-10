@@ -1,0 +1,378 @@
+{
+  "name": "Sample CJ - PL 0-30d",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        0
+      ],
+      "id": "107d5748-dc15-4b5e-90f5-f9343cc01b3b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/Customer_Delinquency_Data.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1600,
+        0
+      ],
+      "id": "881f5f24-a53b-403a-9c9b-a3e115df1ab5",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1392,
+        0
+      ],
+      "id": "710ecc1b-4226-4e70-801a-41f1a0427e1b",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a lifecycle marketing manager. Your job is to develop a series of collection emails and SMS messages. These communications must be in responsive design and should be viewable across mobile, desktop, and tablet devices. These customers are late with their payments, and you need to develop a compassionate and professional communication series. Use applicable legal and compliance boundaries from FDCPA (Fair Debt Collection Practices Act). Do not overstate or hallucinate. Use the information provided only.\nSig_name: Joe Smith\nCompany_name: CompanyXYZ.com\n"
+            },
+            {
+              "content": "=Draft a personalized and customized email with the following structure:\nPre-header: Come up with a pre-header that is compatible across mobile, desktop, and tablet devices and across different mail apps. Keep it concise to less than 15 words. Use the tone guidance provided based on the number of days delinquent. Follow standard legal and compliance language and guidelines for Collections and Loan recovery. Do not use words that trigger SPAM trap. Optimize the pre-header for primary inbox placement. Clearly label it as “pre-header”.\n\nSubject Line: Come up with a subject line that is compatible across mobile, desktop, and tablet devices and across different mail apps. Keep it concise to less than 15 words. Use the tone guidance provided based on the number of days delinquent. Follow standard legal and compliance practices for Collections and Loan recovery as laid out in FDCPA. Do not use words that trigger SPAM trap. Optimize the subject line for primary inbox placement Clearly label it as “subject_line”.\n\nHeader: Come up with a header that is compatible across mobile, desktop, and tablet devices and across different mail apps. Keep it concise to less than 15 words. Use the tone guidance provided based on the number of days delinquent. Follow standard legal and compliance language and guidelines for Collections and Loan recovery. Clearly label it as “header”. Bold the output.\nBody_Copy: \nDraft a personalized email body copy for every customer, letting them know that they are overdue on their loan payment. Do not use words that would trigger spam traps. \nOpen the email using the salutation Dear \n{{ $json.Fname }} {{ $json.Lname }} \\n\nIn the opening paragraph, remind them that they are late with their payment. Include loan details such as account number ({{ $json.Acct_Number }}), loan type ({{ $json.Loan_Type }}), loan balance amount ({{ $json[' Bal_Amt '] }}), monthly payment missed ({{ $json.Monthly_Payment_Amt }}) \nInclude a call to action. If the  {{ $json[' Bal_Amt '] }}< $5000, propose paying with a credit card, or if the {{ $json[' Bal_Amt '] }} >= $5000, propose paying through ACH.\nAlways end the email saying “Thank you for being a valued customer” and that they are always welcome to contact their customer service if they need any support.\nIn the signature, always say “Sincerely, \\n The CompanyXYZ Team”.\nClearly label the body copy output as “body_copy”.\n\nTone:\nIf {{ $json.DPD }}<=7, it is early stage delinquency. Make sure you use an “empathetic and friendly” tone. Position the communication more as a reminder. Subject line message should use the word “REMINDER:” in the beginning.\nReturn OUTPUT IN ONLY valid JSON, no markdown fences. Use the following output structure:\nHere's the full code:\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>A friendly reminder</title>\n  <style>\n    * { box-sizing: border-box; margin: 0; padding: 0; }\n\n    body {\n      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\n      background: #f4f4f0;\n      padding: 40px 20px;\n      color: #1a1a1a;\n    }\n\n    .email-meta {\n      max-width: 620px;\n      margin: 0 auto 8px;\n    }\n\n    .meta-row {\n      display: flex;\n      align-items: stretch;\n      border: 1px solid #ddd;\n      background: #fff;\n      overflow: hidden;\n    }\n\n    .meta-row:first-child {\n      border-radius: 8px 8px 0 0;\n    }\n\n    .meta-row + .meta-row {\n      border-top: none;\n    }\n\n    .meta-row:last-child {\n      border-radius: 0 0 8px 8px;\n      margin-bottom: 20px;\n    }\n\n    .meta-label {\n      background: #f8f8f6;\n      padding: 10px 14px;\n      font-size: 12px;\n      font-weight: 600;\n      color: #888;\n      text-transform: uppercase;\n      letter-spacing: 0.05em;\n      border-right: 1px solid #ddd;\n      min-width: 110px;\n      display: flex;\n      align-items: center;\n    }\n\n    .meta-value {\n      padding: 10px 14px;\n      font-size: 14px;\n      color: #555;\n      font-style: italic;\n      display: flex;\n      align-items: center;\n    }\n\n    /* EMAIL WRAPPER */\n    .email-wrapper {\n      max-width: 620px;\n      margin: 0 auto;\n      background: #fff;\n      border: 1px solid #ddd;\n      border-radius: 10px;\n      overflow: hidden;\n    }\n\n    /* SECTION LABELS */\n    .section-label {\n      background: #f8f8f6;\n      padding: 6px 24px;\n      font-size: 11px;\n      font-weight: 600;\n      color: #999;\n      text-transform: uppercase;\n      letter-spacing: 0.06em;\n      border-bottom: 1px solid #eee;\n    }\n\n    /* HEADER */\n    .email-header {\n      border-bottom: 1px solid #eee;\n    }\n\n    .header-inner {\n      padding: 32px 40px;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      gap: 20px;\n    }\n\n    .logo-placeholder {\n      width: 130px;\n      height: 36px;\n      border: 2px dashed #ccc;\n      border-radius: 4px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      font-size: 11px;\n      color: #bbb;\n      letter-spacing: 0.04em;\n    }\n\n    .hero-placeholder {\n      width: 100%;\n      height: 160px;\n      border: 2px dashed #ccc;\n      border-radius: 6px;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      gap: 8px;\n      background: #fafaf9;\n    }\n\n    .hero-placeholder svg {\n      width: 28px;\n      height: 28px;\n      stroke: #ccc;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    .hero-placeholder span {\n      font-size: 12px;\n      color: #bbb;\n    }\n\n    .headline-bar {\n      width: 75%;\n      height: 14px;\n      background: #ebebeb;\n      border-radius: 20px;\n    }\n\n    /* BODY */\n    .email-body {\n      border-bottom: 1px solid #eee;\n    }\n\n    .body-inner {\n      padding: 32px 40px;\n      display: flex;\n      flex-direction: column;\n      gap: 14px;\n    }\n\n    .body-headline {\n      font-size: 22px;\n      font-weight: 600;\n      color: #1a1a1a;\n      line-height: 1.3;\n    }\n\n    .body-placeholder-lines {\n      display: flex;\n      flex-direction: column;\n      gap: 9px;\n    }\n\n    .line {\n      height: 11px;\n      background: #ebebeb;\n      border-radius: 20px;\n    }\n\n    .body-note {\n      font-size: 13px;\n      color: #999;\n      font-style: italic;\n      padding: 4px 0;\n      border-left: 3px solid #e0e0e0;\n      padding-left: 12px;\n    }\n\n    .cta-wrap {\n      display: flex;\n      justify-content: center;\n      margin-top: 8px;\n    }\n\n    .cta-button {\n      display: inline-block;\n      padding: 12px 32px;\n      background: #1a1a1a;\n      color: #fff;\n      font-size: 14px;\n      font-weight: 500;\n      border-radius: 6px;\n      text-decoration: none;\n      border: 2px dashed #555;\n      cursor: default;\n      letter-spacing: 0.02em;\n    }\n\n    /* SIGNATURE */\n    .email-signature {\n      border-bottom: 1px solid #eee;\n    }\n\n    .signature-inner {\n      padding: 24px 40px;\n      display: flex;\n      flex-direction: column;\n      gap: 5px;\n    }\n\n    .sig-greeting {\n      font-size: 14px;\n      color: #555;\n    }\n\n    .sig-name {\n      font-size: 15px;\n      font-weight: 600;\n      color: #1a1a1a;\n    }\n\n    .sig-title {\n      font-size: 13px;\n      color: #888;\n    }\n\n    .sig-contact {\n      display: flex;\n      align-items: center;\n      gap: 6px;\n      margin-top: 6px;\n      font-size: 12px;\n      color: #aaa;\n    }\n\n    .sig-contact svg {\n      width: 14px;\n      height: 14px;\n      stroke: #bbb;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    .sig-contact a {\n      color: #888;\n      text-decoration: none;\n    }\n\n    .sig-dot {\n      color: #ccc;\n    }\n\n    .sig-socials {\n      display: flex;\n      gap: 8px;\n      margin-top: 8px;\n    }\n\n    .social-icon {\n      width: 26px;\n      height: 26px;\n      border: 1px dashed #ccc;\n      border-radius: 4px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n\n    .social-icon svg {\n      width: 14px;\n      height: 14px;\n      stroke: #bbb;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    /* DISCLOSURE */\n    .email-disclosure {\n      background: #f8f8f6;\n    }\n\n    .disclosure-inner {\n      padding: 18px 40px 24px;\n      display: flex;\n      flex-direction: column;\n      gap: 10px;\n    }\n\n    .disclosure-text {\n      font-size: 11px;\n      color: #aaa;\n      line-height: 1.7;\n    }\n\n    .disclosure-links {\n      display: flex;\n      gap: 18px;\n      flex-wrap: wrap;\n    }\n\n    .disclosure-links a {\n      font-size: 11px;\n      color: #aaa;\n      text-decoration: underline;\n    }\n\n    .disclosure-address {\n      font-size: 11px;\n      color: #bbb;\n    }\n  </style>\n</head>\n<body>\n\n  <!-- SUBJECT LINE + PREHEADER -->\n  <div class=\"email-meta\">\n    <div class=\"meta-row\">\n      <div class=\"meta-label\">Subject line</div>\n      <div class=\"meta-value\">subject_line</div>\n    </div>\n    <div class=\"meta-row\">\n      <div class=\"meta-label\">Preheader</div>\n      <div class=\"meta-value\">pre_header</div>\n    </div>\n  </div>\n\n  <!-- EMAIL BODY -->\n  <div class=\"email-wrapper\">\n\n    <!-- HEADER -->\n    <div class=\"email-header\">\n      <div class=\"section-label\">Header</div>\n      <div class=\"header-inner\">\n        <div class=\"logo-placeholder\">Logo</div>\n        <div class=\"hero-placeholder\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/>\n            <circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"/>\n            <polyline points=\"21 15 16 10 5 21\"/>\n          </svg>\n          <span>Hero image (optional)</span>\n        </div>\n        <div class=\"headline-bar\"></div>\n      </div>\n    </div>\n\n    <!-- BODY COPY -->\n    <div class=\"email-body\">\n      <div class=\"section-label\">Body copy</div>\n      <div class=\"body-inner\">\n        <div class=\"body-headline\">headline</div>\n        <div class=\"body-placeholder-lines\">\n          <div class=\"line\" style=\"width:100%\"></div>\n          <div class=\"line\" style=\"width:92%\"></div>\n          <div class=\"line\" style=\"width:96%\"></div>\n        </div>\n        <div class=\"body-note\">body_copy.</div>\n        <div class=\"body-placeholder-lines\">\n          <div class=\"line\" style=\"width:88%\"></div>\n          <div class=\"line\" style=\"width:100%\"></div>\n          <div class=\"line\" style=\"width:74%\"></div>\n        </div>\n        <div class=\"cta-wrap\">\n          <a href=\"#\" class=\"cta-button\">Call-to-action button</a>\n        </div>\n      </div>\n    </div>\n\n    <!-- SIGNATURE -->\n    <div class=\"email-signature\">\n      <div class=\"section-label\">Signature</div>\n      <div class=\"signature-inner\">\n        <div class=\"sig-greeting\">Warm regards,</div>\n\n        <div class=\"sig-name\">Use predefined Sig_Name from System Prompt<div>\n        <div class=\"sig-title\">[Title] · [Company Name]</div>\n        <div class=\"sig-contact\">\n          <svg viewBox=\"0 0 24 24\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><polyline points=\"2,4 12,13 22,4\"/></svg>\n          <a href=\"mailto:email@company.com\">email@company.com</a>\n          <span class=\"sig-dot\">·</span>\n          <svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z\"/></svg>\n          <a href=\"https://www.company.com\">www.company.com</a>\n        </div>\n        <div class=\"sig-socials\">\n          <div class=\"social-icon\" title=\"LinkedIn\">\n            <svg viewBox=\"0 0 24 24\"><path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\"/><rect x=\"2\" y=\"9\" width=\"4\" height=\"12\"/><circle cx=\"4\" cy=\"4\" r=\"2\"/></svg>\n          </div>\n          <div class=\"social-icon\" title=\"X / Twitter\">\n            <svg viewBox=\"0 0 24 24\"><path d=\"M4 4l16 16M4 20L20 4\"/></svg>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- DISCLOSURE -->\n    <div class=\"email-disclosure\">\n      <div class=\"section-label\">Disclosure / footer</div>\n      <div class=\"disclosure-inner\">\n        <div class=\"disclosure-text\">\n          You're receiving this email because you are a customer of the company.]\n        </div>\n        <div class=\"disclosure-links\">\n          <a href=\"#\">Privacy policy</a>\n          <a href=\"#\">View in browser</a>\n        </div>\n        <div class=\"disclosure-address\">© 2026 [Use company name set in the system prompt] · 123 Street Address, City, State ZIP</div>\n      </div>\n    </div>\n\n  </div>\n\n</body>\n</html>\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          },
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -896,
+        128
+      ],
+      "id": "d181a049-0670-4d1f-89ac-214ed6f05f58",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3417e790-1ece-4a9e-983c-f4f20a22abe1",
+              "leftValue": "={{ $json.Public_Info }}",
+              "rightValue": "Y",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1168,
+        0
+      ],
+      "id": "08595c9c-3fd3-45e3-b10d-73bb7ab50224",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -928,
+        -64
+      ],
+      "id": "dae9e7b6-2e1b-42c8-ac89-eb822aec6a17",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/data/shared/CannotContact_PublicInfo_Present.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -64
+      ],
+      "id": "d4cfcbc8-62d4-4f01-a570-55ffaed356ff",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "html",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        128
+      ],
+      "id": "0329d1e1-be57-4912-a5f8-cf6f13e3bbc5",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/data/shared/EmailOutput.htm",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        128
+      ],
+      "id": "e8c54854-6951-4639-b6f6-5ad6a5c36a43",
+      "name": "Read/Write Files from Disk2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ccb4b35-f610-4801-844e-8a307512a3f9",
+              "name": "subject_line",
+              "value": "={{ $json.output[0].content[0].text.subject_line }}",
+              "type": "string"
+            },
+            {
+              "id": "55d1961a-ea67-4423-89a7-c2737a6b4df9",
+              "name": "pre_header",
+              "value": "={{ $json.output[0].content[0].text.pre_header }}",
+              "type": "string"
+            },
+            {
+              "id": "11771d41-d9d4-4c97-98e3-9c281b7343f9",
+              "name": "header",
+              "value": "={{ $json.output[0].content[0].text.header }}",
+              "type": "string"
+            },
+            {
+              "id": "44dcd721-d33b-448e-976d-49ea4d48354e",
+              "name": "body_copy",
+              "value": "={{ $json.output[0].content[0].text.body_copy }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -544,
+        128
+      ],
+      "id": "367d03fb-12d7-4895-8488-c18d01d4b2e0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are an email generator. I need you to develop this email in HTML format. Use the structure given below:\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Email Template</title>\n  <style>\n    * { box-sizing: border-box; margin: 0; padding: 0; }\n\n    body {\n      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;\n      background: #f4f4f0;\n      padding: 40px 20px;\n      color: #1a1a1a;\n    }\n\n    .email-meta {\n      max-width: 620px;\n      margin: 0 auto 8px;\n    }\n\n    .meta-row {\n      display: flex;\n      align-items: stretch;\n      border: 1px solid #ddd;\n      background: #fff;\n      overflow: hidden;\n    }\n\n    .meta-row:first-child {\n      border-radius: 8px 8px 0 0;\n    }\n\n    .meta-row + .meta-row {\n      border-top: none;\n    }\n\n    .meta-row:last-child {\n      border-radius: 0 0 8px 8px;\n      margin-bottom: 20px;\n    }\n\n    .meta-label {\n      background: #f8f8f6;\n      padding: 10px 14px;\n      font-size: 12px;\n      font-weight: 600;\n      color: #888;\n      text-transform: uppercase;\n      letter-spacing: 0.05em;\n      border-right: 1px solid #ddd;\n      min-width: 110px;\n      display: flex;\n      align-items: center;\n    }\n\n    .meta-value {\n      padding: 10px 14px;\n      font-size: 14px;\n      color: #555;\n      font-style: italic;\n      display: flex;\n      align-items: center;\n    }\n\n    /* EMAIL WRAPPER */\n    .email-wrapper {\n      max-width: 620px;\n      margin: 0 auto;\n      background: #fff;\n      border: 1px solid #ddd;\n      border-radius: 10px;\n      overflow: hidden;\n    }\n\n    /* SECTION LABELS */\n    .section-label {\n      background: #f8f8f6;\n      padding: 6px 24px;\n      font-size: 11px;\n      font-weight: 600;\n      color: #999;\n      text-transform: uppercase;\n      letter-spacing: 0.06em;\n      border-bottom: 1px solid #eee;\n    }\n\n    /* HEADER */\n    .email-header {\n      border-bottom: 1px solid #eee;\n    }\n\n    .header-inner {\n      padding: 32px 40px;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      gap: 20px;\n    }\n\n    .logo-placeholder {\n      width: 130px;\n      height: 36px;\n      border: 2px dashed #ccc;\n      border-radius: 4px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      font-size: 11px;\n      color: #bbb;\n      letter-spacing: 0.04em;\n    }\n\n    .hero-placeholder {\n      width: 100%;\n      height: 160px;\n      border: 2px dashed #ccc;\n      border-radius: 6px;\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      gap: 8px;\n      background: #fafaf9;\n    }\n\n    .hero-placeholder svg {\n      width: 28px;\n      height: 28px;\n      stroke: #ccc;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    .hero-placeholder span {\n      font-size: 12px;\n      color: #bbb;\n    }\n\n    .headline-bar {\n      width: 75%;\n      height: 14px;\n      background: #ebebeb;\n      border-radius: 20px;\n    }\n\n    /* BODY */\n    .email-body {\n      border-bottom: 1px solid #eee;\n    }\n\n    .body-inner {\n      padding: 32px 40px;\n      display: flex;\n      flex-direction: column;\n      gap: 14px;\n    }\n\n    .body-headline {\n      font-size: 22px;\n      font-weight: 600;\n      color: #1a1a1a;\n      line-height: 1.3;\n    }\n\n    .body-placeholder-lines {\n      display: flex;\n      flex-direction: column;\n      gap: 9px;\n    }\n\n    .line {\n      height: 11px;\n      background: #ebebeb;\n      border-radius: 20px;\n    }\n\n    .body-note {\n      font-size: 13px;\n      color: #999;\n      font-style: italic;\n      padding: 4px 0;\n      border-left: 3px solid #e0e0e0;\n      padding-left: 12px;\n    }\n\n    .cta-wrap {\n      display: flex;\n      justify-content: center;\n      margin-top: 8px;\n    }\n\n    .cta-button {\n      display: inline-block;\n      padding: 12px 32px;\n      background: #1a1a1a;\n      color: #fff;\n      font-size: 14px;\n      font-weight: 500;\n      border-radius: 6px;\n      text-decoration: none;\n      border: 2px dashed #555;\n      cursor: default;\n      letter-spacing: 0.02em;\n    }\n\n    /* SIGNATURE */\n    .email-signature {\n      border-bottom: 1px solid #eee;\n    }\n\n    .signature-inner {\n      padding: 24px 40px;\n      display: flex;\n      flex-direction: column;\n      gap: 5px;\n    }\n\n    .sig-greeting {\n      font-size: 14px;\n      color: #555;\n    }\n\n    .sig-name {\n      font-size: 15px;\n      font-weight: 600;\n      color: #1a1a1a;\n    }\n\n    .sig-title {\n      font-size: 13px;\n      color: #888;\n    }\n\n    .sig-contact {\n      display: flex;\n      align-items: center;\n      gap: 6px;\n      margin-top: 6px;\n      font-size: 12px;\n      color: #aaa;\n    }\n\n    .sig-contact svg {\n      width: 14px;\n      height: 14px;\n      stroke: #bbb;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    .sig-contact a {\n      color: #888;\n      text-decoration: none;\n    }\n\n    .sig-dot {\n      color: #ccc;\n    }\n\n    .sig-socials {\n      display: flex;\n      gap: 8px;\n      margin-top: 8px;\n    }\n\n    .social-icon {\n      width: 26px;\n      height: 26px;\n      border: 1px dashed #ccc;\n      border-radius: 4px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n\n    .social-icon svg {\n      width: 14px;\n      height: 14px;\n      stroke: #bbb;\n      fill: none;\n      stroke-width: 1.5;\n    }\n\n    /* DISCLOSURE */\n    .email-disclosure {\n      background: #f8f8f6;\n    }\n\n    .disclosure-inner {\n      padding: 18px 40px 24px;\n      display: flex;\n      flex-direction: column;\n      gap: 10px;\n    }\n\n    .disclosure-text {\n      font-size: 11px;\n      color: #aaa;\n      line-height: 1.7;\n    }\n\n    .disclosure-links {\n      display: flex;\n      gap: 18px;\n      flex-wrap: wrap;\n    }\n\n    .disclosure-links a {\n      font-size: 11px;\n      color: #aaa;\n      text-decoration: underline;\n    }\n\n    .disclosure-address {\n      font-size: 11px;\n      color: #bbb;\n    }\n  </style>\n</head>\n<body>\n\n  <!-- SUBJECT LINE + PREHEADER -->\n  <div class=\"email-meta\">\n    <div class=\"meta-row\">\n      <div class=\"meta-label\">Subject line</div>\n      <div class=\"meta-value\"> {{ $json.subject_line }}</div>\n\n\n\n    </div>\n    <div class=\"meta-row\">\n      <div class=\"meta-label\">Preheader</div>\n      <div class=\"meta-value\">\n{{ $json.pre_header }}\n</div>\n    </div>\n  </div>\n\n  <!-- EMAIL BODY -->\n  <div class=\"email-wrapper\">\n\n    <!-- HEADER -->\n    <div class=\"email-header\">\n      <div class=\"section-label\">\n{{ $json.header }}\n</div>\n      <div class=\"header-inner\">\n        <div class=\"logo-placeholder\">Logo</div>\n        <div class=\"hero-placeholder\">\n          <svg viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\">\n            <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/>\n            <circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"/>\n            <polyline points=\"21 15 16 10 5 21\"/>\n          </svg>\n          <span>Hero image (optional)</span>\n        </div>\n        <div class=\"headline-bar\"></div>\n      </div>\n    </div>\n\n    <!-- BODY COPY -->\n    <div class=\"email-body\">\n      <div class=\"section-label\">Body copy</div>\n      <div class=\"body-inner\">\n        <div class=\"body-headline\">Headline goes here</div>\n        <div class=\"body-placeholder-lines\">\n          <div class=\"line\" style=\"width:100%\"></div>\n          <div class=\"line\" style=\"width:92%\"></div>\n          <div class=\"line\" style=\"width:96%\"></div>\n        </div>\n        <div class=\"body-note\">\n{{ $json.body_copy }}\n</div>\n        <div class=\"body-placeholder-lines\">\n          <div class=\"line\" style=\"width:88%\"></div>\n          <div class=\"line\" style=\"width:100%\"></div>\n          <div class=\"line\" style=\"width:74%\"></div>\n        </div>\n        <div class=\"cta-wrap\">\n          <a href=\"#\" class=\"cta-button\">Call-to-action button</a>\n        </div>\n      </div>\n    </div>\n\n    <!-- SIGNATURE -->\n    <div class=\"email-signature\">\n      <div class=\"section-label\">Signature</div>\n      <div class=\"signature-inner\">\n        <div class=\"sig-greeting\">Warm regards,</div>\n\n        <div class=\"sig-name\">Use predefined Sig_Name from System Promptdiv>\n        <div class=\"sig-title\">[Title] · [Company Name]</div>\n        <div class=\"sig-contact\">\n          <svg viewBox=\"0 0 24 24\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><polyline points=\"2,4 12,13 22,4\"/></svg>\n          <a href=\"mailto:email@company.com\">email@company.com</a>\n          <span class=\"sig-dot\">·</span>\n          <svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z\"/></svg>\n          <a href=\"https://www.company.com\">www.company.com</a>\n        </div>\n        <div class=\"sig-socials\">\n          <div class=\"social-icon\" title=\"LinkedIn\">\n            <svg viewBox=\"0 0 24 24\"><path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\"/><rect x=\"2\" y=\"9\" width=\"4\" height=\"12\"/><circle cx=\"4\" cy=\"4\" r=\"2\"/></svg>\n          </div>\n          <div class=\"social-icon\" title=\"X / Twitter\">\n            <svg viewBox=\"0 0 24 24\"><path d=\"M4 4l16 16M4 20L20 4\"/></svg>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- DISCLOSURE -->\n    <div class=\"email-disclosure\">\n      <div class=\"section-label\">Disclosure / footer</div>\n      <div class=\"disclosure-inner\">\n        <div class=\"disclosure-text\">\n          You're receiving this email because you are a customer of the company.]\n        </div>\n        <div class=\"disclosure-links\">\n          <a href=\"#\">Privacy policy</a>\n          <a href=\"#\">View in browser</a>\n        </div>\n        <div class=\"disclosure-address\">© 2026 [Use company name set in the system prompt] · 123 Street Address, City, State ZIP</div>\n      </div>\n    </div>\n\n  </div>\n\n</body>\n</html>\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        128
+      ],
+      "id": "feac5eea-c25c-403b-af2a-acb1a8adf0b7",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk2": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0dd13a4c-d075-46df-8272-e25f5dbce9b0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "uJuBK7qtxreld7uxMWP7a",
+  "tags": []
+}

@@ -1,0 +1,13 @@
+﻿Customer ID,Fname,Lname,Acct_Number, Loan_Size ,Monthly_Payment_Amt, Bal_Amt ,Loan_Type,TCPA_Consent,Email ID,Mobile_Number,Public_Info,DPD,Payment Made
+1,Joe,Smith,PL123,"$10,000 ",$350 ,"$6,500 ",PL,Y,Joe.Smith@GMAIL.COM,650-123-4567,N,1,N
+2,Jane,L'oreal,PL124,"$15,000 ",$450 ,"$5,000 ",PL,Y,Jane.L'oreal@GMAIL.COM,650-123-4568,N,2,N
+3,Dan,Davino,PL125,"$17,500 ",$550 ,"$4,500 ",PL,Y,Dan.Davino@GMAIL.COM,650-123-4569,N,3,Y
+4,Ron,Williams,PL126,"$18,000 ",$600 ,"$3,200 ",PL,N,Ron.Williams@ICLOUD.COM,650-123-4570,Y,5,N
+5,Raj,Patel,PL127,"$24,000 ",$700 ,"$4,000 ",PL,N,Raj.Patel@ICLOUD.COM,650-123-4571,N,1,N
+6,MJ,Brooks,PL128,"$12,000 ",$225 ,"$6,000 ",PL,N,MJ.Brooks@ICLOUD.COM,650-123-4572,N,2,N
+7,Susan,Angel,PL129,"$7,000 ",$150 ,"$4,000 ",PL,N,Susan.Angel@ICLOUD.COM,650-123-4573,N,6,N
+8,Bill,Pierro,PL130,"$8,500 ",$320 ,"$4,200 ",PL,Y,Bill.Pierro@yahoo.COM,650-123-4574,N,4,N
+9,Tim,Bose,PL131,"$11,000 ",$300 ,"$7,500 ",PL,N,Tim.Bose@yahoo.COM,650-123-4575,Y,1,N
+10,Jack,Zen,PL132,"$25,000 ",$750 ,"$15,000 ",PL,Y,Jack.Zen@yahoo.COM,650-123-4576,N,7,N
+11,Charlie,Chaplin,PL133,"$14,000 ",$450 ,"$5,500 ",PL,Y,Charlie.Chaplin@GMAIL.COM,650-123-4577,N,3,Y
+12,Denzel,Fox,PL134,"$20,000 ",$558 ,"$4,200 ",PL,N,Denzel.Fox@ICLOUD.COM,650-123-4578,N,6,N

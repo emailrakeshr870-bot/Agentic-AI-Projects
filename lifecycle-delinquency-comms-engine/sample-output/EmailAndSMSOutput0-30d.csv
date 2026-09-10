@@ -1,0 +1,265 @@
+﻿﻿Customer ID,Fname,Lname,Acct_Number, Loan_Size ,Monthly_Payment_Amt, Bal_Amt ,Loan_Type,TCPA_Consent,Email ID,Mobile_Number,Public_Info,DPD,subject_line,pre_header,header,body_copy,Payment_Flag_forSMS,SMS_Msg,Char_Count
+1,Joe,Smith,PL123,10000,350,6500,PL,Y,Joe.Smith@GMAIL.COM,650-123-4567,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Joe Smith,
+
+We wanted to remind you that your payment for loan account PL123 is currently overdue. Your loan balance is $6,500, and the monthly payment of $350 was missed. As of today, you are 1 day late on this payment.
+
+To resolve this, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely,
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Joe, your monthly payment of $350 is overdue. Please take action to avoid further consequences. Questions? Call 1800-555-0199. Reply STOP to end",162
+2,Jane,L'oreal,PL124,15000,450,5000,PL,Y,Jane.L'oreal@GMAIL.COM,650-123-4568,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Jane L'oreal,
+
+We hope this message finds you well. We wanted to remind you that your payment for loan account PL124 is currently overdue. The outstanding balance is $5,000, and the monthly payment of $450 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Jane, your monthly payment of $450 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end alerts",156
+8,Bill,Pierro,PL130,8500,320,4200,PL,Y,Bill.Pierro@yahoo.COM,650-123-4574,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Bill Pierro,
+
+We wanted to remind you that your payment for loan account PL130 is currently overdue. Your loan balance is $4,200, and the monthly payment of $320 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this matter, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely,
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Bill, your monthly payment of $320 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end alerts",156
+10,Jack,Zen,PL132,25000,750,15000,PL,Y,Jack.Zen@yahoo.COM,650-123-4576,N,21,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Immediate Attention Required: Payment Overdue**,"Dear Jack Zen,
+
+We want to remind you that your payment for loan account PL132 is currently overdue. Your loan balance is $15,000, and the monthly payment of $750 has not been received. As of today, you are 21 days late on this payment.
+
+To avoid any further consequences, we kindly ask that you make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and please feel free to reach out to our customer service team if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Jack, your monthly payment of $750 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end alerts",156
+13,Mary,Smith,PL123,10000,350,6500,PL,Y,Mary.Smith@GMAIL.COM,650-123-4579,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Mary Smith,
+
+We wanted to remind you that your payment for loan account PL123 is currently overdue. Your loan balance is $6,500, and the monthly payment of $350 was missed. As of today, you are 1 day late on this payment.
+
+To resolve this, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: REMINDER - Mary, your monthly payment of $350 is due. Please make your payment to avoid any issues. Questions?Call 1800-555-0199. Reply STOP to end",156
+14,Abel,Williams,PL124,15000,450,5000,PL,Y,Abel.Williams@GMAIL.COM,650-123-4580,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Abel Williams,
+
+We wanted to remind you that your payment for loan account PL124 is currently overdue. Your loan balance is $5000, and the monthly payment of $450 was due 2 days ago. We understand that life can get busy, and we appreciate your attention to this matter.
+
+To bring your account up to date, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely,
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Abel, your monthly payment of $450 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end alerts",156
+20,Satya,Nikanj,PL130,8500,320,4200,PL,Y,Satya.Nikanj@yahoo.COM,650-123-4586,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Satya Nikanj,
+
+We wanted to remind you that your payment for loan account PL130 is currently overdue. Your loan balance is $4,200, and the monthly payment of $320 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: REMINDER - Satya, your monthly payment of $320 is due. Please make your payment to avoid any issues. Questions?Call 1800-555-0199. Reply STOP to",153
+22,Chloe,Li,PL132,25000,750,15000,PL,Y,Chloe.Li@yahoo.COM,650-123-4588,N,21,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Important Payment Reminder**,"Dear Chloe Li,
+
+We want to remind you that your payment for loan account PL132 is currently overdue. Your loan balance is $15,000, and the monthly payment of $750 has not been received. As of today, you are 21 days late on this payment.
+
+To avoid any further consequences, we encourage you to make your payment through ACH as soon as possible. Thank you for being a valued customer, and please feel free to reach out to our customer service team if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: REMINDER - Chloe, your monthly payment of $750 is due. Please make your payment to avoid any issues. Questions?Call 1800-555-0199. Reply STOP to end",157
+25,Xi,Smith,PL123,10000,350,6500,PL,Y,Xi.Smith@GMAIL.COM,650-123-4591,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Xi Smith,
+
+We wanted to remind you that your payment for loan account PL123 is currently overdue. Your loan balance is $6,500, and the monthly payment of $350 was due recently. We understand that life can get busy, and we appreciate your attention to this matter.
+
+To bring your account up to date, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember, our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Xi, your monthly payment of $350 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end alerts",154
+26,Nancy,Perry,PL124,15000,450,5000,PL,Y,Nancy.Perry@GMAIL.COM,650-123-4592,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Nancy Perry,
+
+We wanted to remind you that your payment for loan account PL124 is currently overdue. Your loan balance is $5000, and the monthly payment of $450 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: REMINDER - Nancy, your monthly payment of $450 is due. Please make your payment to avoid any issues. Questions?Call 1800-555-0199. Reply STOP to end",157
+32,Mia,Pedro,PL130,8500,320,4200,PL,Y,Mia.Pedro@yahoo.COM,650-123-4598,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Mia Pedro,
+
+We hope this message finds you well. We wanted to remind you that your payment for loan account PL130 is currently overdue. The outstanding balance is $4,200, and the monthly payment of $320 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this matter, we encourage you to make your payment using a credit card at your earliest convenience. Thank you for being a valued customer, and please remember that our customer service team is always here to assist you if you need any support.
+
+Sincerely,
+The CompanyXYZ Team",N,"CompanyXYZ: REMINDER - Mia, your monthly payment of $320 is due. Please make your payment to avoid any issues. Questions?Call 1800-555-0199. Reply STOP to end",155
+34,Dario,Damal,PL132,25000,750,15000,PL,Y,Dario.Damal@yahoo.COM,650-123-4600,N,21,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further issues.,**Important Payment Reminder**,"Dear Dario Damal,
+
+We want to remind you that your payment for loan account PL132 is currently overdue. Your loan balance is $15,000, and the monthly payment of $750 has not been received. As of today, you are 21 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",N,"CompanyXYZ: URGENT - Dario, your monthly payment of $750 is overdue. Please act to avoid further action. Questions? Call 1800-555-0199. Reply STOP to end",150
+3,Dan,Davino,PL125,17500,550,4500,PL,Y,Dan.Davino@GMAIL.COM,650-123-4569,N,15,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Dan Davino,
+
+We hope this message finds you well. We wanted to remind you that your payment for loan account PL125 is currently overdue. The outstanding balance is $4,500, and the monthly payment of $550 was missed. As of today, you are 15 days late on this payment.
+
+To resolve this matter, we encourage you to make your payment using a credit card at your earliest convenience. Thank you for being a valued customer, and please remember that our customer service team is always here to assist you if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+5,Raj,Patel,PL127,24000,700,4000,PL,N,Raj.Patel@ICLOUD.COM,650-123-4571,N,25,URGENT: Your Payment is Overdue,Immediate action required to avoid further consequences.,**Important: Payment Reminder for Your Loan**,"Dear Raj Patel,
+
+We want to remind you that your payment for loan account PL127 is currently overdue. Your loan balance is $4,000, and the monthly payment of $700 has not been received. As of today, you are 25 days late on this payment.
+
+To resolve this matter promptly, please make your payment through ACH to avoid any further consequences. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+6,MJ,Brooks,PL128,12000,225,6000,PL,N,MJ.Brooks@ICLOUD.COM,650-123-4572,N,28,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Immediate Attention Required: Payment Overdue**,"Dear MJ Brooks,
+
+We want to remind you that your payment for loan account PL128 is currently overdue. Your loan balance is $6,000, and the monthly payment of $225 has not been received. As of today, you are 28 days late on this payment.
+
+To resolve this matter promptly, please make your payment through ACH to avoid any further consequences. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+7,Susan,Angel,PL129,7000,150,4000,PL,N,Susan.Angel@ICLOUD.COM,650-123-4573,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Susan Angel,
+
+We wanted to remind you that your payment for loan account PL129 is currently overdue. Your loan balance is $4,000, and the monthly payment of $150 was missed. As of today, you are 1 day late.
+
+To resolve this, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+11,Charlie,Chaplin,PL133,14000,450,5500,PL,Y,Charlie.Chaplin@GMAIL.COM,650-123-4577,N,25,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important Notice Regarding Your Loan Payment**,"Dear Charlie Chaplin,
+
+We want to remind you that your payment for loan account PL133 is currently overdue. Your loan balance is $5,500, and the monthly payment of $450 has not been received. As of today, you are 25 days late on this payment.
+
+To avoid any further complications, we kindly urge you to make your payment through ACH as soon as possible. Thank you for being a valued customer, and please remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+12,Denzel,Fox,PL134,20000,558,4200,PL,N,Denzel.Fox@ICLOUD.COM,650-123-4578,N,28,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Immediate Attention Required: Payment Overdue**,"Dear Denzel Fox,
+
+We want to remind you that your payment for loan account PL134 is currently overdue. Your loan type is PL, with a balance of $4,200, and the monthly payment of $558 has not been received. As of today, you are 28 days late on this payment.
+
+To resolve this matter promptly, please make your payment through ACH to avoid any further consequences. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+15,Warren,Goldsmith,PL125,17500,550,4500,PL,Y,Warren.Goldsmith@GMAIL.COM,650-123-4581,N,15,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Warren Goldsmith,
+
+We want to remind you that your payment for loan account PL125 is currently overdue. Your loan balance is $4,500, and the monthly payment of $550 was missed. As of today, you are 15 days late on this payment.
+
+To resolve this matter, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+17,Bill,Suttenberg,PL127,24000,700,4000,PL,N,Bill.Suttenberg@ICLOUD.COM,650-123-4583,N,25,URGENT: Immediate Attention Required for Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important: Your Loan Payment is Overdue**,"Dear Bill Suttenberg,
+
+We want to remind you that your payment for loan account PL127 is currently overdue. Your loan balance is $4,000, and the monthly payment of $700 has not been received. As of today, you are 25 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+18,Sam,Ultmen,PL128,12000,225,6000,PL,N,Sam.Ultmen@ICLOUD.COM,650-123-4584,N,28,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important: Your Payment is Overdue**,"Dear Sam Ultmen,
+
+We want to remind you that your payment for loan account PL128 is currently overdue. Your loan balance is $6,000, and the monthly payment of $225 has not been received. As of today, you are 28 days late on this payment.
+
+To avoid further consequences, we urge you to make your payment through ACH as soon as possible. Thank you for being a valued customer, and please remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+19,Sundar,Macha,PL129,7000,150,4000,PL,N,Sundar.Macha@ICLOUD.COM,650-123-4585,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Sundar Macha,
+
+We wanted to remind you that your payment for loan account PL129 is currently overdue. Your loan balance is $4000, and the monthly payment of $150 was missed. As of today, you are 1 day late on this payment.
+
+To resolve this, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+23,Amanda,Xian,PL133,14000,450,5500,PL,Y,Amanda.Xian@GMAIL.COM,650-123-4589,N,25,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important: Your Loan Payment is Overdue**,"Dear Amanda Xian,
+
+We want to remind you that your payment for loan account PL133 is currently overdue. Your loan balance is $5,500, and the monthly payment of $450 has not been received. As of today, you are 25 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+24,Stan,Flat,PL134,20000,558,4200,PL,N,Stan.Flat@ICLOUD.COM,650-123-4590,N,28,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important: Your Loan Payment is Overdue**,"Dear Stan Flat,
+
+We want to remind you that your payment for loan account PL134 is currently overdue. Your loan type is PL, with a balance of $4,200. The monthly payment of $558 has not been received, and it has now been 28 days since the due date.
+
+To resolve this matter, please make your payment through ACH as soon as possible. Thank you for being a valued customer, and remember that you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+27,Cramer,America,PL125,17500,550,4500,PL,Y,Cramer.America@GMAIL.COM,650-123-4593,N,15,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Cramer America,
+
+We want to remind you that your payment for loan account PL125 is currently overdue. Your loan balance is $4,500, and the monthly payment of $550 has not been received. As of today, you are 15 days late on this payment.
+
+To resolve this matter, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+29,Richard,Patel,PL127,24000,700,4000,PL,N,Richard.Patel@ICLOUD.COM,650-123-4595,N,25,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Important: Immediate Attention Required for Your Account**,"Dear Richard Patel,
+
+We want to remind you that your payment for loan account PL127 is currently overdue. Your loan balance is $4,000, and the monthly payment of $700 has not been received. As of today, you are 25 days late on this payment.
+
+To resolve this matter promptly, we encourage you to make your payment using a credit card. Thank you for being a valued customer, and please remember that our customer service team is always here to assist you if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+30,Bianca,Brooks,PL128,12000,225,6000,PL,N,Bianca.Brooks@ICLOUD.COM,650-123-4596,N,28,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further action.,**Important Payment Reminder**,"Dear Bianca Brooks,
+
+We want to remind you that your payment for loan account PL128 is currently overdue. Your loan balance is $6,000, and the monthly payment of $225 has not been received. As of today, you are 28 days late on this payment.
+
+To avoid any further consequences, we encourage you to make your payment through ACH as soon as possible. Thank you for being a valued customer, and please feel free to reach out to our customer service team if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+31,Cary,Ruben,PL129,7000,150,4000,PL,N,Cary.Ruben@ICLOUD.COM,650-123-4597,N,1,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Cary Ruben,
+
+We wanted to remind you that your payment for loan account PL129 is currently overdue. Your loan type is PL, with a balance of $4000, and the monthly payment of $150 was missed. It has been 1 day since the due date, and we understand that oversights can happen.
+
+To resolve this, please consider making your payment with a credit card at your earliest convenience. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+35,Mike,Holdings,PL133,14000,450,5500,PL,Y,Mike.Holdings@GMAIL.COM,650-123-4601,N,25,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important: Your Loan Payment is Overdue**,"Dear Mike Holdings,
+
+We want to remind you that your payment for loan account PL133 is currently overdue. Your loan balance is $5,500, and the monthly payment of $450 has not been received. As of today, you are 25 days late on this payment.
+
+To avoid any further complications, we kindly ask that you make your payment through ACH as soon as possible. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+36,Rob,Mario,PL134,20000,558,4200,PL,N,Rob.Mario@ICLOUD.COM,650-123-4602,N,28,URGENT: Immediate Action Required on Your Loan Payment,Your payment is overdue. Please address this matter promptly.,**Important Notice Regarding Your Loan Payment**,"Dear Rob Mario,
+
+We want to remind you that your payment for loan account PL134 is now overdue. Your current loan balance is $4,200, and the monthly payment of $558 has not been received. As of today, you are 28 days late on this payment.
+
+To resolve this matter, please make your payment through ACH as soon as possible. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+38,Jerry,Aestha,PL132,25000,750,15000,PL,Y,Jerry.Aestha@GMAIL.COM,650-123-4604,N,2,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Friendly Reminder: Payment Due**,"Dear Jerry Aestha,
+
+We hope this message finds you well. We wanted to remind you that your payment for loan account PL132 is currently overdue. The loan balance is $15,000, and the monthly payment of $750 was missed. As of today, you are 2 days late on this payment.
+
+To resolve this matter, we kindly ask you to make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and please remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+39,Ross,Junkins,PL133,14000,450,5500,PL,Y,Ross.Junkins@GMAIL.COM,650-123-4605,N,15,REMINDER: Your Payment is Overdue,Please take a moment to address your overdue loan payment.,**Payment Reminder for Your Loan Account**,"Dear Ross Junkins,
+
+We hope this message finds you well. We want to remind you that your payment for loan account PL133 is currently overdue. Your loan balance is $5,500, and the monthly payment of $450 was missed. As of today, you are 15 days late on this payment.
+
+To resolve this matter, please make your payment through ACH at your earliest convenience. Thank you for being a valued customer, and remember that our customer service team is always here to support you if you need assistance.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
+40,Rachel,Walter,PL134,20000,558,4200,PL,N,Rachel.Walter@ICLOUD.COM,650-123-4606,N,21,URGENT: Your Payment is Overdue,Please address your overdue payment to avoid further issues.,**Important: Action Required on Your Account**,"Dear Rachel Walter,
+
+We want to remind you that your payment for loan account PL134 is currently overdue. Your loan balance is $4,200, and the monthly payment of $558 has not been received. As of today, you are 21 days late on this payment.
+
+To resolve this matter, please make your payment through ACH as soon as possible. Thank you for being a valued customer, and remember, you are always welcome to contact our customer service if you need any support.
+
+Sincerely, 
+The CompanyXYZ Team",,,0
