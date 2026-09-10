@@ -16,6 +16,7 @@ used, the full exported n8n workflow, and results.
 | [ClaimAudit AI — Responsible AI Agent](./claimaudit-responsible-ai-agent) | Healthcare audit teams depend on IT/data teams just to query claims data, slowing down compliance work | Chat agent generates safe SQL from plain language, with input/output guardrails, PII redaction, confidence scoring, and full audit logging |
 | [Reimbursement Agent (MCP Architecture)](./reimbursement-mcp-agent) | Manual expense processing is slow, inconsistent, and error-prone as claim volume grows | Multi-workflow MCP architecture: orchestrator agent calls tools (bill structuring, policy caps, utilization, email) exposed by a dedicated MCP server, with a self-auditing bill-parsing sub-workflow |
 | [AI Helpdesk Copilot (Multi-Agent)](./ai-helpdesk-copilot-multiagent) | Manual support ticket triage is slow and inconsistent; responses risk hallucinating unsupported claims | Four-agent pipeline (triage → draft → critic) grounded in historical tickets via RAG, with prompt-injection detection and confidence/policy gating at every stage |
+| [Shipment Disruption Router](./shipment-disruption-router) | Manual dispatcher review of shipment disruptions causes latency, misrouting, and no audit trail | Three-agent pipeline (classify → route → audit) grounded in a logistics policy rulebook, benchmarked by a separate offline evaluation harness |
 
 More projects coming soon.
 
