@@ -1,0 +1,175 @@
+{
+  "name": "MCP Server Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "test-server"
+      },
+      "id": "e2a704df-bcd8-4e8f-93b2-12358be17d32",
+      "name": "MCP Server Trigger",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        240
+      ],
+      "webhookId": "mcp-test-server"
+    },
+    {
+      "parameters": {
+        "description": "Convert raw bill text into a clean structured JSON with category-wise (food/travel/hotel/others) tax-inclusive totals. Internally runs a structuring agent, an arithmetic auditor, and a restructuring agent if the audit fails. \n\nYou must use the tool defind such as Sub: Structure Bill",
+        "workflowId": {
+          "__rl": true,
+          "value": "VunNOdjmz1g3Q2eQoHowt",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/VunNOdjmz1g3Q2eQoHowt",
+          "cachedResultName": "Sub: Structure Bill"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "raw_bill": "={{ $fromAI('raw_bill', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "raw_bill"
+          ],
+          "schema": [
+            {
+              "id": "raw_bill",
+              "displayName": "raw_bill",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "id": "2b19d977-5586-4f74-ba40-aed28cfddbbb",
+      "name": "structure_bill",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "After importing Workflow 3, open this node and pick '3 - Sub-Workflow: Greeter' from the workflow dropdown."
+    },
+    {
+      "parameters": {
+        "toolDescription": "Return the per-category reimbursement caps (food, travel, hotel) for an employee based on their company position. Use this to find the maximum allowable reimbursement amount per category. Input: emp_id (string, e.g. \"E001\"). Output: { food: number, travel: number, hotel: number } representing ceiling amounts.",
+        "command": "=EMP_ID=\"{{ $fromAI('emp_id', 'Employee ID like E001', 'string') }}\" python3 << 'PYEOF'\nimport sqlite3, json, os\n\nemp_id = os.environ.get(\"EMP_ID\", \"\").strip()\nif not emp_id:\n    print(json.dumps({\"error\": \"emp_id is required\"}))\nelse:\n    conn = sqlite3.connect(\"/data/shared/reimbursement.db\")\n    conn.row_factory = sqlite3.Row\n    c = conn.cursor()\n    c.execute(\"\"\"\n        SELECT r.category, r.reimbursement_cap\n        FROM employee_details e\n        JOIN reimbursement_policy r ON e.position = r.position\n        WHERE e.employee_id = ?\n          AND r.category IN ('Food','Travel','Hotel')\n    \"\"\", (emp_id,))\n    rows = c.fetchall()\n    conn.close()\n    out = {\"food\": 0.0, \"travel\": 0.0, \"hotel\": 0.0}\n    for r in rows:\n        out[r[\"category\"].lower()] = float(r[\"reimbursement_cap\"])\n    print(json.dumps(out))\nPYEOF"
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        16,
+        160
+      ],
+      "id": "c3440490-ff1c-4e7f-ada4-10d2296af332",
+      "name": "get_reimbursement_caps"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Return the sum of an employee's already-claimed reimbursements per category for the current policy period. Use this to check how much of each category cap the employee has already consumed before approving a new bill. Input: emp_id (string, e.g. \"E001\"). Output: { food: number, travel: number, hotel: number } representing utilized-to-date amounts in the same currency as the caps.",
+        "command": "=EMP_ID=\"{{ $fromAI('emp_id', 'Employee ID like E001', 'string') }}\" python3 << 'PYEOF'\nimport sqlite3, json, os\n\nemp_id = os.environ.get(\"EMP_ID\", \"\").strip()\nif not emp_id:\n    print(json.dumps({\"error\": \"emp_id is required\"}))\nelse:\n    conn = sqlite3.connect(\"/data/shared/reimbursement.db\")\n    conn.row_factory = sqlite3.Row\n    c = conn.cursor()\n    c.execute(\"\"\"\n              SELECT category, COALESCE(SUM(amount), 0) AS total_amount\n              FROM past_reimbursements\n              WHERE employee_id = ?\n              GROUP BY category\n    \"\"\", (emp_id,))\n    rows = c.fetchall()\n    conn.close()\n    out = {\"food\": 0.0, \"travel\": 0.0, \"hotel\": 0.0}\n    for r in rows:\n        out[r[\"category\"].lower()] = float(r[\"total_amount\"])\n    print(json.dumps(out))\nPYEOF"
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        16,
+        352
+      ],
+      "id": "5b5eed26-f5b9-411a-b995-6d6d27c29223",
+      "name": "get_past_utilization "
+    },
+    {
+      "parameters": {
+        "fromEmail": "sender@example.com",
+        "toEmail": "employee@example.com",
+        "subject": "={{ $fromAI('Subject', ``, 'string') }}",
+        "emailFormat": "text",
+        "text": "={{ $fromAI('Text', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSendTool",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        544
+      ],
+      "id": "cf910810-3016-49f0-a137-12b69a6759a4",
+      "name": "send_email",
+      "webhookId": "b0b981cb-102a-45e0-8ec0-e8f073c98be4",
+      "credentials": {
+        "smtp": {
+          "id": "zTEvsU2tXc8braFt",
+          "name": "SMTP account 11"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "structure_bill": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_reimbursement_caps": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_past_utilization ": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "881ee0fa-13cd-4af4-a415-49a2ed02b5f2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "0b_5Aiklg1aYlTainWjBs",
+  "tags": []
+}

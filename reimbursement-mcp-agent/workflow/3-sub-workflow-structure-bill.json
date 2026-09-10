@@ -1,0 +1,377 @@
+{
+  "name": "Sub: Structure Bill",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eda158c9-d381-4291-95a7-73e7c5c65e08",
+              "name": "raw_bill",
+              "value": "=={{ $('When Executed by Another Workflow').item.json.raw_bill }}",
+              "type": "string"
+            },
+            {
+              "id": "a3fdcd64-55ca-49ea-92fa-e9d6fc6ccd5f",
+              "name": "structured_bill",
+              "value": "={{ JSON.stringify($json.output) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d57e80c8-2008-4f9d-942a-99b1ba6bbec4",
+      "name": "Parse Structured",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c50a800-10c5-4ff6-a5ca-c0df78e87a7d",
+              "name": "raw_bill",
+              "value": "={{ $('Parse Structured').item.json.raw_bill }}",
+              "type": "string"
+            },
+            {
+              "id": "d50d06fd-3645-4003-8a2c-16fe1517fff6",
+              "name": "structured_bill",
+              "value": "={{ $('Parse Structured').item.json.structured_bill }}",
+              "type": "string"
+            },
+            {
+              "id": "d58bfec2-4cfb-41e5-9f56-93ab3e220c0b",
+              "name": "decision",
+              "value": "={{ JSON.parse($json.output).decision }}",
+              "type": "string"
+            },
+            {
+              "id": "21c4d5b0-41df-4554-a743-eed5f6b47e18",
+              "name": "rationale",
+              "value": "={{ JSON.parse($json.output).rationale }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7ffb4a0d-4d57-4c53-accb-883833193ab2",
+      "name": "Parse Audit",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "919349e9-c2a2-4fa8-9262-62be787462e2",
+              "leftValue": "={{ $json.decision }}",
+              "rightValue": "APPROVE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1c5a3e93-2fd8-4ec6-9c48-f68cc85fdbd4",
+      "name": "IF Approved",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc18803c-69f2-4667-bf7d-61cff2b6881f",
+              "name": "result",
+              "value": "={{ JSON.parse($json.structured_bill) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c4cb30cd-5d3b-41bd-ba6b-b5062575cb76",
+      "name": "Final (Approved)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "186d87c3-8924-4b56-808a-7126fba8c36c",
+              "name": "result",
+              "value": "={{ typeof $json.output === 'string' ? JSON.parse($json.output) : $json.output }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "79372528-a018-44fe-a130-32e3a4c05cbd",
+      "name": "Final (Restructured)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=### ROLE\nYou are a senior Corporate expense analyst specializing in vendor-agnostic expense normalization across hotels, restaurants, and travel agencies.\n\n### INPUT\nRaw bill text extracted from receipts or invoices.\n\n### OBJECTIVE\nExtract and compute only the following seven outputs:\n\n1. Date (YYYY-MM-DD or null)\n2. Vendor Details — single string: Vendor name | Address | Invoice # (or null)\n3. Food Bill Amount — food + beverages + liquor + their taxes (0 if none)\n4. Travel Bill Amount — flights, taxis, rideshare, rentals + taxes (0 if none)\n5. Hotel Bill Amount — room charges, lodging fees, occupancy taxes (0 if none)\n6. Others Total Amount — parking, tips, laundry, internet, ambiguous items + their taxes (0 if none)\n7. Total Bill Amount — final total stated on bill; must equal sum of the above\n\n### CATEGORIZATION RULES\n* Hotel: room charges, lodging fees, occupancy taxes\n* Food: meals, beverages, catering, room service food, liquor + their taxes\n* Travel: flights, taxis, rideshare, rental cars, travel agency charges\n* Others: parking, tips, laundry, internet, ambiguous items\nIf ambiguous, assign to Others.\n\n### OUTPUT FORMAT (STRICT JSON ONLY, NO FENCES)\n{\n  \"date\": \"YYYY-MM-DD or null\",\n  \"vendor_details\": \"string or null\",\n  \"food_bill_amount\": number,\n  \"travel_bill_amount\": number,\n  \"hotel_bill_amount\": number,\n  \"others_bill_amount\": number,\n  \"total_bill_amount\": number\n}\n\n### CONSTRAINTS\n* Output must be valid JSON only\n* No markdown, explanations, or comments\n* Do not guess missing values; null for text, 0 for money\n* All monetary values must be tax-inclusive"
+            },
+            {
+              "content": "={{ $json.raw_bill }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1264,
+        96
+      ],
+      "id": "8d39f4d3-6321-4f32-acb7-0f0ff0175ac6",
+      "name": "Strcuture Bill",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=ROLE:\nYou are a senior expense compliance auditor. Validate that each category total in the structured data can be EXACTLY derived from explicit line items + taxes in the raw bill.\n\nDETERMINISTIC ACCEPTANCE RULES (ALL MUST PASS):\n1. Evidence-based recomposition — sum (base + explicitly labeled taxes) per category\n2. All category totals must include applicable taxes\n3. Category integrity:\n   - Food = food + beverage + liquor + liquor tax\n   - Hotel = room + lodging fees + occupancy taxes\n   - Travel = transport + transport taxes\n   - Other = laundry, parking, taxes not covered above\n4. Arithmetic — food + travel + hotel + other == total_bill_amount, exact match\n\nDECISION:\n- APPROVE if all rules pass\n- BLOCK if any rule fails\n\nOUTPUT FORMAT (STRICT JSON ONLY, NO FENCES):\n{ \"decision\": \"APPROVE\" or \"BLOCK\", \"rationale\": \"string\" }"
+            },
+            {
+              "content": "=INPUTS:\n1. Raw bill text:\n{{ $json.raw_bill }}\n\n2. Structured expense data to validate:\n{{ $json.structured_bill }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -736,
+        96
+      ],
+      "id": "bb57b40c-40e7-4f68-8dda-52dc25053aa7",
+      "name": "Decision Audit",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=ROLE:\nYou are a senior Corporate Expense Analyst. You are correcting a previously BLOCKED expense structure. Fix ONLY the issues called out by the auditor; do not alter correct fields.\n\nCORRECTION PRINCIPLES:\n1. Raw bill text is the ONLY source of truth.\n2. Modify only the fields flagged as incorrect.\n3. All monetary values must be tax-inclusive.\n4. Categorization rules:\n   - Hotel: room, lodging, occupancy taxes\n   - Food: meals, beverages, liquor, room service food\n   - Travel: flights, taxis, rideshare, rental cars\n   - Others: parking, tips, laundry, internet, ambiguous items\n5. food + travel + hotel + others MUST equal total_bill_amount.\n\nOUTPUT FORMAT (STRICT JSON ONLY, NO FENCES):\n{\n  \"date\": \"YYYY-MM-DD or null\",\n  \"vendor_details\": \"string or null\",\n  \"food_bill_amount\": number,\n  \"travel_bill_amount\": number,\n  \"hotel_bill_amount\": number,\n  \"others_bill_amount\": number,\n  \"total_bill_amount\": number\n}"
+            },
+            {
+              "content": "=INPUTS:\n1. Raw bill text:\n{{ $json.raw_bill }}\n\n2. Previously structured (BLOCKED):\n{{ $json.structured_bill }}\n\n3. Auditor rationale:\n{{ $json.rationale }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        288
+      ],
+      "id": "75c6d872-0f94-4689-90aa-731ceebfaa6e",
+      "name": "Restructure Bill",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"raw_bill\":\"text\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1472,
+        96
+      ],
+      "id": "6753c7d3-b914-493a-a20c-b3ffdaaa0cdc",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Parse Structured": {
+      "main": [
+        [
+          {
+            "node": "Decision Audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Audit": {
+      "main": [
+        [
+          {
+            "node": "IF Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Approved": {
+      "main": [
+        [
+          {
+            "node": "Final (Approved)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restructure Bill",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Strcuture Bill": {
+      "main": [
+        [
+          {
+            "node": "Parse Structured",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Audit": {
+      "main": [
+        [
+          {
+            "node": "Parse Audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restructure Bill": {
+      "main": [
+        [
+          {
+            "node": "Final (Restructured)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Strcuture Bill",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "d69ac92b-11e1-40bb-801f-05bf9b2f6b17",
+  "meta": {
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "VunNOdjmz1g3Q2eQoHowt",
+  "tags": []
+}

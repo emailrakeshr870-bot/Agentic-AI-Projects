@@ -1,0 +1,292 @@
+{
+  "name": "Reimbursement Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "sseEndpoint": "http://localhost:5678/mcp/test-server/sse",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "f2e18650-f5e7-4d93-a653-a7e429e8fb36",
+      "name": "MCP Client Tool",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        960,
+        224
+      ],
+      "notes": "Replace sseEndpoint with the Production URL from Workflow 2's MCP Server Trigger after activating it."
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "session2",
+        "contextWindowLength": 10
+      },
+      "id": "aebea3fb-3477-4a57-bc60-ae3e81c23b9e",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "id": "52f607d4-6d4c-4f87-a02b-535816e597e8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        224
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Process this employee bill:\n- Emp_ID: {{ $json.Emp_ID }}\n- emp_name: {{ $json.emp_name }}\n- receiver_email: {{ $json.receiver_email }}\n- raw_bill:\n{{ $json.raw_bill }}",
+        "options": {
+          "systemMessage": "=You are a reimbursement-processing assistant. You receive an employee bill with:\n- Emp_ID\n- emp_name\n- raw_bill\n- receiver_email\n\nYou MUST execute these steps in order. Do NOT skip any step. Do NOT produce a\nfinal answer until STEP 6 has completed.\n\nSTEP 1 — structure_bill\n  Call structure_bill({ raw_bill }).\n  It returns: { date, vendor_details, food_bill_amount, travel_bill_amount,\n  hotel_bill_amount, others_bill_amount, total_bill_amount }.\n  Treat this output as authoritative. Do NOT modify it.\n\nSTEP 2 — caps\n  Call get_reimbursement_caps({ emp_id: Emp_ID }).\n  It returns: { food, travel, hotel } — the per-category limits.\n\nSTEP 3 — utilization\n  Call get_past_utilization({ emp_id: Emp_ID }).\n  It returns: { food, travel, hotel } — already-spent amounts.\n\nSTEP 4 — calculate (do this in your head, deterministically)\n  For each of food, travel, hotel:\n    requested = structured_bill.<cat>_bill_amount\n    cap       = caps.<cat>\n    used      = utilization.<cat>\n    remaining = max(0, cap - used)\n    approved  = min(requested, remaining)\n    rejected  = max(0, requested - approved)\n  For \"others\":\n    approved = others_bill_amount\n    rejected = 0   (no cap on Others — reimbursed in full)\n  Round all monetary values to 2 decimal places.\n\nSTEP 5 — compose email body\n  Generate a professional and audit-safe reimbursement decision email.\n  Use the provided inputs exactly as given.\n  \n  INPUT DATA:\n  - Employee ID: {Emp_ID}\n  - Employee Name: {emp_name}\n  - Transaction Date: {structured_bill.date}\n  - Vendor Details: {structured_bill.vendor_details}\n  - Approved Rationale: <one-sentence plain-English summary of the decision derived from STEP 4>\n  - Non-reimbursable Amount (Others): {structured_bill.others_bill_amount}\n  - Total Bill Amount Submitted: {structured_bill.total_bill_amount}\n  \n  EMAIL REQUIREMENTS:\n  1. Greet the employee by name\n  2. Reference transaction date and vendor details\n  3. Clearly state the reimbursement decision\n  4. Include the rationale in a neutral, audit-safe manner\n  5. End with a professional Finance closing\n\n\nSTEP 6 — send_email  (MANDATORY — call this tool before producing your final answer)\n  Call send_email with EXACTLY these two argument names:\n    Subject: \"Reimbursement Decision — <vendor short name>, <date>\"\n    Text:    <the email body composed in STEP 5>\n  Note: argument names are capital-S Subject and capital-T Text.\n  Do NOT pass \"from\", \"to\", \"subject\", or \"body\" — those are not expected.\n\nSTEP 7 — final answer (only AFTER send_email returns successfully)\n  Return STRICT JSON, no fences, no commentary:\n  {\n    \"Emp_ID\": \"...\",\n    \"emp_name\": \"...\",\n    \"mail_subject\": \"...\",\n    \"mail_status\": \"sent\",\n    \"calculation_summary\": {\n      \"food\":   { \"requested\": ..., \"approved\": ..., \"rejected\": ... },\n      \"travel\": { \"requested\": ..., \"approved\": ..., \"rejected\": ... },\n      \"hotel\":  { \"requested\": ..., \"approved\": ..., \"rejected\": ... },\n      \"others\": { \"requested\": ..., \"approved\": ..., \"rejected\": 0 },\n      \"totals\": { \"requested\": ..., \"approved\": ..., \"rejected\": ... }\n    }\n  }\n\nCONSTRAINTS:\n- Never invent numbers.\n- Never skip or reorder steps.\n- If a tool errors, report the error in the final summary instead of fabricating a result."
+        }
+      },
+      "id": "499e6f68-89e4-47d7-b555-b40004072959",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        96,
+        0
+      ],
+      "id": "a609fc77-9803-4d42-8d14-8da6df011146",
+      "name": "When chat message received",
+      "webhookId": "bf851d42-35c8-4d8d-b336-0215a166799e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "599ae920-29b9-431c-84e7-d4e2ed32a224",
+              "name": "Emp_ID",
+              "value": "=E001",
+              "type": "string"
+            },
+            {
+              "id": "0a5bc064-0a13-4de5-b3ba-2b61b82a5148",
+              "name": "emp_name",
+              "value": "=Amit Sharma",
+              "type": "string"
+            },
+            {
+              "id": "faf6d065-7a9b-443c-acf1-04dc447bf106",
+              "name": "raw_bill",
+              "value": "={{ $json['0'].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "336f8365-3c49-4254-a412-9c761518db22",
+              "name": "receiver_email",
+              "value": "employee@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5a5f7de1-cbe6-4533-afa4-133113eb39e2",
+      "name": "Provide Emp ID, Emp Name",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "Extract the text details from the image uploaded, make sure you extract everything ",
+        "inputType": "base64",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        304,
+        0
+      ],
+      "id": "653eeeb0-89a8-4964-bfac-7de6bf57edd0",
+      "name": "Extract Text from Image",
+      "credentials": {
+        "openAiApi": {
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1613801-49ea-42a7-8ea6-3ab2d4d391f6",
+              "name": "Emp_ID",
+              "value": "={{ $('Provide Emp ID, Emp Name').item.json.Emp_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "824a8070-8358-4e1f-9661-f03dad2fcb9f",
+              "name": "emp_name",
+              "value": "={{ $('Provide Emp ID, Emp Name').item.json.emp_name }}",
+              "type": "string"
+            },
+            {
+              "id": "8ad5b0d8-5fb3-40b1-88f6-8952ae877320",
+              "name": "result",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "90af9c9d-4a00-46df-86e0-fb407794d9e9",
+      "name": "Final Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "MCP Client Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Extract Text from Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Provide Emp ID, Emp Name": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text from Image": {
+      "main": [
+        [
+          {
+            "node": "Provide Emp ID, Emp Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b18aa1e4-d9f0-4afd-8b93-e9b2499c97f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "wdIGmouAAcTS_0P9WdjYQ",
+  "tags": []
+}
