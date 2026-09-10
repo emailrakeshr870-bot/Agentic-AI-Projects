@@ -1,0 +1,126 @@
+{
+  "name": "Customer Profile Lookup - Subflow",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "customer_id"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "20cb29aa-8b7f-4b43-b544-dba3db093fe7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "=CUSTOMER_ID=\"{{ $json.customer_id }}\" python3 << 'PYEOF'\nimport sqlite3, json, os\ncustomer_id = os.environ.get(\"CUSTOMER_ID\", \"\").strip()\nif not customer_id:\n  print(json.dumps({\"error\": \"customer_id is required\"}))\nelse:\n  conn = sqlite3.connect(\"/data/shared/customers.db\")\n  conn.row_factory = sqlite3.Row\n  c = conn.cursor()\n  c.execute(\"SELECT * FROM customers WHERE customer_id = ?\", (customer_id,))\n  row = c.fetchone()\n  conn.close()\n\nif row is None:\n  print(json.dumps({\"error\": \"customer not found\", \"customer_id\": customer_id}))\nelse:\n  print(json.dumps(dict(row)))\n\nPYEOF"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -16
+      ],
+      "id": "ec470a04-5eaa-4590-805b-5bb5eb77dc04",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b97401b-a6ce-441c-9c6f-a9330296d88c",
+              "name": "customer_id",
+              "value": "={{ JSON.parse($json.stdout).customer_id }}",
+              "type": "string"
+            },
+            {
+              "id": "208190ee-279d-4292-8460-733e0dc894e3",
+              "name": "customer_name",
+              "value": "={{ JSON.parse($json.stdout).name }}\n\n{{ \n  (() => {\n    try {\n      const data = typeof $json.stdout === 'string' ? JSON.parse($json.stdout || '{}') : ($json.stdout || {});\n      const includePII = $('When called by Agent').item?.json?.include_pii;\n\n      if (String(includePII) !== 'true') {\n        data.name = \"[REDACTED]\";\n      }\n      return data;\n    } catch (e) {\n      return { error: \"Failed to parse stdout\", raw: $json.stdout };\n    }\n  })() \n}}\n\n\n",
+              "type": "string"
+            },
+            {
+              "id": "16e80202-94c0-4d32-a0ec-77706fb965ec",
+              "name": "customer_tier",
+              "value": "={{ JSON.parse($json.stdout).tier }}",
+              "type": "string"
+            },
+            {
+              "id": "eeddbd25-990b-48e0-be9d-9982505350cf",
+              "name": "preferred_channel",
+              "value": "={{ JSON.parse($json.stdout).preferred_channel }}",
+              "type": "string"
+            },
+            {
+              "id": "aa76fb86-ae4a-4ffc-b7cd-8749e95f3947",
+              "name": "number_of_exceptions_inlast_90d",
+              "value": "={{ JSON.parse($json.stdout).exceptions_last_90d }}",
+              "type": "string"
+            },
+            {
+              "id": "d7c95e54-fddc-41af-9dbb-bceffaaf3244",
+              "name": "active_credit",
+              "value": "={{ JSON.parse($json.stdout).active_credit }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        -16
+      ],
+      "id": "3fa3a47a-9154-4ac8-9d42-5a15cb6e5f10",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "6d9c6f2a-35ff-494c-954f-f9b1b960ccf1",
+  "meta": {
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "ExUGc9pXZruNJnxaCo-Z_",
+  "tags": []
+}

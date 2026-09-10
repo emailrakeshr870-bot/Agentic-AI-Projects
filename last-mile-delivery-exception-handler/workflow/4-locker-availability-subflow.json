@@ -1,0 +1,347 @@
+{
+  "name": "Locker Availability Subflow",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "zip_code"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        -272
+      ],
+      "id": "85906196-132e-4c6c-88a6-9bed1c52b087",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "locker_details",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -272
+      ],
+      "id": "36fa39a7-b3ee-4923-aa10-f80f32e5a5c9",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12179ef1-2f6e-489e-acba-2965d35411ec",
+              "name": "locker_details",
+              "value": "={{ JSON.parse($json.stdout || '[]') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -272
+      ],
+      "id": "862d13eb-c94a-4e55-980b-ccdd2e4405f5",
+      "name": "Converting SQL Output into an array - edit field node"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93f44ecc-4630-4b8f-b7e3-0c7548457451",
+              "name": "eligible_flag",
+              "value": "={{ (() => {\n  // 1. Map text sizes to numbers for easy comparison\n  const sizeMap = { SMALL: 1, MEDIUM: 2, LARGE: 3 };\n\n  // 2. Extract values into clearly named variables\n  const requestedSize = $('When Executed by Another Workflow').item.json.package_size;\n  const maxLockerSize = $json.max_package_size;\n  const currentStatus = $json.capacity_status;\n\n  const requestedScore = sizeMap[requestedSize] || 0;\n  const lockerMaxScore = sizeMap[maxLockerSize] || 0;\n\n  // RULE 1: If the package is bigger than the locker's maximum capacity, reject it\n  if (lockerMaxScore < requestedScore) {\n    return false;\n  }\n\n  // RULE 2: If the locker is completely full, reject it\n  if (currentStatus === 'FULL') {\n    return false;\n  }\n\n  // RULE 3: If capacity is limited, ONLY allow SMALL packages\n  if (currentStatus === 'LIMITED' && requestedSize !== 'SMALL') {\n    return false;\n  }\n\n  // If it passes all rules, the locker is available!\n  return true;\n})() }}\n",
+              "type": "string"
+            },
+            {
+              "id": "3d8585c7-2f61-4a44-9733-4b7fb8f0b5de",
+              "name": "reason",
+              "value": "={{ (() => {\n  const sizeMap = { SMALL: 1, MEDIUM: 2, LARGE: 3 };\n\n  const requestedSize = $('When Executed by Another Workflow').item.json.package_size;\n  const maxLockerSize = $json.max_package_size;\n  const currentStatus = $json.capacity_status;\n\n  const requestedScore = sizeMap[requestedSize] || 0;\n  const lockerMaxScore = sizeMap[maxLockerSize] || 0;\n\n  // Check 1: Size Compatibility\n  if (lockerMaxScore < requestedScore) {\n    return `Locker max capacity is ${maxLockerSize} < package ${requestedSize}`;\n  }\n\n  // Check 2: Total Capacity\n  if (currentStatus === 'FULL') {\n    return 'Locker is FULL';\n  }\n\n  // Check 3: Limited Capacity Restrictions\n  if (currentStatus === 'LIMITED' && requestedSize !== 'SMALL') {\n    return 'Locker capacity is LIMITED - only SMALL packages are accepted';\n  }\n\n  // Success\n  return 'Compatible';\n})() }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        -272
+      ],
+      "id": "0b5a0529-7507-4fe5-b463-13bf41e71650",
+      "name": "Checking package size vs. locker size and availability"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "eligible_flag"
+            },
+            {
+              "fieldToAggregate": "reason"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -272
+      ],
+      "id": "84d105a1-60c8-4019-a205-d9b89fd2fc5e",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7d7041b4-f0e3-4a3e-9b80-1df8635b7020",
+              "name": "locker_id",
+              "value": "={{ JSON.parse($json.stdout).locker_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c046a794-3a50-4582-bbc1-e4d439793747",
+              "name": "locker_address",
+              "value": "={{ JSON.parse($json.stdout).address }}",
+              "type": "string"
+            },
+            {
+              "id": "f4298ba3-5764-42b1-86d2-d8a92a513036",
+              "name": "locker_zipcode",
+              "value": "={{ JSON.parse($json.stdout).zip_code }}",
+              "type": "string"
+            },
+            {
+              "id": "6e48e693-3f10-4ede-ae33-e24a50cf88fc",
+              "name": "locker_availability",
+              "value": "={{ JSON.parse($json.stdout).capacity_status }}",
+              "type": "string"
+            },
+            {
+              "id": "3340b59d-e48d-48ce-9e3d-e7dbe160d227",
+              "name": "locker_package_size",
+              "value": "={{ JSON.parse($json.stdout).max_package_size }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -16
+      ],
+      "id": "77e28f19-7174-43db-9e84-c42fff410e1b",
+      "name": "Parse SQL output - edit node"
+    },
+    {
+      "parameters": {
+        "command": "=export zip_code=\"{{ $json.zip_code }}\" \n\npython3 << 'PYEOF'\nimport sqlite3, json, os\nzip_code = os.environ.get(\"zip_code\", \"\").strip()\n\nif not zip_code:\n  print(json.dumps({\"error\": \"zip_code is required\"}))\nelse:\n  conn = sqlite3.connect(\"/data/shared/customers.db\")\n  conn.row_factory = sqlite3.Row\n  c = conn.cursor()\n  c.execute(\"SELECT * FROM lockers WHERE zip_code = ?\", (zip_code,))\n  row = c.fetchone()\n  conn.close()\n  \n  if row:\n    print(json.dumps(dict(row)))\n  else:\n    print(json.dumps({\"error\": f\"No locker found for zip code {zip_code}\"}))\n\nPYEOF\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -16
+      ],
+      "id": "b1814eca-3d16-4ecf-810b-956a1ee2c46d",
+      "name": "Exec Cmd - Check Locker Availability and Capacity SQL"
+    },
+    {
+      "parameters": {
+        "command": "=export zip_code=\"{{ $json.zip_code }}\" \n\npython3 << 'PYEOF'\nimport sqlite3, json, os\nzip_code = os.environ.get(\"zip_code\", \"\").strip()\n\nif not zip_code:\n  print(json.dumps({\"error\": \"zip_code is required\"}))\nelse:\n  conn = sqlite3.connect(\"/data/shared/customers.db\")\n  conn.row_factory = sqlite3.Row\n  c = conn.cursor()\n  c.execute(\"SELECT * FROM lockers WHERE zip_code = ?\", (zip_code,))\n  rows = c.fetchall()\n  conn.close()\n  print(json.dumps([dict(r) for r in rows]))\n\nPYEOF"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -272
+      ],
+      "id": "48b595a9-566f-42a3-b059-ec81434659b9",
+      "name": "Execute Command - check locker size and availability - sql cmd"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "45ac0830-4db5-4f71-8e7a-5a1b2c7b05fa",
+              "name": "eligible_flag",
+              "value": "={{ (() => {\n  // 1. Map text sizes to numbers for easy comparison\n  const sizeMap = { SMALL: 1, MEDIUM: 2, LARGE: 3 };\n\n  // 2. Extract values into clearly named variables from the new schema\n  const requestedSize = $('When Executed by Another Workflow').item.json.package_size;\n  const maxLockerSize = $json.locker_package_size;\n  // locker_availability contains 'LIMITED', 'FULL', etc.\n  const currentStatus = $json.locker_availability; \n\n  const requestedScore = sizeMap[requestedSize] || 0;\n  const lockerMaxScore = sizeMap[maxLockerSize] || 0;\n\n  // RULE 1: If the package is bigger than the locker's maximum capacity, reject it\n  if (lockerMaxScore < requestedScore) {\n    return {\n      eligible: false,\n      reason: `Package size (${requestedSize}) exceeds maximum locker capacity (${maxLockerSize}).`\n    };\n  }\n\n  // RULE 2: If the locker is completely full, reject it\n  if (currentStatus === 'FULL') {\n    return {\n      eligible: false,\n      reason: 'Locker capacity is completely FULL.'\n    };\n  }\n\n  // RULE 3: If capacity is limited, ONLY allow SMALL packages\n  if (currentStatus === 'LIMITED' && requestedSize !== 'SMALL') {\n    return {\n      eligible: false,\n      reason: `Locker capacity is LIMITED. Cannot accept ${requestedSize} packages.`\n    };\n  }\n\n  // If all rules pass, the locker is eligible\n  return {\n    eligible: true,\n    reason: null\n  };\n})() }}\n",
+              "type": "string"
+            },
+            {
+              "id": "06879067-1434-4610-a82d-579b04791907",
+              "name": "reason",
+              "value": "={{ (() => {\n  const sizeMap = { SMALL: 1, MEDIUM: 2, LARGE: 3 };\n\n  const requestedSize = $('When Executed by Another Workflow').item.json.package_size;\n  const maxLockerSize = $json.locker_package_size;\n  const currentStatus = $json.locker_availability;\n\n  const requestedScore = sizeMap[requestedSize] || 0;\n  const lockerMaxScore = sizeMap[maxLockerSize] || 0;\n\n  // Check 1: Size Compatibility\n  if (lockerMaxScore < requestedScore) {\n    return `Locker max capacity is ${maxLockerSize} < package ${requestedSize}`;\n  }\n\n  // Check 2: Total Capacity\n  if (currentStatus === 'FULL') {\n    return 'Locker is FULL';\n  }\n\n  // Check 3: Limited Capacity Restrictions\n  if (currentStatus === 'LIMITED' && requestedSize !== 'SMALL') {\n    return 'Locker capacity is LIMITED - only SMALL packages are accepted';\n  }\n\n  // Success\n  return 'Compatible';\n})() }}\n",
+              "type": "string"
+            },
+            {
+              "id": "65b0ab1f-ff43-4055-bb16-6dbc4aa9e910",
+              "name": "Input_zip_code",
+              "value": "={{ $('When Executed by Another Workflow').item.json.zip_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f8c0ce5e-0bfd-4f4c-af5c-8b7c3a85bedc",
+              "name": "locker_id",
+              "value": "={{ $json.locker_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4b9341d6-c821-4a75-9b86-02753509567e",
+              "name": "locker_address",
+              "value": "={{ $json.locker_address }}",
+              "type": "string"
+            },
+            {
+              "id": "a5d8d536-1a40-47bd-80f1-5ca89b38a0ab",
+              "name": "locker_zipcode",
+              "value": "={{ $json.locker_zipcode }}",
+              "type": "string"
+            },
+            {
+              "id": "97f9f47b-1820-485f-94ec-ba82ec54793b",
+              "name": "locker_availability",
+              "value": "={{ $json.locker_availability }}",
+              "type": "string"
+            },
+            {
+              "id": "21073c98-d0ac-4e03-b666-94ffd771fb3f",
+              "name": "locker_package_size",
+              "value": "={{ $json.locker_package_size }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        -16
+      ],
+      "id": "b9dde3a9-7c9a-4560-8c3f-e3ea6384b14f",
+      "name": "Checking Package size and locker availability + aggregate all fields - edit node"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute Command - check locker size and availability - sql cmd",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Exec Cmd - Check Locker Availability and Capacity SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Checking package size vs. locker size and availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converting SQL Output into an array - edit field node": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checking package size vs. locker size and availability": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse SQL output - edit node": {
+      "main": [
+        [
+          {
+            "node": "Checking Package size and locker availability + aggregate all fields - edit node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exec Cmd - Check Locker Availability and Capacity SQL": {
+      "main": [
+        [
+          {
+            "node": "Parse SQL output - edit node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command - check locker size and availability - sql cmd": {
+      "main": [
+        [
+          {
+            "node": "Converting SQL Output into an array - edit field node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "d00a631b-29bb-4100-bc6a-0e25c17854ce",
+  "meta": {
+    "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
+  },
+  "id": "C8TchCxWqH2nf-8nR9pJa",
+  "tags": []
+}
