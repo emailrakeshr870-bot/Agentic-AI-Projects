@@ -1,0 +1,324 @@
+{
+  "name": "Evaluation Workflow for AI powered shipment disruptor",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2c735204-5e57-4591-8645-fe3aa480ccdc",
+      "name": "Run evaluation (manual)"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/test_cases_curated.csv",
+        "options": {}
+      },
+      "id": "07160f44-cda5-48de-a513-6164d3579bcc",
+      "name": "Read test_cases.csv",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fa6b703a-a773-4b6a-9b08-df750be8a464",
+      "name": "Extract GT",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(x => x.json);\nconst byId = {};\nfor (const r of rows) {\n  const id = String(r['Order Id'] || '').trim();\n  if (!id) continue;\n  byId[id] = r;\n}\nconst out = [];\nfor (const id of Object.keys(byId)) {\n  const r = byId[id];\n  out.push({\n    json: {\n      target_order_id: id,\n      gt_decision: r['decision_expected'],\n      gt_policies: r['expected_policies']\n    }\n  });\n}\nreturn out;"
+      },
+      "id": "674ee009-a6a4-43e5-ae9b-e46ff8ce0b5e",
+      "name": "Build cases",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Uav3WWNXk2cU3LwJfNTml",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Uav3WWNXk2cU3LwJfNTml",
+          "cachedResultName": "AI-powered Shipment Disruption Router"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        0
+      ],
+      "id": "8fa835e2-7c2a-499f-84b1-6e5d81cb7160",
+      "name": "Run pipeline"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert evaluator assessing the quality of AI reasoning in logistics decision-making.\n\nYour job is to evaluate whether an AI agent's reasoning is:\n1. Logically sound - Does the conclusion follow from the premises?\n2. Policy-aligned - Does it properly apply the cited policies?\n3. Complete - Does it consider all relevant factors?\n4. Clear - Is the explanation understandable?\n\nBe fair but rigorous. High scores (0.8+) should be reserved for excellent reasoning.\nMedium scores (0.5-0.8) for adequate reasoning with some gaps.\nLow scores (<0.5) for flawed or incomplete reasoning.\n\nProvide specific examples in your strengths and weaknesses lists\n\nRESULT:\n{{ JSON.stringify($json, null, 2) }}\n\nEvaluate the quality of this reasoning and provide scores",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        992,
+        0
+      ],
+      "id": "bf473a53-8fa0-48ef-bfbf-40242fee974d",
+      "name": "Coherence judge"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"coherence_score\": 5, \"justification\": \"...\" }"
+      },
+      "id": "01f6c9f7-032e-4d7c-8bf3-4e2be2f8894a",
+      "name": "Parser: coherence",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        208
+      ],
+      "id": "5f792215-ea8e-4002-b751-44369212e7a2",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a46513df",
+              "name": "order_id",
+              "value": "={{ $('Build cases').item.json.target_order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d5009511-ea50-49b3-9d27-b75f02edcaa8",
+              "name": "tool_used",
+              "value": "={{ $('Run pipeline').item.json.tool_used }}",
+              "type": "string"
+            },
+            {
+              "id": "a08927b3-b41b-4525-8148-dc70e201ba3f",
+              "name": "resolution_decision",
+              "value": "={{ $('Run pipeline').item.json.resolution_output.decision }}",
+              "type": "string"
+            },
+            {
+              "id": "ac3b4700",
+              "name": "gt_decision",
+              "value": "={{ $('Build cases').item.json.gt_decision }}",
+              "type": "string"
+            },
+            {
+              "id": "c3d4cdb9",
+              "name": "policy_citations",
+              "value": "={{ $('Run pipeline').item.json.resolution_output.policy_citations }}",
+              "type": "array"
+            },
+            {
+              "id": "b34c27f4",
+              "name": "gt_policies",
+              "value": "={{ $('Build cases').item.json.gt_policies }}",
+              "type": "string"
+            },
+            {
+              "id": "4bba2ec5",
+              "name": "coherence_score",
+              "value": "={{ ($json.output||{}).coherence_score }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a829c01f-092a-4f7e-8409-b5cbf465b8f1",
+      "name": "Combine prediction + GT",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node — Evaluation Metrics Calculator\n// Input: array of test case items from previous node\n// Each item should have: order_id, tool_used, resolution_decision,\n//   gt_decision, policy_citations, gt_policies, coherence_score\n\nconst items = $input.all();\n\n// ─── helpers ───────────────────────────────────────────────────────────────\n\n/**\n * Parse the tool_used field.\n * Accepts a JSON string like '[\"search_playbook\",\"Simple_Vector_Store\"]'\n * or an array already.\n */\nfunction parseTools(raw) {\n  if (Array.isArray(raw)) return raw;\n  try { return JSON.parse(raw); } catch { return []; }\n}\n\n/**\n * Parse policy_citations field.\n * Accepts either:\n *   - an object  { \"0\": \"POL-004\", \"1\": \"POL-002\" }\n *   - a string   '{\"0\":\"POL-004\",\"1\":\"POL-002\"}'\n *   - an array   [\"POL-004\", \"POL-002\"]\n * Returns a flat array of policy IDs.\n */\nfunction parseCitations(raw) {\n  if (!raw) return [];\n  let obj = raw;\n  if (typeof raw === \"string\") {\n    try { obj = JSON.parse(raw); } catch { return []; }\n  }\n  if (Array.isArray(obj)) return obj.map(String);\n  if (typeof obj === \"object\") return Object.values(obj).map(String);\n  return [];\n}\n\n/**\n * Parse gt_policies field.\n * Accepts a pipe-separated string \"POL-002|POL-006\", a plain string \"POL-004\",\n * or an array.\n * Returns a flat array of policy IDs.\n */\nfunction parseGtPolicies(raw) {\n  if (!raw) return [];\n  if (Array.isArray(raw)) return raw.map(String);\n  return String(raw).split(\"|\").map(s => s.trim()).filter(Boolean);\n}\n\n// Expected tools that indicate tool usage (adjust if needed)\nconst EXPECTED_TOOLS = [\"search_playbook\", \"Simple_Vector_Store\"];\n\n// ─── per-case metrics ───────────────────────────────────────────────────────\n\nconst results = items.map(item => {\n  const d = item.json;\n\n  const resolution   = String(d.resolution_decision || \"\").trim().toLowerCase();\n  const gtDecision   = String(d.gt_decision || \"\").trim().toLowerCase();\n  const coherence    = parseFloat(d.coherence_score) || 0;\n  const tools        = parseTools(d.tool_used);\n  const citations    = parseCitations(d.policy_citations);\n  const gtPolicies   = parseGtPolicies(d.gt_policies);\n\n  // 1. Decision match (1 = correct, 0 = wrong)\n  const decisionMatch = resolution === gtDecision ? 1 : 0;\n\n  // 2. Escalation accuracy\n  //    Correct if BOTH resolution AND gt_decision are \"escalate_human\",\n  //    or NEITHER is \"escalate_human\"\n  const resEscalated = resolution === \"escalate_human\";\n  const gtEscalated  = gtDecision  === \"escalate_human\";\n  const escalationMatch = resEscalated === gtEscalated ? 1 : 0;\n\n  // 3. Policy citation recall\n  //    How many of the ground-truth policies were cited?\n  let citationRecall = 0;\n  if (gtPolicies.length > 0) {\n    const hits = gtPolicies.filter(p => citations.includes(p)).length;\n    citationRecall = hits / gtPolicies.length;\n  }\n\n  // 4. Policy exact match\n  //    1 only if the cited set exactly equals the gt set (order-insensitive)\n  const exactMatch =\n    gtPolicies.length === citations.length &&\n    gtPolicies.every(p => citations.includes(p)) &&\n    citations.every(p => gtPolicies.includes(p))\n      ? 1 : 0;\n\n  // 5. Task completion\n  //    1 if a resolution_decision was produced and is non-empty\n  const taskComplete = resolution.length > 0 ? 1 : 0;\n\n  // 6. Tool accuracy\n  //    1 if AT LEAST ONE expected tool was used\n  const toolAccuracy = EXPECTED_TOOLS.some(t => tools.includes(t)) ? 1 : 0;\n\n  return {\n    order_id:         d.order_id,\n    decisionMatch,\n    escalationMatch,\n    citationRecall,\n    exactMatch,\n    coherence,        // already on 0–1 scale; multiply ×5 below for 1–5\n    taskComplete,\n    toolAccuracy,\n  };\n});\n\n// ─── aggregate metrics ──────────────────────────────────────────────────────\n\nconst n = results.length;\n\nfunction pct(arr, key) {\n  return n === 0 ? 0 : (arr.reduce((s, r) => s + r[key], 0) / n) * 100;\n}\n\nfunction avg(arr, key) {\n  return n === 0 ? 0 : arr.reduce((s, r) => s + r[key], 0) / n;\n}\n\nconst metrics = {\n  // Percentage of cases where resolution_decision === gt_decision\n  decision_accuracy_pct: parseFloat(pct(results, \"decisionMatch\").toFixed(2)),\n\n  // Percentage of cases where escalation status matches\n  escalation_accuracy_pct: parseFloat(pct(results, \"escalationMatch\").toFixed(2)),\n\n  // Average % of ground-truth policies that appear in citations\n  policy_citation_recall_pct: parseFloat((avg(results, \"citationRecall\") * 100).toFixed(2)),\n\n  // Percentage of cases with exactly-matching policy sets\n  policy_exact_match_pct: parseFloat(pct(results, \"exactMatch\").toFixed(2)),\n\n  // Mean coherence score scaled to 1–5\n  mean_coherence_1to5: parseFloat((avg(results, \"coherence\") * 5).toFixed(3)),\n\n  // Percentage of cases where a decision was produced\n  task_completion: parseFloat(pct(results, \"taskComplete\").toFixed(2)),\n\n  // Percentage of cases where at least one expected tool was used\n  tool_accuracy: parseFloat(pct(results, \"toolAccuracy\").toFixed(2)),\n\n  // Meta\n  total_cases: n,\n};\n\n// ─── output ─────────────────────────────────────────────────────────────────\n// Returns one item with the aggregated metrics\n// (plus per-case breakdown in case_results for debugging)\n\nreturn [\n  {\n    json: {\n      ...metrics,\n      case_results: results,\n    },\n  },\n];"
+      },
+      "id": "71f83020-8ecb-479d-8bad-85f0d2669f0d",
+      "name": "Evaluate all (metrics)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run evaluation (manual)": {
+      "main": [
+        [
+          {
+            "node": "Read test_cases.csv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read test_cases.csv": {
+      "main": [
+        [
+          {
+            "node": "Extract GT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract GT": {
+      "main": [
+        [
+          {
+            "node": "Build cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build cases": {
+      "main": [
+        [
+          {
+            "node": "Run pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run pipeline": {
+      "main": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser: coherence": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coherence judge": {
+      "main": [
+        [
+          {
+            "node": "Combine prediction + GT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine prediction + GT": {
+      "main": [
+        [
+          {
+            "node": "Evaluate all (metrics)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "71c04ecf-791f-410a-9764-d3891f692e4b",
+  "meta": {
+    "instanceId": "71845a102cb5767c25e0f72a66bb23c5d193a101b830898ef40864d1886f33d0"
+  },
+  "nodeGroups": [],
+  "id": "8NROUDxq9uZQdoXk",
+  "tags": []
+}

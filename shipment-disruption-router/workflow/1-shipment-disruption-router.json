@@ -1,0 +1,1519 @@
+{
+  "name": "AI-powered Shipment Disruption Router",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        -848
+      ],
+      "id": "03f37ae4-06d2-4efe-ae28-521437fe6a23",
+      "name": "Run evaluation (manual)"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/test_cases_curated.csv",
+        "options": {}
+      },
+      "id": "fa1e5c19-2428-4e9a-8e11-b93f61217395",
+      "name": "Read test_cases.csv",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -848
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0aeb0938-4cbe-4c70-a206-5e9ecca0f67e",
+      "name": "Extract GT",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        -848
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(x => x.json);\nconst byId = {};\nfor (const r of rows) {\n  const id = String(r['Order Id'] || '').trim();\n  if (!id) continue;\n  byId[id] = r;\n}\nconst out = [];\nfor (const id of Object.keys(byId)) {\n  const r = byId[id];\n  out.push({\n    json: {\n      target_order_id: id,\n      gt_decision: r['decision_expected'],\n      gt_policies: r['expected_policies']\n    }\n  });\n}\nreturn out;"
+      },
+      "id": "79e7cab0-7feb-4f0d-8a1e-0ce13ea17a27",
+      "name": "Build cases",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        -848
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Uav3WWNXk2cU3LwJfNTml",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Uav3WWNXk2cU3LwJfNTml",
+          "cachedResultName": "AI-powered Shipment Disruption Router"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -848
+      ],
+      "id": "07feb5b4-cfe0-4c19-aaf4-a09fa5cf6e71",
+      "name": "Run pipeline"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert evaluator assessing the quality of AI reasoning in logistics decision-making.\n\nYour job is to evaluate whether an AI agent's reasoning is:\n1. Logically sound - Does the conclusion follow from the premises?\n2. Policy-aligned - Does it properly apply the cited policies?\n3. Complete - Does it consider all relevant factors?\n4. Clear - Is the explanation understandable?\n\nBe fair but rigorous. High scores (0.8+) should be reserved for excellent reasoning.\nMedium scores (0.5-0.8) for adequate reasoning with some gaps.\nLow scores (<0.5) for flawed or incomplete reasoning.\n\nProvide specific examples in your strengths and weaknesses lists\n\nRESULT:\n{{ JSON.stringify($json, null, 2) }}\n\nEvaluate the quality of this reasoning and provide scores",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -192,
+        -848
+      ],
+      "id": "1e1e5eef-e865-40eb-ab4e-9aa443f36e1d",
+      "name": "Coherence judge"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"coherence_score\": 5, \"justification\": \"...\" }"
+      },
+      "id": "e10b2ee5-bed7-40b3-b3ed-a71425008ef1",
+      "name": "Parser: coherence",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -304,
+        -640
+      ],
+      "id": "c2ea21ee-98d2-42af-828a-44140f1f0f10",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a46513df",
+              "name": "order_id",
+              "value": "={{ $('Build cases').item.json.target_order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d5009511-ea50-49b3-9d27-b75f02edcaa8",
+              "name": "tool_used",
+              "value": "={{ $('Run pipeline').item.json.tool_used }}",
+              "type": "string"
+            },
+            {
+              "id": "a08927b3-b41b-4525-8148-dc70e201ba3f",
+              "name": "resolution_decision",
+              "value": "={{ $('Run pipeline').item.json.resolution_output.decision }}",
+              "type": "string"
+            },
+            {
+              "id": "ac3b4700",
+              "name": "gt_decision",
+              "value": "={{ $('Build cases').item.json.gt_decision }}",
+              "type": "string"
+            },
+            {
+              "id": "c3d4cdb9",
+              "name": "policy_citations",
+              "value": "={{ $('Run pipeline').item.json.resolution_output.policy_citations }}",
+              "type": "array"
+            },
+            {
+              "id": "b34c27f4",
+              "name": "gt_policies",
+              "value": "={{ $('Build cases').item.json.gt_policies }}",
+              "type": "string"
+            },
+            {
+              "id": "4bba2ec5",
+              "name": "coherence_score",
+              "value": "={{ ($json.output||{}).coherence_score }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9524b3ea-c1b8-40af-bac7-4d3ef2906761",
+      "name": "Combine prediction + GT",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -848
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node — Evaluation Metrics Calculator\n// Input: array of test case items from previous node\n// Each item should have: order_id, tool_used, resolution_decision,\n//   gt_decision, policy_citations, gt_policies, coherence_score\n\nconst items = $input.all();\n\n// ─── helpers ───────────────────────────────────────────────────────────────\n\n/**\n * Parse the tool_used field.\n * Accepts a JSON string like '[\"search_playbook\",\"Simple_Vector_Store\"]'\n * or an array already.\n */\nfunction parseTools(raw) {\n  if (Array.isArray(raw)) return raw;\n  try { return JSON.parse(raw); } catch { return []; }\n}\n\n/**\n * Parse policy_citations field.\n * Accepts either:\n *   - an object  { \"0\": \"POL-004\", \"1\": \"POL-002\" }\n *   - a string   '{\"0\":\"POL-004\",\"1\":\"POL-002\"}'\n *   - an array   [\"POL-004\", \"POL-002\"]\n * Returns a flat array of policy IDs.\n */\nfunction parseCitations(raw) {\n  if (!raw) return [];\n  let obj = raw;\n  if (typeof raw === \"string\") {\n    try { obj = JSON.parse(raw); } catch { return []; }\n  }\n  if (Array.isArray(obj)) return obj.map(String);\n  if (typeof obj === \"object\") return Object.values(obj).map(String);\n  return [];\n}\n\n/**\n * Parse gt_policies field.\n * Accepts a pipe-separated string \"POL-002|POL-006\", a plain string \"POL-004\",\n * or an array.\n * Returns a flat array of policy IDs.\n */\nfunction parseGtPolicies(raw) {\n  if (!raw) return [];\n  if (Array.isArray(raw)) return raw.map(String);\n  return String(raw).split(\"|\").map(s => s.trim()).filter(Boolean);\n}\n\n// Expected tools that indicate tool usage (adjust if needed)\nconst EXPECTED_TOOLS = [\"search_playbook\", \"Simple_Vector_Store\"];\n\n// ─── per-case metrics ───────────────────────────────────────────────────────\n\nconst results = items.map(item => {\n  const d = item.json;\n\n  const resolution   = String(d.resolution_decision || \"\").trim().toLowerCase();\n  const gtDecision   = String(d.gt_decision || \"\").trim().toLowerCase();\n  const coherence    = parseFloat(d.coherence_score) || 0;\n  const tools        = parseTools(d.tool_used);\n  const citations    = parseCitations(d.policy_citations);\n  const gtPolicies   = parseGtPolicies(d.gt_policies);\n\n  // 1. Decision match (1 = correct, 0 = wrong)\n  const decisionMatch = resolution === gtDecision ? 1 : 0;\n\n  // 2. Escalation accuracy\n  //    Correct if BOTH resolution AND gt_decision are \"escalate_human\",\n  //    or NEITHER is \"escalate_human\"\n  const resEscalated = resolution === \"escalate_human\";\n  const gtEscalated  = gtDecision  === \"escalate_human\";\n  const escalationMatch = resEscalated === gtEscalated ? 1 : 0;\n\n  // 3. Policy citation recall\n  //    How many of the ground-truth policies were cited?\n  let citationRecall = 0;\n  if (gtPolicies.length > 0) {\n    const hits = gtPolicies.filter(p => citations.includes(p)).length;\n    citationRecall = hits / gtPolicies.length;\n  }\n\n  // 4. Policy exact match\n  //    1 only if the cited set exactly equals the gt set (order-insensitive)\n  const exactMatch =\n    gtPolicies.length === citations.length &&\n    gtPolicies.every(p => citations.includes(p)) &&\n    citations.every(p => gtPolicies.includes(p))\n      ? 1 : 0;\n\n  // 5. Task completion\n  //    1 if a resolution_decision was produced and is non-empty\n  const taskComplete = resolution.length > 0 ? 1 : 0;\n\n  // 6. Tool accuracy\n  //    1 if AT LEAST ONE expected tool was used\n  const toolAccuracy = EXPECTED_TOOLS.some(t => tools.includes(t)) ? 1 : 0;\n\n  return {\n    order_id:         d.order_id,\n    decisionMatch,\n    escalationMatch,\n    citationRecall,\n    exactMatch,\n    coherence,        // already on 0–1 scale; multiply ×5 below for 1–5\n    taskComplete,\n    toolAccuracy,\n  };\n});\n\n// ─── aggregate metrics ──────────────────────────────────────────────────────\n\nconst n = results.length;\n\nfunction pct(arr, key) {\n  return n === 0 ? 0 : (arr.reduce((s, r) => s + r[key], 0) / n) * 100;\n}\n\nfunction avg(arr, key) {\n  return n === 0 ? 0 : arr.reduce((s, r) => s + r[key], 0) / n;\n}\n\nconst metrics = {\n  // Percentage of cases where resolution_decision === gt_decision\n  decision_accuracy_pct: parseFloat(pct(results, \"decisionMatch\").toFixed(2)),\n\n  // Percentage of cases where escalation status matches\n  escalation_accuracy_pct: parseFloat(pct(results, \"escalationMatch\").toFixed(2)),\n\n  // Average % of ground-truth policies that appear in citations\n  policy_citation_recall_pct: parseFloat((avg(results, \"citationRecall\") * 100).toFixed(2)),\n\n  // Percentage of cases with exactly-matching policy sets\n  policy_exact_match_pct: parseFloat(pct(results, \"exactMatch\").toFixed(2)),\n\n  // Mean coherence score scaled to 1–5\n  mean_coherence_1to5: parseFloat((avg(results, \"coherence\") * 5).toFixed(3)),\n\n  // Percentage of cases where a decision was produced\n  task_completion: parseFloat(pct(results, \"taskComplete\").toFixed(2)),\n\n  // Percentage of cases where at least one expected tool was used\n  tool_accuracy: parseFloat(pct(results, \"toolAccuracy\").toFixed(2)),\n\n  // Meta\n  total_cases: n,\n};\n\n// ─── output ─────────────────────────────────────────────────────────────────\n// Returns one item with the aggregated metrics\n// (plus per-case breakdown in case_results for debugging)\n\nreturn [\n  {\n    json: {\n      ...metrics,\n      case_results: results,\n    },\n  },\n];"
+      },
+      "id": "a7a3ab42-498b-4110-8097-be7c58bf0343",
+      "name": "Evaluate all (metrics)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -848
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -112,
+        208
+      ],
+      "id": "6a7ccb6e-aa52-4a73-adac-d89d71010592",
+      "name": "When chat message received",
+      "webhookId": "531988b0-1c7d-4196-ac0d-ae1358639010"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15d48861",
+              "name": "order_id",
+              "value": "={{ $json.target_order_id || $json.chatInput || 'TC007' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "899afeb3-13e4-4969-aa97-381df91566c2",
+      "name": "Target shipment (EDIT ME)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/logistics_policy_rulebook.txt",
+        "options": {}
+      },
+      "id": "789785f9-9878-4077-8342-aced2398733f",
+      "name": "Read policy rulebook",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        304,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        32
+      ],
+      "id": "6e2e3fb9-f929-463b-bedd-f4ae1b04da48",
+      "name": "Load Vector Store (this run)"
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        240
+      ],
+      "id": "cc20622e-c6f3-4520-ac98-e306d5916db0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 800,
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        752,
+        448
+      ],
+      "id": "52e27e3d-4a46-4eba-a30d-a5d8e18bf031",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        704
+      ],
+      "id": "b00fa0c9-5522-4adc-ba87-b3c18030ed61",
+      "name": "Embeddings OpenAI"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/shared/test_cases_curated.csv",
+        "options": {}
+      },
+      "id": "12406d6c-3455-4682-bf5f-99b4f230a287",
+      "name": "Read test_cases CSV",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        864,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        32
+      ],
+      "id": "27a60a8b-1b5f-46a1-9b79-273498b9b410",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fe4b206f",
+              "leftValue": "={{ $json['Order Id'] }}",
+              "rightValue": "={{ $('Target shipment (EDIT ME)').first().json.order_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c17ea115-c61c-4c83-a769-9f3ca80fb23e",
+      "name": "Keep target shipment",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\n\nconst context = {\n  order_id: r['Order Id'],\n  delivery_status: r['Delivery Status'],\n  shipping_mode: r['Shipping Mode'],\n  days_scheduled: Number(r['Days for shipment (scheduled)']),\n  days_real: Number(r['Days for shipping (real)']),\n  delay_gap: Number(r['delay_gap']),\n  late_risk: Number(r['Late_delivery_risk']),\n  customer_segment: r['Customer Segment'],\n  sales: Number(r['Sales']),\n  category: r['Category Name'],\n  region: r['Order Region'],\n  city: r['Order City'],\n  country: r['Order Country']\n};\n\nreturn [{ json: { context } }];"
+      },
+      "id": "442eaa41-c40d-4c7b-bedb-3801300a0eb7",
+      "name": "Format context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3dd73fe7",
+              "leftValue": "={{ /ignore (all|previous)|system prompt|disregard/i.test(JSON.stringify($json.context)) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "afc21b6b-12f2-49cf-a85b-753c2df596ec",
+      "name": "Guardrail: injection?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1bfeb866",
+              "leftValue": "={{ $json.context.delivery_status==='Shipping on time' && $json.context.weather_alert==='none' && $json.context.customs_status==='none' && $json.context.carrier_status==='on_track' && $json.context.capacity_breach===false && Number($json.context.projected_delay_gap) <= Number($json.context.sla_tolerance_days) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e925a889-cf4a-42ac-a277-02a31b155619",
+      "name": "Guardrail: routine noise?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1936,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f9d8d5d",
+              "name": "order_id",
+              "value": "={{ $('Target shipment (EDIT ME)').first().json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae56c01f",
+              "name": "final_decision",
+              "value": "monitor",
+              "type": "string"
+            },
+            {
+              "id": "ef06b346",
+              "name": "requires_human",
+              "value": "false",
+              "type": "boolean"
+            },
+            {
+              "id": "cf75c26e",
+              "name": "disruption_type",
+              "value": "standard_delay",
+              "type": "string"
+            },
+            {
+              "id": "1d64080a",
+              "name": "recommended_alternate",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "026c330a",
+              "name": "policy_citations",
+              "value": "={{ ['POL-004'] }}",
+              "type": "array"
+            },
+            {
+              "id": "7582ce58",
+              "name": "escalated",
+              "value": "false",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e4acd9bf-9990-4041-bde2-7c4b9e79876a",
+      "name": "Finalize (noise/guardrail)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2144,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=DISRUPTION CONTEXT:\n{{ JSON.stringify($('Format context').first().json.context, null, 2) }}\n\nClassify disruption type and severity. Return JSON only.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a ClassifierAgent specializing in logistics disruption analysis.\n\nYour job is to analyze shipment disruption events and classify them accurately.\n\nGiven a disruption event, you must determine:\n1. Disruption type (weather, carrier_failure, capacity_breach, customs_hold, or standard_delay)\n2. Severity level (low, medium, high, critical)\n3. Confidence in your classification\n\nClassification Guidelines:\n- Consider the delay gap (real days - scheduled days)\n- Factor in shipping mode SLA expectations\n- Assess customer segment impact\n- Evaluate order value and category sensitivity\n\nSeverity Scoring:\n- LOW: Minor delays (< 2 days gap), standard shipping, low-value orders\n- MEDIUM: Moderate delays (2-4 days gap), some SLA pressure\n- HIGH: Significant delays (4-6 days gap), premium shipping modes, corporate customers\n- CRITICAL: Severe delays (> 6 days), canceled shipments, high-value + corporate\n\nAlways provide clear reasoning for your classification"
+        }
+      },
+      "id": "8a80ef06-5a59-4e80-bd4d-3f64e97e9100",
+      "name": "Classifier Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2192,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"disruption_type\":\"weather\",\n  \"severity\":\"high\",\n  \"confidence\":0.9,\n  \"reasoning\":\"...\"\n}"
+      },
+      "id": "2b127acc-6378-4e08-be5b-4d9915d15882",
+      "name": "Parser: Classification",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2352,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2688,
+        416
+      ],
+      "id": "edb07267-5a39-4d64-9893-affc5fd3d00d",
+      "name": "Gen LLM (gpt-4o-mini)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "650d751c",
+              "name": "classification",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "754fff8b",
+              "name": "low_conf",
+              "value": "={{ Number($json.output.confidence) < 0.6 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d037454b-5bf1-431f-887b-dc81d7da7d6f",
+      "name": "Parse classification",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2512,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c037779d",
+              "name": "revision_count",
+              "value": "={{ $json.revision_count }}",
+              "type": "number"
+            },
+            {
+              "id": "aa713e29",
+              "name": "critic_feedback",
+              "value": "={{ $json.critic_feedback }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2d5e73c-3ba7-46bc-bf9f-cd1e17b3131f",
+      "name": "Prep router input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2704,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A shipment disruption needs a routing recommendation.\n\nDISRUPTION CONTEXT (disruption_type and severity are precomputed from the signals):\n{{ JSON.stringify($('Format context').first().json.context, null, 2) }}\n\n{{ $('Prep router input').first().json.critic_feedback ? 'PRIOR CRITIC FEEDBACK — you MUST address this in your revised recommendation:\\n' + $('Prep router input').first().json.critic_feedback : 'No prior feedback; this is the first pass.' }}\n\nDo this:\n1. If escalate is true, recommend escalate_human and cite POL-003.\n2. Call policy_search for the rules governing \"{{ $('Parse classification').item.json.classification.disruption_type }}\" and cite the POL IDs you rely on.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a RouterAgent responsible for making logistics routing decisions.\nCRITICAL: All decisions MUST be grounded in the provided policies. You must cite policy IDs.\nYour job:\n1. Review the disruption classification\n2. Examine the retrieved policies carefully\n3. Generate a routing decision that follows policy guidelines\n4. Cite specific policy IDs that justify your decision\n5. Consider geographic routing constraints\n6. Provide a clear action plan\n\nDecision Options:\n- reroute: Redirect shipment via alternate route/hub\n- hold: Keep at current location, monitor situation\n- expedite: Upgrade to faster shipping mode\n- escalate_human: Send to human dispatcher for review\n- monitor: Continue normal processing with increased monitoring\n\nPRIORITY DECISION RULES (check in this order):\n1. CANCELLATION CHECK: If Delivery Status is \"Shipping canceled\" → escalate_human (POL-003)\n2. HIGH-VALUE CHECK: If Order Value > $3,000 AND late delivery risk → expedite (POL-002 High-Value Clause)\n3. ELECTRONICS CHECK: If Category is \"Electronics\" AND delay > 2 days → expedite (POL-006)\n4. SLA TOLERANCE CHECK: If delay is within SLA tolerance for the shipping mode → monitor (POL-004)\n  - Standard Class: tolerate up to 3 days delay\n  - Second Class: tolerate up to 2 days delay\n  - First Class: tolerate up to 1 day delay\n  - Same Day: tolerate 0 days delay\n5. STANDARD LATE DELIVERY: If delay is 2-5 days and alternate route exists → reroute (POL-002)\n6. MINOR DELAY: If delay is less than 2 days and within tolerance → monitor or hold (POL-004)\n\nGROUNDING REQUIREMENT:\nEvery decision must reference at least one policy ID. Your reasoning must explain how the\ncited policies support your decision.\n\nGEOGRAPHIC ROUTING:\nWhen rerouting, specify the target hub or alternate route based on the region.\nIf this is a revision, carefully address ALL issues raised by the validator",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "c8577b88-28b6-461e-8105-525a72bc788b",
+      "name": "Router Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2896,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"decision\":\"reroute\",\n  \"policy_citations\":[\"POL-001\"],\n  \"confidence\":0.9,\n  \"rationale\":\"...\"\n}"
+      },
+      "id": "ea58a22d-aea9-40f2-a29e-5b3a5e4bdc32",
+      "name": "Parser: Router",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3136,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "=Search the logistics policy rulebook (POL-001..POL-009) for the rules governing a disruption. Query with the disruption type and the situation.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "cCSIPEVec8tK44hOEgyFo__policy",
+          "mode": "list",
+          "cachedResultName": "cCSIPEVec8tK44hOEgyFo__policy"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        2848,
+        464
+      ],
+      "id": "6a5aa0b3-7c60-414a-871b-3e412b03d4bb",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f9bd425",
+              "name": "recommendation",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "278a40e7",
+              "name": "revision_count",
+              "value": "={{ $('Prep router input').first().json.revision_count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7ad891a-13a1-4333-ba27-f1db6c009dd5",
+      "name": "Parse router",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3264,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Review the Router Agent's recommendation for soundness, grounding, and safety.\n\nROUTER RECOMMENDATION:\n{{ JSON.stringify($('Parse router').first().json.recommendation, null, 2) }}\n\nDISRUPTION CONTEXT:\n{{ JSON.stringify($('Format context').first().json.context, null, 2) }}\n\n\nPOLICIES THAT WERE RETRIEVED:\nRETRIEVED_CHUNKS:\n{{ $('Router Agent').all().map(item => item.json.document?.pageContent || item.json.pageContent || item.json.text || item.json.metadata?.text || JSON.stringify(item.json)).join('\\n\\n---\\n\\n') }}\n\n\nPerform validation and provide results in JSON format.\n\nCheck:\n1. Are all required fields present?\n2. Do cited policies support this decision?\n3. Is geographic routing feasible?\n4. Does the decision align with severity level?\n5. Should this have been escalated to human?\n\nProvide detailed validation results.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AuditorAgent validating logistics routing decisions.\n\nYour job is to ensure decisions are:\n1. Properly formatted (schema valid)\n2. Generally aligned with policies (not necessarily perfect)\n3. Logically sound\n\nDecide:\n- ACCEPT: grounded and policy-compliant.\n- REVISE: fixable; explain what to change in rationale.\n- ESCALATE: cannot be safely answered from evidence.\nReturn JSON matching the schema."
+        }
+      },
+      "id": "03d76029-05d9-4c7f-a4c0-dd719dc7171c",
+      "name": "Auditor Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3488,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"decision\":\"ACCEPT\",\n  \"validation_passed\":true,\n  \"rationale\":\"...\"\n}"
+      },
+      "id": "703d5ace-e672-4fc0-98bf-2677642a8307",
+      "name": "Parser: Auditor",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3744,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3344,
+        272
+      ],
+      "id": "6c532cbb-f273-48c2-a9bd-c5b8fe7d406d",
+      "name": "Eval LLM (gpt-4o)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e8655971",
+              "name": "auditor",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "d703a572",
+              "name": "revision_count",
+              "value": "={{ $('Parse router').first().json.revision_count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "558b7840-6964-4486-88e0-f0d20c722a53",
+      "name": "Parse auditor",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3872,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.auditor.decision }}",
+                    "rightValue": "ACCEPT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r-acc"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.auditor.decision }}",
+                    "rightValue": "ESCALATE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r-esc"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.auditor.decision }}",
+                    "rightValue": "REVISE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r-rev"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7f9d3ca-8cfb-45e5-bb07-dcb387eadedd",
+      "name": "Route critic decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        4096,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "09707f08",
+              "name": "resolution_output",
+              "value": "={{ $('Parse router').first().json.recommendation }}",
+              "type": "object"
+            },
+            {
+              "id": "8f403948-4423-49c8-8a82-8e30910700b9",
+              "name": "tool_used",
+              "value": "={{ (() => { \n  const steps = ($('Router Agent').first().json.intermediateSteps) || []; \n  const map = { playbook: 'search_playbook', playbook_search: 'search_playbook' }; \n  const at = steps.map(s => (s && s.action && s.action.tool) ? (map[s.action.tool] || s.action.tool) : null).filter(Boolean); \n  const base = ['search_playbook']; \n  return [...new Set([...base, ...at])]; \n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "8d240c61-5064-48ba-82e2-f7e2ab91bbef",
+              "name": "validation_result",
+              "value": "={{ $json.auditor.validation_passed }}",
+              "type": "boolean"
+            },
+            {
+              "id": "465979af-57eb-4291-9b94-e5f25d814dc1",
+              "name": "final_decision",
+              "value": "={{ $json.auditor.decision }}",
+              "type": "string"
+            },
+            {
+              "id": "14792c87-94f1-4846-b525-adcceb90e560",
+              "name": "routing_decision",
+              "value": "={{ $('Router Agent').item.json.output.decision }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4b9a4be-6a43-4479-aaeb-60282fb00da1",
+      "name": "Accept resolution",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4480,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5138fc0c",
+              "name": "resolution_output",
+              "value": "={{ $('Parse router').first().json.recommendation }}",
+              "type": "object"
+            },
+            {
+              "id": "9d71e7fa",
+              "name": "escalated",
+              "value": "true",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea77e46e-b0c4-4726-96ad-7a63ffe82b9f",
+      "name": "Mark escalated",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4480,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "228b3e8e",
+              "leftValue": "={{ $('Prep router input').first().json.revision_count < 2 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "30b5346a-26c0-4293-8ceb-780a5ad0afb7",
+      "name": "Under revise limit?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4320,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8197282",
+              "name": "revision_count",
+              "value": "={{ $('Prep router input').first().json.revision_count + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "4b1b0286",
+              "name": "critic_feedback",
+              "value": "={{ ($('Parse auditor').first().json.auditor.rationale) || (($('Parse auditor').first().json.auditor.issues_found||[]).join('; ')) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a5b4ce0e-1543-4b2c-8a20-01c08024ebef",
+      "name": "Increment + feedback (loop)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4496,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        -160
+      ],
+      "id": "d78e3e32-95bf-4867-8138-5ecaf5d22990",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run evaluation (manual)": {
+      "main": [
+        [
+          {
+            "node": "Read test_cases.csv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read test_cases.csv": {
+      "main": [
+        [
+          {
+            "node": "Extract GT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract GT": {
+      "main": [
+        [
+          {
+            "node": "Build cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build cases": {
+      "main": [
+        [
+          {
+            "node": "Run pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run pipeline": {
+      "main": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser: coherence": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Coherence judge",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coherence judge": {
+      "main": [
+        [
+          {
+            "node": "Combine prediction + GT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine prediction + GT": {
+      "main": [
+        [
+          {
+            "node": "Evaluate all (metrics)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Target shipment (EDIT ME)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Target shipment (EDIT ME)": {
+      "main": [
+        [
+          {
+            "node": "Read policy rulebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read policy rulebook": {
+      "main": [
+        [
+          {
+            "node": "Load Vector Store (this run)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Load Vector Store (this run)",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Load Vector Store (this run)",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Vector Store (this run)": {
+      "main": [
+        [
+          {
+            "node": "Read test_cases CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read test_cases CSV": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Keep target shipment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep target shipment": {
+      "main": [
+        [
+          {
+            "node": "Format context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format context": {
+      "main": [
+        [
+          {
+            "node": "Guardrail: injection?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardrail: injection?": {
+      "main": [
+        [
+          {
+            "node": "Finalize (noise/guardrail)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guardrail: routine noise?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardrail: routine noise?": {
+      "main": [
+        [
+          {
+            "node": "Finalize (noise/guardrail)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classifier Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser: Classification": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Classifier Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen LLM (gpt-4o-mini)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classifier Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Router Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classifier Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse classification": {
+      "main": [
+        [
+          {
+            "node": "Prep router input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prep router input": {
+      "main": [
+        [
+          {
+            "node": "Router Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser: Router": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Router Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Router Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse router": {
+      "main": [
+        [
+          {
+            "node": "Auditor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser: Auditor": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auditor Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eval LLM (gpt-4o)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auditor Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auditor Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse auditor": {
+      "main": [
+        [
+          {
+            "node": "Route critic decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route critic decision": {
+      "main": [
+        [
+          {
+            "node": "Accept resolution",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark escalated",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Under revise limit?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Under revise limit?": {
+      "main": [
+        [
+          {
+            "node": "Increment + feedback (loop)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark escalated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment + feedback (loop)": {
+      "main": [
+        [
+          {
+            "node": "Prep router input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Target shipment (EDIT ME)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0a738e11-b3d2-466b-af79-78c31c5dce10",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "71845a102cb5767c25e0f72a66bb23c5d193a101b830898ef40864d1886f33d0"
+  },
+  "nodeGroups": [],
+  "id": "nPe5v8wFKF9fe2ea",
+  "tags": []
+}
