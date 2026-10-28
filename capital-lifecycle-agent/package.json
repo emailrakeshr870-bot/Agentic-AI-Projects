@@ -1,0 +1,13 @@
+{
+  "name": "capital-lifecycle-agent",
+  "version": "1.0.0",
+  "description": "Concept demo of an adaptive next-best-action engine for small-business lending lifecycle marketing.",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "screenshots": "node scripts/screenshots.js",
+    "frames": "node scripts/workflow-frames.js",
+    "deck": "node scripts/build-workflow-deck.js"
+  }
+}

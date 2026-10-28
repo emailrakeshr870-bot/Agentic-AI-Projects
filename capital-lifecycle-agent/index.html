@@ -1,0 +1,1601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Capital Lifecycle Agent</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an operator console — customer on the left, the journey ledger in the middle, the engine's reasoning on the right; an Experiments view shows how every rule is tested against a holdout. */
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EFEB; --ink:#0F2230; --muted:#56676F; --line:#D3DCD7;
+  --accent:#0E7C5A; --accent-ink:#FFFFFF; --accent-soft:#DAEEE4;
+  --warn:#9A5B00; --warn-soft:#FBEACF; --bad:#AE2A21; --bad-soft:#F7DDDA; --info:#2B5BA8; --info-soft:#E0E9F7;
+  --grid:#E1E7E3; --ref:#9A5B00;
+  --display:'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --body:'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1418; --surface:#132026; --surface-2:#1A2A31; --ink:#E5EEF0; --muted:#9BAEB5; --line:#294049;
+  --accent:#3DBE8B; --accent-ink:#06261A; --accent-soft:#15392C;
+  --warn:#E5A84E; --warn-soft:#3A2B12; --bad:#F08C82; --bad-soft:#3F1D1A; --info:#86ADEE; --info-soft:#1B2B45;
+  --grid:#20333A; --ref:#E5A84E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1418; --surface:#132026; --surface-2:#1A2A31; --ink:#E5EEF0; --muted:#9BAEB5; --line:#294049;
+  --accent:#3DBE8B; --accent-ink:#06261A; --accent-soft:#15392C;
+  --warn:#E5A84E; --warn-soft:#3A2B12; --bad:#F08C82; --bad-soft:#3F1D1A; --info:#86ADEE; --info-soft:#1B2B45;
+  --grid:#20333A; --ref:#E5A84E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 40px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;padding-block:20px 14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.mark{width:36px;height:36px;border-radius:9px;background:var(--ink);display:grid;place-items:center;flex:none}
+.brand h1{font-size:21px;font-weight:700}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.hright{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);white-space:nowrap}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:36px;height:20px;border-radius:999px;background:var(--line);position:relative;cursor:pointer;margin:0;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:left .15s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{left:18px}
+.switch input:disabled{opacity:.5;cursor:not-allowed}
+nav.tabs{display:flex;gap:4px;padding-block:12px 16px;overflow-x:auto}
+nav.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:500;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.sim{display:grid;grid-template-columns:300px minmax(0,1fr) 410px;gap:16px;align-items:start}
+@media (max-width:1200px){.sim{grid-template-columns:280px minmax(0,1fr)}.engine{grid-column:1 / -1}}
+@media (max-width:760px){.sim{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.stack{display:flex;flex-direction:column;gap:14px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ph h2{font-size:16px;font-weight:600}
+.personas{display:flex;flex-direction:column;gap:8px}
+.pbtn{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px;cursor:pointer}
+.pbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pbtn .av{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:13px;background:var(--surface-2);flex:none}
+.pbtn[aria-pressed="true"] .av{background:var(--accent);color:var(--accent-ink)}
+.pbtn b{display:block;font-size:14px;font-weight:600}
+.pbtn small{color:var(--muted);font-size:12.5px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:0}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+.trigger{border-left:3px solid var(--info);background:var(--info-soft);padding:10px 12px;border-radius:0 8px 8px 0;font-size:13.5px}
+.consent{display:flex;flex-wrap:wrap;gap:6px}
+.consent span{font-size:12px;padding:3px 8px;border-radius:6px;background:var(--surface-2)}
+.consent span.off{color:var(--muted);text-decoration:line-through}
+.consent span.down{background:var(--warn-soft)}
+.heat{display:grid;grid-template-columns:30px repeat(8,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.heat .c{height:14px;border-radius:2px;background:var(--accent)}
+.heat .hd{text-align:center}
+.cal{list-style:none;padding:0;margin:0;font-size:12.5px;display:flex;flex-direction:column;gap:3px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:500;font-size:14px;text-align:left}
+.btn:hover:not(:disabled){border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.good{border-color:var(--accent);color:var(--accent)}
+.btn.good:hover:not(:disabled){background:var(--accent-soft)}
+.btn.assist{border-color:var(--info);color:var(--info)}
+.btn.assist:hover:not(:disabled){background:var(--info-soft)}
+.btn.neg{border-style:dashed}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.btn.bad:hover:not(:disabled){background:var(--bad-soft)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}
+.subrow{margin-top:8px;padding:10px;border-radius:8px;background:var(--surface-2)}
+.clock{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.clock .t{font-family:var(--mono);font-size:14px}
+.preview{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.preview .bar{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 12px;background:var(--surface-2);font-size:12.5px;flex-wrap:wrap}
+.preview .body{padding:14px}
+.mock-inapp{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--surface)}
+.mock-inapp h3{font-size:17px;margin-bottom:6px}
+.mock-inapp p{margin:0 0 10px;color:var(--muted);font-size:14px}
+.cta{display:inline-block;background:var(--accent);color:var(--accent-ink);padding:6px 12px;border-radius:7px;font-size:13.5px;font-weight:600}
+.mock-email .subj{font-weight:600;font-size:15px;margin-bottom:6px}
+.mock-email p{margin:0 0 10px;color:var(--muted);font-size:14px}
+.mock-push{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:14px;padding:10px 12px;max-width:420px}
+.mock-push .ic{width:28px;height:28px;border-radius:7px;background:var(--ink);flex:none}
+.mock-push p{margin:0;font-size:14px}
+.mock-sms{background:var(--surface-2);border-radius:16px 16px 16px 4px;padding:10px 14px;max-width:420px;font-size:14px}
+.waitbox{padding:14px;border-radius:10px;background:var(--warn-soft);font-size:14px}
+.donebox{padding:14px;border-radius:10px;background:var(--accent-soft);font-size:14px}
+.servbox{padding:14px;border-radius:10px;background:var(--bad-soft);font-size:14px}
+.actions .label{margin-bottom:8px}
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:440px;overflow-y:auto;border-top:1px solid var(--line)}
+.timeline li{display:grid;grid-template-columns:118px 18px minmax(0,1fr);gap:8px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:13.5px}
+.timeline .when{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:1px}
+.timeline .dot{width:10px;height:10px;border-radius:50%;margin-top:5px;background:var(--line)}
+.timeline li.k-send .dot{background:var(--ink)}
+.timeline li.k-good .dot{background:var(--accent)}
+.timeline li.k-assist .dot{background:var(--info)}
+.timeline li.k-silent .dot{background:var(--muted)}
+.timeline li.k-neg .dot{background:var(--warn)}
+.timeline li.k-risk .dot{background:var(--bad)}
+.timeline li.k-trigger .dot{background:var(--info);border-radius:2px}
+.timeline li.k-learn .dot{background:var(--warn);border-radius:2px}
+.timeline .what b{font-weight:600}
+.timeline .what small{display:block;color:var(--muted);font-size:12.5px}
+.empty{color:var(--muted);font-size:13.5px;padding:10px 0}
+.meter{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .4s}
+.aff{display:grid;grid-template-columns:92px minmax(0,1fr) 44px;gap:8px;align-items:center;font-size:13px}
+.aff .val{text-align:right;font-family:var(--mono);font-size:12.5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2)}
+.pill.good{background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--info-soft);color:var(--info)}
+.nba{border:1px solid var(--ink);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.nba .head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.nba .head b{font-family:var(--display);font-size:17px}
+.explain{font-size:14px;background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.explain small{display:block;color:var(--muted);margin-top:6px;font-size:12px}
+.gates{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.gates li{display:flex;gap:8px}
+.gates .ok{color:var(--accent);font-weight:700;width:14px;flex:none}
+.gates .no{color:var(--bad);font-weight:700;width:14px;flex:none}
+.tablewrap{overflow-x:auto}
+table.opts{width:100%;border-collapse:collapse;font-size:12.5px}
+table.opts th{text-align:left;font-weight:600;color:var(--muted);padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.opts td{padding:6px 5px;white-space:normal;border-bottom:1px solid var(--line);vertical-align:top}
+table.opts td.n{font-family:var(--mono);text-align:right;white-space:nowrap}
+table.opts tr.win td{background:var(--accent-soft)}
+table.opts tr.blocked td{color:var(--muted)}
+.learn{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.learn li{border-left:3px solid var(--warn);padding:4px 0 4px 10px}
+details summary{cursor:pointer;font-weight:600;font-size:14px}
+.comp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.comp{grid-template-columns:minmax(0,1fr)}}
+textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:10px;font:inherit;resize:vertical}
+select,input[type="time"]{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:7px 8px;font:inherit;max-width:100%}
+.formrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:13.5px}
+.formrow label{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.issues{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.issue{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.issue.high{border-left:4px solid var(--bad)}
+.issue.med{border-left:4px solid var(--warn)}
+.issue.low{border-left:4px solid var(--info)}
+.issue b{display:block}
+.issue small{color:var(--muted)}
+.fixed{background:var(--accent-soft);border-radius:8px;padding:12px;font-size:14px}
+.variants{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.variants li{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px}
+/* experiments */
+.exp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:980px){.exp{grid-template-columns:minmax(0,1fr)}}
+.exp .wide{grid-column:1 / -1}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{border:1px solid var(--line);border-radius:9px;padding:12px}
+.kpi .v{font-family:var(--display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+.split{display:flex;height:34px;border-radius:8px;overflow:hidden;font-size:12.5px;font-weight:600}
+.split div{display:flex;align-items:center;padding:0 10px;white-space:nowrap}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart text{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.chart .gl{stroke:var(--grid);stroke-width:1}
+.chart .ax{stroke:var(--line);stroke-width:1}
+.chart .bar{fill:var(--accent);opacity:.45}
+.chart .bar.win{opacity:1}
+.chart .ln{fill:none;stroke:var(--accent);stroke-width:2}
+.chart .pt{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.chart .rf{stroke:var(--ref);stroke-width:2;stroke-dasharray:5 4}
+.chart .lbl{fill:var(--ink);font-family:var(--body);font-size:12px;font-weight:600}
+.chart .hit{fill:transparent}
+.chart .hit:hover + .tip, .chart g:hover .tip{opacity:1}
+.tip{opacity:0;transition:opacity .1s;pointer-events:none}
+.tip rect{fill:var(--ink)}
+.tip text{fill:var(--bg);font-family:var(--body);font-size:11.5px}
+.verdict{border-left:3px solid var(--accent);padding:6px 0 6px 12px;font-size:13.5px}
+table.ref{width:100%;border-collapse:collapse;font-size:13px}
+table.ref th,table.ref td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.ref th{color:var(--muted);font-weight:600}
+table.ref td.n{font-family:var(--mono);text-align:right}
+table.ref tr.win td{background:var(--accent-soft)}
+.how{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.how{grid-template-columns:minmax(0,1fr)}}
+.how p,.how li{font-size:14px}
+.how ul{padding-left:18px;margin:6px 0 0}
+.formula{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);padding:10px 12px;border-radius:8px;overflow-x:auto;white-space:pre}
+footer{margin-top:24px;color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
+/* workflow */
+.wftool{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between}
+.wfwrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background-color:var(--surface-2);background-image:radial-gradient(var(--line) 1.2px, transparent 1.2px);background-size:22px 22px}
+#wf{display:block;width:100%;min-width:1260px;height:auto}
+#wf text{font-family:var(--body)}
+.wn{cursor:pointer}
+.wn .box{fill:var(--surface);stroke:var(--line);stroke-width:1.5;transition:stroke .2s}
+.wn:hover .box{stroke:var(--muted)}
+.wn.sel .box{stroke:var(--ink);stroke-width:2.5}
+.wn.hot .box{stroke:var(--accent);stroke-width:2.5}
+.wn.active .box{stroke:var(--accent);stroke-width:3;animation:wfpulse 1.4s ease-in-out infinite}
+@keyframes wfpulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.35}}
+.wn .ib{fill:var(--ink)}
+.wn.k-trigger .ib{fill:var(--info)} .wn.k-action .ib{fill:var(--accent)} .wn.k-wait .ib{fill:var(--warn)}
+.wn.k-good .ib{fill:var(--accent)} .wn.k-bad .ib{fill:var(--bad)} .wn.k-learn .ib{fill:var(--warn)}
+.wn .ic{fill:none;stroke:var(--surface);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wn .t1{fill:var(--ink);font-size:13px;font-weight:600}
+.wn .t2{fill:var(--muted);font-size:11px}
+.wn .port{fill:var(--surface);stroke:var(--muted);stroke-width:1.5}
+.wn .cnt{fill:var(--accent)} .wn .cntt{fill:var(--accent-ink);font-size:10.5px;font-weight:700}
+.we path{fill:none;stroke:var(--muted);stroke-width:1.6;opacity:.5}
+.we.hot path{stroke:var(--accent);opacity:1;stroke-width:2.6;stroke-dasharray:7 5;animation:wfflow .7s linear infinite}
+@keyframes wfflow{to{stroke-dashoffset:-12}}
+.we rect{fill:var(--surface);stroke:var(--line)} .we text{fill:var(--muted);font-size:10.5px}
+.we.hot rect{stroke:var(--accent)} .we.hot text{fill:var(--accent);font-weight:600}
+#wf marker path{fill:var(--muted)} #wf marker.hot path{fill:var(--accent)}
+.wfgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.wfgrid{grid-template-columns:minmax(0,1fr)}}
+.insp pre{margin:0;font-family:var(--mono);font-size:12px;background:var(--surface-2);border-radius:8px;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.runlog{list-style:none;margin:0;padding:0;font-size:13px;display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto}
+.runlog li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px}
+.runlog .n{font-family:var(--mono);color:var(--muted);font-size:11.5px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="brand">
+    <div class="mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 15 L8 9 L11 12 L17 4" fill="none" stroke="#3DBE8B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="4" r="2" fill="#3DBE8B"/></svg></div>
+    <div>
+      <h1>Capital Lifecycle Agent</h1>
+      <p>Adaptive next-best-action for small-business lines of credit, term loans and credit cards</p>
+    </div>
+  </div>
+  <div class="hright">
+    <span class="chip">Concept demo · synthetic data · not affiliated with Intuit</span>
+    <label class="switch" title="Off: prepared explanations and drafts only (demo-safe). On: Claude writes them live, with prepared versions as fallback.">
+      <input type="checkbox" id="liveai"> <span id="liveaiLabel">Live AI</span>
+    </label>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" id="tab-sim" aria-selected="true" data-view="sim">Journey simulator</button>
+  <button role="tab" id="tab-exp" aria-selected="false" data-view="exp">Experiments</button>
+  <button role="tab" id="tab-comp" aria-selected="false" data-view="comp">Compliance check</button>
+  <button role="tab" id="tab-how" aria-selected="false" data-view="how">How it works</button>
+  <button role="tab" id="tab-flow" aria-selected="false" data-view="flow">Workflow view</button>
+</nav>
+
+<!-- SIMULATOR -->
+<section id="view-sim" class="sim">
+  <aside class="panel stack" aria-label="Customer">
+    <div class="ph"><h2>Customer</h2><span class="label">Synthetic</span></div>
+    <div class="personas" id="personas"></div>
+    <dl class="facts" id="facts"></dl>
+    <div>
+      <div class="label" style="margin-bottom:6px">Trigger</div>
+      <div class="trigger" id="trigger"></div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:6px">Engagement rhythm</div>
+      <div class="heat" id="heat" aria-label="Engagement by day and time of day"></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Darker = more likely to engage. Learned from logins and clicks.</div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:6px">Business calendar</div>
+      <ul class="cal" id="cal"></ul>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:6px">Channel consent</div>
+      <div class="consent" id="consent"></div>
+    </div>
+    <div class="stack" style="gap:8px">
+      <div class="label">Play a scripted path</div>
+      <button class="btn" id="playEngaged">▶ Engaged path</button>
+      <button class="btn" id="playSilent">▶ Silent path</button>
+      <button class="btn" id="playRisk">▶ Risk event path</button>
+      <div class="btnrow"><button class="btn" id="stopPlay" disabled>Stop</button><button class="btn" id="reset">Reset journey</button></div>
+    </div>
+  </aside>
+
+  <main class="panel stack" aria-label="Journey">
+    <div class="clock">
+      <div><div class="label">Simulated clock</div><div class="t" id="clock"></div></div>
+      <span class="pill" id="stagePill"></span>
+    </div>
+    <div class="preview" id="preview"></div>
+    <div class="actions">
+      <div class="label" id="actionsLabel">What does the customer do?</div>
+      <div class="btnrow" id="actions"></div>
+      <div id="subactions"></div>
+    </div>
+    <div>
+      <div class="ph" style="margin-bottom:6px"><h2>Journey ledger</h2><span class="label">Every action and inaction · <button class="btn" id="toFlow" style="padding:2px 8px;font-size:12px">See as workflow →</button></span></div>
+      <ol class="timeline" id="timeline"></ol>
+    </div>
+  </main>
+
+  <section class="engine panel stack" aria-label="Engine">
+    <div class="ph"><h2>Customer state</h2><span class="label">Updates after every signal</span></div>
+    <div>
+      <div class="ph" style="margin-bottom:4px"><span style="font-size:13.5px">Intent</span><span class="mono" id="intentVal"></span></div>
+      <div class="meter"><i id="intentBar"></i></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Fades back toward baseline with a 5-day half-life when there is no new engagement.</div>
+    </div>
+    <div class="stack" style="gap:6px" id="affinity"></div>
+    <dl class="kv" id="stateKv"></dl>
+
+    <div class="nba" id="nba"></div>
+
+    <details id="traceBox" open>
+      <summary>Decision trace</summary>
+      <div class="stack" style="gap:10px;margin-top:10px">
+        <ul class="gates" id="gates"></ul>
+        <div class="tablewrap"><table class="opts" id="opts"></table></div>
+        <div style="font-size:12px;color:var(--muted)">Net = benefit − cadence cost − fatigue cost − opt-out risk, in risk-adjusted dollars per eligible customer (illustrative). Benefit already includes time-of-day and business-calendar timing. The engine waits when no option clears $8.</div>
+      </div>
+    </details>
+
+    <div>
+      <div class="ph" style="margin-bottom:6px"><h2>What the engine learned</h2></div>
+      <ul class="learn" id="learn"></ul>
+    </div>
+  </section>
+</section>
+
+<!-- EXPERIMENTS -->
+<section id="view-exp" class="exp" hidden>
+  <div class="panel stack wide">
+    <div class="ph"><h2>How every rule gets tested</h2><span class="pill warn">Illustrative simulated results</span></div>
+    <p style="margin:0;font-size:14px;max-width:80ch">The engine’s numbers (3 ignored sessions, a weekly cap, a 14-day snooze) are starting assumptions. Each one runs as a test cell against control, and success is always measured as incremental, risk-adjusted value versus a randomized holdout that gets no Capital or card lifecycle marketing.</p>
+    <div>
+      <div class="label" style="margin-bottom:6px">Eligible population: 60,000 prequalified customers</div>
+      <div class="split" role="img" aria-label="90 percent treated by the engine, 10 percent global holdout">
+        <div style="width:90%;background:var(--accent);color:var(--accent-ink)">90% treated by the engine · split into test cells</div>
+        <div style="width:10%;background:var(--warn-soft);color:var(--warn);justify-content:center">10% holdout</div>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="tablewrap"><table class="ref" id="holdoutTable"></table></div>
+    <div class="verdict" id="holdoutVerdict"></div>
+  </div>
+
+  <div class="panel stack">
+    <div class="ph"><h2>Weekly touch cap</h2><span class="label">Cells: 2 to 6 touches a week</span></div>
+    <p style="margin:0;font-size:13.5px;color:var(--muted)">Net value per 1,000 eligible customers = incremental risk-adjusted funded $ − value of channels lost to opt-outs.</p>
+    <svg class="chart" id="capChart" viewBox="0 0 520 240" role="img" aria-label="Net value by weekly cap"></svg>
+    <div class="tablewrap"><table class="ref" id="capTable"></table></div>
+    <div class="verdict" id="capVerdict"></div>
+  </div>
+
+  <div class="panel stack">
+    <div class="ph"><h2>When to switch channels</h2><span class="label">In-product click rate by impression</span></div>
+    <p style="margin:0;font-size:13.5px;color:var(--muted)">Each extra in-product impression earns fewer clicks. Switch when the next impression is worth less than the next-best channel (dashed line).</p>
+    <svg class="chart" id="ignChart" viewBox="0 0 520 240" role="img" aria-label="Click rate by impression number"></svg>
+    <div class="verdict" id="ignVerdict"></div>
+  </div>
+
+  <div class="panel stack">
+    <div class="ph"><h2>Snooze length by “Not now” reason</h2><span class="label">Cells: 7, 14, 21, 30 days</span></div>
+    <p style="margin:0;font-size:13.5px;color:var(--muted)">Score = re-engagement after the snooze − 5 × opt-outs when the offer returns. Highlighted cells win.</p>
+    <div class="tablewrap"><table class="ref" id="snoozeTable"></table></div>
+    <div class="verdict" id="snoozeVerdict"></div>
+  </div>
+
+  <div class="panel stack">
+    <div class="ph"><h2>Attribution window and intent decay</h2><span class="label">Days from click to application</span></div>
+    <p style="margin:0;font-size:13.5px;color:var(--muted)">Share of eventual applicants who applied within N days of their click (cumulative).</p>
+    <svg class="chart" id="decayChart" viewBox="0 0 520 240" role="img" aria-label="Cumulative share applying by day after click"></svg>
+    <div class="verdict" id="decayVerdict"></div>
+  </div>
+
+  <div class="panel stack wide">
+    <h2 style="font-size:16px">Rules for changing a rule</h2>
+    <ul style="margin:0;padding-left:18px;font-size:14px">
+      <li>A cell replaces the default only when it beats control on net value per eligible customer, at the planned sample size, with guardrails intact (opt-out rate, complaints, 90-day delinquency, overall product engagement).</li>
+      <li>Results are read by segment. A cap that is right for landscapers may be wrong for design studios.</li>
+      <li>Any campaign whose unsubscribe rate passes 0.3% is throttled automatically while it’s reviewed.</li>
+      <li>A small share of traffic keeps exploring other values, so the engine notices when behavior shifts.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section id="view-comp" class="comp" hidden>
+  <div class="panel stack">
+    <div class="ph"><h2>Check a message</h2><span class="label">Rules run instantly</span></div>
+    <div class="btnrow" id="samples"></div>
+    <label for="msg" class="label">Message</label>
+    <textarea id="msg"></textarea>
+    <div class="formrow">
+      <label>Channel <select id="ch"><option value="email">Email</option><option value="inapp">In-product</option><option value="push">Push</option><option value="sms">SMS</option></select></label>
+      <label>Product <select id="prod"><option value="loan">Loan or line of credit</option><option value="card">Credit card</option></select></label>
+      <label id="smsConsentWrap"><input type="checkbox" id="smsConsent"> SMS marketing consent on file</label>
+      <label id="sendTimeWrap">Send time <input type="time" id="sendTime" value="10:00"></label>
+    </div>
+    <div class="ph"><h2>Findings</h2><span id="issueCount" class="pill"></span></div>
+    <ul class="issues" id="issues"></ul>
+    <div>
+      <div class="label" style="margin-bottom:6px">Suggested compliant version</div>
+      <div class="fixed" id="fixed"></div>
+    </div>
+  </div>
+  <div class="panel stack">
+    <div class="ph"><h2>Draft compliant variants</h2><span class="label" id="draftMode">Prepared</span></div>
+    <div class="formrow">
+      <label>Customer <select id="vPersona"></select></label>
+      <label>Theme <select id="vTheme"></select></label>
+    </div>
+    <div class="btnrow"><button class="btn primary" id="draftBtn">Draft 3 subject lines</button></div>
+    <ul class="variants" id="variants"></ul>
+    <p style="margin:0;font-size:12.5px;color:var(--muted)" id="draftNote">Every draft, prepared or AI-written, passes the same rules before it is shown. A draft that fails is replaced with a prepared line.</p>
+    <hr style="border:0;border-top:1px solid var(--line);width:100%">
+    <div class="label">Rules in this check</div>
+    <ul style="margin:0;padding-left:18px;font-size:13.5px" id="rulelist"></ul>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="view-how" class="how" hidden>
+  <div class="panel stack">
+    <h2 style="font-size:18px">The adaptive loop</h2>
+    <p style="margin:0">After every touch the engine waits out a response window, records what the customer did or didn’t do, updates the customer’s state, and decides the next touch, or decides to wait. Nothing runs on a fixed calendar.</p>
+    <div class="formula">Sense → Interpret → Decide → Act → Observe → back to Sense</div>
+    <h3 style="font-size:15px">Signals the engine can actually see</h3>
+    <div class="tablewrap"><table class="ref">
+      <tr><th>Source</th><th>Engaged</th><th>Silent or negative</th><th>Window</th></tr>
+      <tr><td>In-product</td><td>CTA click</td><td>Ignored for 3 sessions; “Not now” with a reason</td><td>3 sessions</td></tr>
+      <tr><td>Email</td><td>CTA click (+20 intent)</td><td>No click; “fewer emails”; unsubscribe. Opens aren’t used: they can’t be measured reliably.</td><td>48 hours</td></tr>
+      <tr><td>Push</td><td>Tap</td><td>No tap; notifications off</td><td>4 hours</td></tr>
+      <tr><td>SMS</td><td>Link tap</td><td>No tap; STOP</td><td>24 hours</td></tr>
+      <tr><td>Exposure, no click</td><td>Comes back on their own to the lending page or application (+10 intent, credited as a view-through)</td><td>Nothing within the window</td><td>In-product 3 days · email 7 · push 1</td></tr>
+      <tr><td>Landing page</td><td>Starts application</td><td>Leaves without action: page and message didn’t answer the concern</td><td>Same visit</td></tr>
+      <tr><td>Application</td><td>Submits</td><td>Abandons</td><td>Same visit</td></tr>
+    </table></div>
+  </div>
+  <div class="panel stack">
+    <h2 style="font-size:18px">How a decision is made</h2>
+    <ol style="margin:0;padding-left:18px">
+      <li><b>Gate:</b> eligibility, suppressions (risk, snooze), consent, weekly cap of 4 touches.</li>
+      <li><b>Candidates:</b> every consented channel at every allowed hour in the next 4 days, plus “wait”.</li>
+      <li><b>Score:</b> timed benefit minus cadence, fatigue and opt-out costs.</li>
+      <li><b>Pick:</b> the highest net option; wait when nothing clears $8.</li>
+    </ol>
+    <div class="formula">benefit  = value × 6% × affinity × (0.5 + intent/100)
+           × timing × calendar × 0.5^(hours until send ÷ 120)
+timing   = 0.6 + 0.4 × engagement rhythm at that hour and day
+calendar = 1.15 when it lands 6–48 h before payroll or a bill
+cadence  = benefit × (1 − hours since customer action ÷ 24) × 0.8
+           (× 0.25 in-product; 0 after 24 hours)
+fatigue  = $4 × touches in the last 7 days
+repeat   = 20% of benefit if this channel just went unanswered
+opt-out  = P(opt-out) × 12-month value of the channel
+P(opt-out) = base × (1 + 0.5 × unanswered on channel + 0.25 × touches this week)
+net      = benefit − cadence − fatigue − repeat − opt-out
+intent   = fades to baseline with a 5-day half-life</div>
+  </div>
+  <div class="panel stack">
+    <h2 style="font-size:18px">Timing, cadence and snoozes</h2>
+    <ul>
+      <li><b>Time of day and day of week:</b> each customer has an engagement rhythm, starting from their segment and refined by their own logins and clicks.</li>
+      <li><b>Business calendar:</b> touches 6–48 hours before payroll or a large bill get a timing lift, because that is when cash planning happens.</li>
+      <li>At least 20 hours between marketing touches; 48 hours between emails (96 after “fewer emails”); 72 hours between texts.</li>
+      <li><b>Abandoned application:</b> one message right away and one reminder from any channel within 24 hours, with no cadence cost.</li>
+      <li><b>“Not now” reasons:</b> don’t need funding → 30 days; remind me later → 7 days; worried about cost → 7 days, then a cost message; already have financing → 30 days. A new need signal ends any snooze early.</li>
+      <li>Three touches in a row with no response: pause until a new need signal.</li>
+    </ul>
+  </div>
+  <div class="panel stack">
+    <h2 style="font-size:18px">Protecting the channel</h2>
+    <ul>
+      <li>An unsubscribe, a STOP or notifications turned off is the worst outcome: the channel is gone for every future offer. The opt-out cost puts a price on that risk before every send.</li>
+      <li>Risk rises with unanswered touches and frequency, so after a few ignores an extra email can be worth less than nothing.</li>
+      <li>The preference center offers “fewer emails” first, so customers can turn the volume down instead of off.</li>
+      <li>Opt-outs are per channel: an email unsubscribe doesn’t end in-product messages.</li>
+      <li>Late payment: all promotion stops and the customer moves to Servicing.</li>
+    </ul>
+    <h3 style="font-size:15px">What this demo is and isn’t</h3>
+    <ul>
+      <li>Synthetic customers and illustrative numbers. Scoring is a transparent rule set; in production, intent, affinity, timing and opt-out risk come from Data Science models trained on real behavior.</li>
+      <li>Eligibility, offer amounts and pricing come from Risk. Messages come from a library approved by Legal and Compliance.</li>
+      <li>Live AI only narrates decisions and drafts copy. Decisions and the compliance check are deterministic.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="view-flow" class="stack" hidden>
+  <div class="panel stack">
+    <div class="wftool">
+      <div>
+        <h2 style="font-size:17px">Journey as a workflow</h2>
+        <p style="margin:2px 0 0;font-size:13px;color:var(--muted)">The same engine as the simulator, drawn as nodes. Run a path and watch each node execute; click any node to inspect its output.</p>
+      </div>
+      <div class="btnrow">
+        <label class="formrow" style="font-size:13.5px">Customer <select id="wfPersona"></select></label>
+        <button class="btn" id="wfEngaged">▶ Engaged</button>
+        <button class="btn" id="wfSilent">▶ Silent</button>
+        <button class="btn" id="wfRisk">▶ Risk event</button>
+        <button class="btn" id="wfReset">Reset</button>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--info)"></i>Trigger</span><span><i style="background:var(--ink)"></i>Logic</span><span><i style="background:var(--accent)"></i>Action / outcome</span><span><i style="background:var(--warn)"></i>Wait / learn</span><span><i style="background:var(--bad)"></i>Stop</span><span>Dashed green = path just executed · pulsing node = where the customer is now</span>
+    </div>
+    <div class="wfwrap"><svg id="wf" viewBox="0 0 2060 800" role="img" aria-label="Next-best-action journey workflow"></svg></div>
+  </div>
+  <div class="wfgrid">
+    <div class="panel stack">
+      <div class="ph"><h2>Customer step</h2><span class="label" id="wfClock"></span></div>
+      <div id="wfNow" style="font-size:14px"></div>
+      <div class="btnrow" id="wfActions"></div>
+      <div class="ph" style="margin-top:4px"><h2>Execution log</h2><span class="label">Newest last</span></div>
+      <ol class="runlog" id="wfLog"></ol>
+    </div>
+    <div class="panel stack insp">
+      <div class="ph"><h2 id="inspTitle">Node inspector</h2><span class="pill" id="inspKind"></span></div>
+      <p style="margin:0;font-size:13.5px" id="inspDesc"></p>
+      <div class="label">Output</div>
+      <pre id="inspOut"></pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Built by Rakesh R. Iyer · concept demo for a lifecycle marketing discussion</span>
+  <span>All businesses, amounts, scores and test results are fictional.</span>
+</footer>
+</div>
+
+<script>
+"use strict";
+/* ================= ENGINE (pure) ================= */
+const H = 3600e3;
+const START = new Date(2026, 9, 27, 10, 0, 0); // Tue Oct 27 2026, 10:00
+const at = t => new Date(START.getTime() + Math.round(t * 60) * 60e3);
+const evt = (m, d, h) => (new Date(2026, m, d, h) - START) / H;
+function fmt(t){ return at(t).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); }
+function fmtShort(t){ return at(t).toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'}); }
+function fmtDay(t){ return at(t).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric'}); }
+function dayNum(t){ const s = new Date(START); s.setHours(0,0,0,0); const d = at(t); d.setHours(0,0,0,0); return Math.round((d - s) / 864e5) + 1; }
+function nextAtHour(t, hours, weekdaysOnly){
+  const base = Math.ceil(t - 1e-9);
+  for (let k = 0; k < 24 * 14; k++){
+    const c = base + k, d = at(c);
+    if (weekdaysOnly && (d.getDay() === 0 || d.getDay() === 6)) continue;
+    if (hours.includes(d.getHours())) return c;
+  }
+  return base;
+}
+const CH = { inapp:'In-product', email:'Email', push:'Push', sms:'SMS' };
+const CHANNELS = ['inapp','email','push','sms'];
+const SAME_GAP = { inapp:24, email:48, push:48, sms:72 };
+const HOURS = { email:[6,20], push:[8,20], sms:[9,20] };      // allowed send windows (local)
+const OPT_BASE = { inapp:0, email:0.003, push:0.008, sms:0.012 };
+const CH_VALUE = { inapp:0, email:0.9, push:0.5, sms:0.6 };    // 12-month channel value as a share of conversion value
+const MIN_NET = 8, WEEK_CAP = 4, INTENT_HALF = 120;
+const SNOOZE = {
+  need:{ days:30, label:'Don’t need funding right now', theme:'need' },
+  later:{ days:7, label:'Remind me later', theme:null },
+  cost:{ days:7, label:'Worried about the cost', theme:'cost' },
+  have:{ days:30, label:'Already have financing', theme:'cost' }
+};
+
+const PERSONAS = {
+  greenline: {
+    id:'greenline', name:'Greenline Landscaping', initials:'GL', industry:'Landscaping · 9 employees', revenue:'$1.1M revenue · 3 years of books',
+    product:'Line of credit', kind:'loan', offer:'Prequalified up to $35K (subject to credit review)',
+    trigger:'Cash-flow forecast shows an $18K shortfall around Nov 20 (payroll plus an equipment lease).',
+    newNeed:'A $9,400 invoice is now 20 days past due, widening the Nov 20 gap.',
+    consent:{inapp:true,email:true,push:true,sms:false}, aff:{inapp:.60,email:.45,push:.25,sms:0}, intent:40,
+    sessions:[7,18], weekdays:true, value:1400,
+    peaks:[[7,1],[18,.7],[12,.3]], dow:[.2,1,1,.95,.9,.7,.4],
+    events:[{ t:evt(10,6,9), label:'Payroll' }, { t:evt(10,20,9), label:'Payroll + equipment lease' }],
+    surfaces:['Cash Flow page','Invoices page','Home dashboard'],
+    order:['need','cost','trust','speed'],
+    T:{
+      need:{label:'Cash-gap timing', inapp:{title:'Cover the $18K gap before Nov 20', body:'Your cash-flow forecast shows a shortfall around Nov 20. You’re prequalified for a line of credit up to $35K, subject to credit review. Draw only what you need.', cta:'See my line of credit'}, email:{subject:'A line of credit, ready before Nov 20', body:'Your forecast shows a shortfall around Nov 20. You’re prequalified for a line of credit up to $35K, subject to credit review.', cta:'See my line of credit'}, push:'Your forecast shows a gap around Nov 20. See your prequalified line of credit.', sms:'Greenline: your forecast shows a gap near Nov 20. See your prequalified line of credit: [link] Reply STOP to opt out.', alts:['Get ahead of the Nov 20 cash gap','Your prequalified line of credit, ready when you are','Plan for Nov 20 with a line of credit']},
+      cost:{label:'Cost and payments', inapp:{title:'See your payment before you commit', body:'Use the calculator to see what an $18K draw would cost. No origination or prepayment fees, and you pay interest only on what you draw. Subject to credit review.', cta:'Calculate my payment'}, email:{subject:'What would an $18K draw cost? See it in 30 seconds', body:'No origination or prepayment fees. Interest only on what you draw. See your estimated payment before you apply.', cta:'Calculate my payment'}, push:'See what an $18K draw would cost. No origination fees.', sms:'Greenline: see your payment on an $18K draw before you apply: [link] Reply STOP to opt out.', alts:['See your payment on an $18K draw','No origination fees. Interest only on what you draw.','Know the cost before you borrow']},
+      trust:{label:'Credit check and guarantee', inapp:{title:'Checking your offer won’t affect your personal credit score', body:'We use a soft pull to show your offer. If you apply, a personal guarantee is required. Here’s what that means in plain language.', cta:'Read the details'}, email:{subject:'Questions about the credit check? Here are the answers', body:'Viewing your offer uses a soft pull. If you apply, a personal guarantee is required; we explain what that means.', cta:'Read the details'}, push:'Viewing your offer uses a soft pull. See how it works.', sms:'Greenline: viewing your offer uses a soft pull. Details: [link] Reply STOP to opt out.', alts:['How the credit check works, in plain language','What a personal guarantee means for you','Your questions about applying, answered']},
+      speed:{label:'Speed to funds', inapp:{title:'Funds typically in 1–2 business days', body:'Apply in minutes using the business data you already keep. Approved lines are typically funded in 1–2 business days, subject to credit review.', cta:'Start my application'}, email:{subject:'Apply in minutes; funds typically in 1–2 business days', body:'Your books already hold most of what the application needs. Approved lines are typically funded in 1–2 business days.', cta:'Start my application'}, push:'Apply in minutes. Funds typically arrive in 1–2 business days.', sms:'Greenline: apply in minutes; funds typically in 1–2 business days: [link] Reply STOP to opt out.', alts:['Apply in minutes with data you already keep','Funds typically in 1–2 business days','Most of your application is already filled in']},
+      resume:{label:'Resume application', inapp:{title:'Your application is saved', body:'You’re about 2 minutes from finishing. Pick up where you left off.', cta:'Resume application'}, email:{subject:'Your application is saved: about 2 minutes left', body:'Everything you entered is saved. Pick up where you left off whenever you’re ready.', cta:'Resume application'}, push:'Your application is saved. About 2 minutes left.', sms:'Greenline: your application is saved. Resume: [link] Reply STOP to opt out.', alts:['Your application is saved','About 2 minutes left on your application','Pick up where you left off']}
+    }
+  },
+  northbeam: {
+    id:'northbeam', name:'Northbeam Design Studio', initials:'NB', industry:'Design studio · 4 people', revenue:'$640K revenue · 5 years of books',
+    product:'Business credit card', kind:'card', offer:'Prequalified, limit up to $15K (subject to credit review)',
+    trigger:'Bank feed shows about $6,200 a month paid to other card issuers, plus 7 recurring software bills.',
+    newNeed:'Two new recurring software subscriptions appeared in the bank feed.',
+    consent:{inapp:true,email:true,push:false,sms:true}, aff:{inapp:.50,email:.55,push:0,sms:.30}, intent:35,
+    sessions:[9,14], weekdays:true, value:900,
+    peaks:[[9,1],[14,.8],[21,.4]], dow:[.3,1,1,1,1,.8,.2],
+    events:[{ t:evt(10,1,9), label:'Software bills renew' }, { t:evt(10,15,9), label:'Contractor payments' }],
+    surfaces:['Expenses page','Bills page','Home dashboard'],
+    order:['need','cost','trust','speed'],
+    T:{
+      need:{label:'Rewards on current spend', inapp:{title:'Earn 2% back on spend you already have', body:'About $6,200 a month goes to other cards. On the business credit card that would earn about $124 a month in cash back, with no annual fee. Subject to credit review.', cta:'See my card offer'}, email:{subject:'Your $6,200 a month in card spend could earn about $124 back', body:'2% cash back on everyday purchases and no annual fee. Subject to credit review.', cta:'See my card offer'}, push:'Your card spend could earn about $124 a month back.', sms:'Northbeam: your card spend could earn ~$124/mo back. See your offer: [link] Reply STOP to opt out.', alts:['Earn 2% back on spend you already have','About $124 a month back on your current card spend','Cash back with no annual fee']},
+      cost:{label:'Fees and terms', inapp:{title:'No annual fee, no surprises', body:'No annual fee. Cash back is paid as a statement credit. Review rates and terms before you apply.', cta:'See rates and terms'}, email:{subject:'No annual fee. Here are the full terms.', body:'Cash back is paid as a statement credit. Review the rates and terms before you apply.', cta:'See rates and terms'}, push:'No annual fee. See the full terms.', sms:'Northbeam: no annual fee. Full terms: [link] Reply STOP to opt out.', alts:['No annual fee, full terms up front','How cash back is paid','Read the terms before you apply']},
+      trust:{label:'Credit check', inapp:{title:'Seeing your offer won’t affect your personal credit score', body:'See your offer first. A full credit review happens only if you apply.', cta:'See my offer'}, email:{subject:'See your card offer with no impact to your personal credit score', body:'A full credit review happens only if you decide to apply.', cta:'See my offer'}, push:'See your card offer with no impact to your personal credit score.', sms:'Northbeam: see your card offer, no impact to your personal credit score: [link] Reply STOP to opt out.', alts:['See your offer before any credit review','How the card application works','No impact to your personal credit score to look']},
+      speed:{label:'Bookkeeping time saved', inapp:{title:'Your card spend, already in your books', body:'Every transaction syncs and is categorized automatically, so month-end takes minutes instead of hours.', cta:'See how it works'}, email:{subject:'Month-end in minutes: card spend that categorizes itself', body:'Every transaction syncs and is categorized automatically.', cta:'See how it works'}, push:'Card spend that categorizes itself. See how.', sms:'Northbeam: card spend that categorizes itself: [link] Reply STOP to opt out.', alts:['Card spend that categorizes itself','Month-end in minutes','Receipts matched automatically']},
+      resume:{label:'Resume application', inapp:{title:'Your card application is saved', body:'You’re about 2 minutes from finishing. Pick up where you left off.', cta:'Resume application'}, email:{subject:'Your card application is saved: about 2 minutes left', body:'Everything you entered is saved.', cta:'Resume application'}, push:'Your card application is saved. About 2 minutes left.', sms:'Northbeam: your card application is saved. Resume: [link] Reply STOP to opt out.', alts:['Your card application is saved','About 2 minutes left','Pick up where you left off']}
+    }
+  },
+  harbor: {
+    id:'harbor', name:'Harbor Coffee Roasters', initials:'HC', industry:'Coffee roaster · 14 employees', revenue:'$2.3M revenue, up 32% this year',
+    product:'Term loan', kind:'loan', offer:'Prequalified up to $60K (subject to credit review)',
+    trigger:'Revenue is up 32% this year, a January dip is forecast, and a $48K quote for a second roaster is saved in Bills.',
+    newNeed:'Wholesale orders for December doubled versus last year.',
+    consent:{inapp:true,email:true,push:true,sms:true}, aff:{inapp:.55,email:.40,push:.35,sms:.25}, intent:45,
+    sessions:[6,16], weekdays:false, value:2600,
+    peaks:[[6,1],[16,.8]], dow:[.8,.9,.9,.9,.9,.95,1],
+    events:[{ t:evt(9,30,9), label:'Payroll' }, { t:evt(10,13,9), label:'Payroll' }, { t:evt(10,16,9), label:'Roaster deposit due' }],
+    surfaces:['Bills page','Cash Flow page','Home dashboard'],
+    order:['need','cost','trust','speed'],
+    T:{
+      need:{label:'Growth funding', inapp:{title:'Fund the second roaster before the holidays', body:'Revenue is up 32% this year. You’re prequalified for a term loan up to $60K for the roaster quote saved in Bills, subject to credit review.', cta:'See my term loan'}, email:{subject:'Fund the second roaster before holiday demand', body:'You’re prequalified for a term loan up to $60K, subject to credit review.', cta:'See my term loan'}, push:'Ready for the second roaster? See your prequalified term loan.', sms:'Harbor: see your prequalified term loan for the new roaster: [link] Reply STOP to opt out.', alts:['Fund the second roaster before the holidays','Your prequalified term loan for growth','Keep up with holiday demand']},
+      cost:{label:'Fixed payments', inapp:{title:'Fixed payments you can plan around', body:'See the monthly payment on a $48K loan before you apply. No prepayment penalty. Subject to credit review.', cta:'See my payment'}, email:{subject:'What would the roaster cost per month?', body:'See your estimated fixed payment before you apply. No prepayment penalty.', cta:'See my payment'}, push:'See your monthly payment before you apply. No prepayment penalty.', sms:'Harbor: see your monthly payment before you apply: [link] Reply STOP to opt out.', alts:['Fixed payments you can plan around','See the monthly payment first','No prepayment penalty']},
+      trust:{label:'Credit check and guarantee', inapp:{title:'Checking your offer won’t affect your personal credit score', body:'We use a soft pull to show your offer. If you apply, a personal guarantee is required. Here’s what that means.', cta:'Read the details'}, email:{subject:'How the credit check and personal guarantee work', body:'Viewing your offer uses a soft pull. If you apply, a personal guarantee is required.', cta:'Read the details'}, push:'Viewing your offer uses a soft pull. See how it works.', sms:'Harbor: viewing your offer uses a soft pull. Details: [link] Reply STOP to opt out.', alts:['How the credit check works','What a personal guarantee means','Your questions about applying, answered']},
+      speed:{label:'Speed to funds', inapp:{title:'Decision in minutes, funds in 1–2 business days', body:'Apply with the business data you already keep. Approved loans are typically funded in 1–2 business days.', cta:'Start my application'}, email:{subject:'Decision in minutes; funds typically in 1–2 business days', body:'Most of your application is already filled in from your books.', cta:'Start my application'}, push:'Decision in minutes. Funds typically in 1–2 business days.', sms:'Harbor: decision in minutes, funds typically in 1–2 business days: [link] Reply STOP to opt out.', alts:['Decision in minutes','Funds typically in 1–2 business days','Most of your application is already filled in']},
+      resume:{label:'Resume application', inapp:{title:'Your application is saved', body:'You’re about 2 minutes from finishing. Pick up where you left off.', cta:'Resume application'}, email:{subject:'Your application is saved: about 2 minutes left', body:'Everything you entered is saved.', cta:'Resume application'}, push:'Your application is saved. About 2 minutes left.', sms:'Harbor: your application is saved. Resume: [link] Reply STOP to opt out.', alts:['Your application is saved','About 2 minutes left','Pick up where you left off']}
+    }
+  }
+};
+
+/* engagement rhythm: 0..1 by hour and weekday */
+function rhythmAt(P, hour, dow){
+  let w = 0;
+  for (const [ph, pw] of P.peaks){ const d = Math.min(Math.abs(hour - ph), 24 - Math.abs(hour - ph)); w = Math.max(w, pw * Math.exp(-(d * d) / (2 * 1.6 * 1.6))); }
+  return Math.min(1, 0.05 + w * P.dow[dow]);
+}
+function rhythm(P, t){ const d = at(t); return rhythmAt(P, d.getHours(), d.getDay()); }
+function calendarBoost(P, t){
+  for (const e of P.events){ const lead = e.t - t; if (lead >= 6 && lead <= 48) return { f:1.15, label:`${Math.round(lead)} hours before ${e.label.toLowerCase()} (${fmtDay(e.t)})` }; }
+  return { f:1, label:null };
+}
+
+function newState(P){
+  return { P, t:0, intent:P.intent, tDecay:0, aff:{...P.aff}, consent:{...P.consent}, down:{}, tried:[], objection:null, misses:0, missBy:{},
+    lpMisses:0, surfaceIdx:0, stage:'offer', lastOut:null, lastByCh:{}, lastBehavior:null, lastMissCh:null,
+    touches:[], pending:null, abStep:0, abandonAt:null, abLastCh:null, snoozeUntil:null, snoozeReason:null,
+    log:[], learn:[], decision:null };
+}
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function decayTo(S, t){
+  if (t > S.tDecay){ S.intent = S.P.intent + (S.intent - S.P.intent) * Math.pow(0.5, (t - S.tDecay) / INTENT_HALF); S.tDecay = t; }
+}
+function bump(S, delta){ decayTo(S, S.t); S.intent = clamp(S.intent + delta, 0, 100); }
+function touches7d(S, t){ return S.touches.filter(x => x > t - 168 && x <= t).length; }
+function eligible(S, ch){ return !!S.consent[ch] && S.aff[ch] > 0; }
+function gapFor(S, ch){ return ch === 'email' && S.down.email ? 96 : SAME_GAP[ch]; }
+function earliestFor(S, ch){
+  let e = S.t + 0.25;
+  if (S.lastOut) e = Math.max(e, S.lastOut.t + (ch === 'inapp' ? 12 : 20));
+  if (S.lastByCh[ch] != null) e = Math.max(e, S.lastByCh[ch] + gapFor(S, ch));
+  return e;
+}
+function slotOk(S, ch, t){
+  const d = at(t), h = d.getHours(), wd = d.getDay();
+  if (ch === 'inapp') return S.P.sessions.includes(h) && !(S.P.weekdays && (wd === 0 || wd === 6));
+  const [a, b] = HOURS[ch]; return h >= a && h <= b;
+}
+function optRisk(S, ch, sendAt){
+  const p = OPT_BASE[ch] * (1 + 0.5 * (S.missBy[ch] || 0) + 0.25 * touches7d(S, sendAt)) * (S.down[ch] ? 0.6 : 1);
+  return { p, cost: p * S.P.value * CH_VALUE[ch] };
+}
+function score(S, ch, sendAt){
+  const P = S.P, delay = sendAt - S.t;
+  const timing = 0.6 + 0.4 * rhythm(P, sendAt);
+  const cal = calendarBoost(P, sendAt);
+  const benefit = P.value * 0.06 * S.aff[ch] * (0.5 + S.intent / 100) * timing * cal.f * Math.pow(0.5, delay / 120);
+  const hb = S.lastBehavior ? sendAt - S.lastBehavior.t : 999;
+  const cf = hb < 24 ? (1 - hb / 24) * (ch === 'inapp' ? 0.25 : 0.8) : 0;
+  const cadence = benefit * cf;
+  const fatigue = 4 * touches7d(S, sendAt);
+  const repeat = S.lastMissCh === ch ? benefit * 0.2 : 0;
+  const opt = optRisk(S, ch, sendAt);
+  return { benefit, cadence, fatigue, repeat, opt:opt.cost, pOpt:opt.p, timing, cal:cal.label, net: benefit - cadence - fatigue - repeat - opt.cost, hb };
+}
+function pickTheme(S){
+  if (S.objection && !S.tried.includes(S.objection)) return S.objection;
+  return S.P.order.find(k => !S.tried.includes(k)) || null;
+}
+function evalOptions(S){
+  return CHANNELS.map(ch => {
+    if (!S.consent[ch]) return { ch, blocked: S.P.consent[ch] ? 'Opted out' : (ch === 'push' ? 'No app or push opt-in' : 'No consent') };
+    if (S.aff[ch] <= 0) return { ch, blocked:'No affinity' };
+    const e = earliestFor(S, ch);
+    const start = Math.ceil(e - 1e-9);
+    let first = null, best = null;
+    for (let k = 0; k <= 96; k++){
+      const t = start + k;
+      if (!slotOk(S, ch, t)) continue;
+      const s = { at:t, ...score(S, ch, t) };
+      if (!first) first = s;
+      if (!best || s.net > best.net + 0.01) best = s;
+    }
+    if (!best) return { ch, blocked:'No allowed slot in the next 4 days' };
+    if (touches7d(S, best.at) >= WEEK_CAP) return { ch, blocked:'Weekly cap reached', at:best.at };
+    return { ch, ...best, alt: first && first.at !== best.at ? first : null };
+  });
+}
+function decide(S){
+  const P = S.P;
+  decayTo(S, S.t);
+  const gates = [
+    { ok:true, text:`Eligible: ${P.offer}` },
+    { ok: S.stage !== 'servicing', text: S.stage === 'servicing' ? 'Risk flag: late payment reported' : 'No risk or servicing flags' },
+    { ok: S.stage !== 'snoozed', text: S.stage === 'snoozed' ? `Snoozed until ${fmt(S.snoozeUntil)} (${SNOOZE[S.snoozeReason].label.toLowerCase()})` : 'Not snoozed' },
+    { ok: touches7d(S, S.t) < WEEK_CAP, text:`Contact fatigue: ${touches7d(S, S.t)} of ${WEEK_CAP} touches this week` },
+    { ok:true, text:`Consent: ${CHANNELS.map(c => `${CH[c]} ${S.consent[c] ? (S.down[c] ? '↓' : '✓') : '✗'}`).join(' · ')}` }
+  ];
+  if (S.stage === 'servicing') return { type:'suppressed', gates, options:[], why:'A late payment was reported. All Capital and card promotion stops and the customer moves to Servicing. Marketing and Servicing share one suppression list.' };
+  if (S.stage === 'submitted') return { type:'done', gates, options:[], why:'Application submitted. This journey ends; the onboarding journey takes over (funding confirmation, autopay, first draw).' };
+  if (S.stage === 'snoozed') return { type:'wait', gates, options:[], why:`Snoozed for ${SNOOZE[S.snoozeReason].days} days because the customer chose “${SNOOZE[S.snoozeReason].label}”. A new need signal ends the snooze early.`, snooze:true };
+  if (S.stage === 'abandoned') return decideAbandon(S, gates);
+  if (S.misses >= 3) return { type:'wait', gates, options:[], why:'Three touches in a row with no response across channels. More messages would add fatigue and raise opt-out risk, so the engine pauses and waits for a new need signal.' };
+  const theme = pickTheme(S);
+  if (!theme) return { type:'wait', gates, options:[], why:'Every message theme has been tried without a response. Pause, and flag the offer and landing page for a creative review.' };
+  const options = evalOptions(S);
+  const live = options.filter(o => !o.blocked).sort((a, b) => b.net - a.net || CHANNELS.indexOf(a.ch) - CHANNELS.indexOf(b.ch));
+  const best = live[0];
+  if (!best || best.net < MIN_NET) return { type:'wait', gates, options, theme, why:`No option clears the $${MIN_NET} threshold once cadence, fatigue and opt-out risk are counted. Waiting beats sending.` };
+  return { type:'send', gates, options, ch:best.ch, at:best.at, theme, best, why: whyText(S, best, theme) };
+}
+function decideAbandon(S, gates){
+  const P = S.P, opts = [];
+  if (S.abStep === 0){
+    for (const ch of ['push','sms','email']){
+      if (!eligible(S, ch)){ opts.push({ ch, blocked: S.consent[ch] ? 'No affinity' : (S.P.consent[ch] ? 'Opted out' : 'No consent') }); continue; }
+      let a = S.t + 0.25;
+      if (ch !== 'email'){ const h = at(a).getHours(); if (h < 8 || h >= 21) a = nextAtHour(a, [8], false); }
+      const v = P.value * 0.25 * S.aff[ch], o = optRisk(S, ch, a).cost * 0.3;
+      opts.push({ ch, at:a, benefit:v, cadence:0, fatigue:0, repeat:0, opt:o, net:v - o });
+    }
+    opts.push({ ch:'inapp', blocked:'Customer just left the session' });
+  } else {
+    const limit = S.abandonAt + 24;
+    for (const ch of CHANNELS){
+      if (!eligible(S, ch)){ opts.push({ ch, blocked: S.consent[ch] ? 'No affinity' : (S.P.consent[ch] ? 'Opted out' : 'No consent') }); continue; }
+      if (ch === S.abLastCh){ opts.push({ ch, blocked:'Used for the first nudge' }); continue; }
+      let a = null;
+      for (let t = Math.ceil(S.t + (ch === 'inapp' ? 1 : 3)); t <= limit; t++){ if (slotOk(S, ch, t) && rhythm(P, t) >= 0.35){ a = t; break; } }
+      if (a == null){ opts.push({ ch, blocked:'No good slot inside the 24-hour window' }); continue; }
+      const v = P.value * 0.2 * S.aff[ch] * (0.6 + 0.4 * rhythm(P, a)), o = optRisk(S, ch, a).cost * 0.3;
+      opts.push({ ch, at:a, benefit:v, cadence:0, fatigue:0, repeat:0, opt:o, net:v - o });
+    }
+  }
+  const best = opts.filter(o => !o.blocked).sort((a, b) => b.net - a.net)[0];
+  if (!best) return { type:'wait', gates, options:opts, why:'No channel can reach the customer inside the 24-hour reminder window. The saved application stays visible in-product.' };
+  const why = S.abStep === 0
+    ? `Abandoned application is a service moment, so there is no cadence cost. ${CH[best.ch]} has the highest affinity among channels that can reach the customer right away.`
+    : `One reminder inside 24 hours of abandonment, on a different channel from the first nudge, at an hour this customer usually engages. ${CH[best.ch]} is the strongest remaining option before ${fmtShort(S.abandonAt + 24)}.`;
+  return { type:'send', gates, options:opts, ch:best.ch, at:best.at, theme:'resume', best, abandon:true, why };
+}
+function whyText(S, best, theme){
+  const P = S.P, parts = [];
+  parts.push(`${CH[best.ch]} scores highest: affinity ${S.aff[best.ch].toFixed(2)} at intent ${Math.round(S.intent)}.`);
+  const d = at(best.at);
+  parts.push(`${d.toLocaleString('en-US',{weekday:'long'})} at ${d.toLocaleString('en-US',{hour:'numeric'})} is a strong slot in this customer’s rhythm${best.cal ? `, and it lands ${best.cal}` : ''}.`);
+  if (best.alt && best.alt.at < best.at && best.alt.net < best.net){
+    const reason = best.alt.cadence > 1 ? `it would land ${Math.round(best.alt.hb)} hours after the customer’s last action and feel intrusive` : 'it falls at a weaker hour for this customer';
+    parts.push(`The soonest slot (${fmtShort(best.alt.at)}) nets only $${Math.round(best.alt.net)}: ${reason}.`);
+  }
+  if (best.opt >= 1) parts.push(`Opt-out risk is priced in at $${Math.round(best.opt)}.`);
+  if (S.objection === theme && S.lpMisses > 0) parts.push(`Message switches to “${P.T[theme].label}” because the last landing-page visit ended without action.`);
+  else if (S.objection === theme && S.snoozeReason) parts.push(`Message is “${P.T[theme].label}” because of the reason the customer gave for “Not now”.`);
+  else if (S.tried.length) parts.push(`Theme rotates to “${P.T[theme].label}” because earlier themes got no response.`);
+  if (best.ch === 'inapp' && S.surfaceIdx > 0) parts.push(`Shown on the ${P.surfaces[S.surfaceIdx % P.surfaces.length]} instead of the surface that was ignored.`);
+  return parts.join(' ');
+}
+function messageFor(S, d){
+  const P = S.P, th = P.T[d.theme], ch = d.ch;
+  if (ch === 'inapp') return { ch, title:th.inapp.title, body:th.inapp.body, cta:th.inapp.cta, surface: d.abandon ? 'Home dashboard' : P.surfaces[S.surfaceIdx % P.surfaces.length] };
+  if (ch === 'email') return { ch, title:th.email.subject, body:th.email.body, cta:th.email.cta };
+  if (ch === 'push') return { ch, body:th.push };
+  return { ch, body:th.sms };
+}
+function msgText(m){ return [m.title, m.body, m.cta].filter(Boolean).join(' '); }
+const VIEW_WINDOW = { inapp:72, email:168, push:24, sms:48 };
+
+function engaged(S, ch){ S.misses = 0; S.lastMissCh = null; S.missBy[ch] = 0; }
+function missed(S, ch, theme){ S.misses += 1; S.lastMissCh = ch; S.missBy[ch] = (S.missBy[ch] || 0) + 1; if (theme && !S.tried.includes(theme)) S.tried.push(theme); }
+function loseChannel(S, ch, label){
+  S.consent[ch] = false;
+  const v = Math.round(S.P.value * CH_VALUE[ch]);
+  S.learn.unshift(`${label}: ${CH[ch].toLowerCase()} is gone for every future offer, about $${v.toLocaleString()} of 12-month channel value for this customer. This is the outcome the opt-out cost is there to prevent.`);
+}
+
+function applySignal(S, sig){
+  const p = S.pending, P = S.P;
+  const L = (kind, text, sub) => S.log.push({ t:S.t, kind, text, sub });
+  if (sig === 'risk'){
+    if (S.stage === 'servicing' || S.stage === 'submitted') return false;
+    S.t = (p && p.at != null ? Math.max(S.t, p.at) : S.t) + 6;
+    S.stage = 'servicing'; S.pending = null;
+    L('risk', 'Late payment reported on an existing account', 'Promotion suppressed across Capital and card. Customer handed to Servicing.');
+    S.learn.unshift('Risk signal overrides every stage: no promotion while the account is past due.');
+    return true;
+  }
+  if (sig === 'newneed'){
+    if (!(S.stage === 'snoozed' || S.stage === 'paused')) return false;
+    const early = S.stage === 'snoozed';
+    S.t += 72; S.stage = 'offer'; S.misses = 0; S.tried = []; S.objection = 'need'; S.lastMissCh = null; S.missBy = {};
+    bump(S, 15);
+    L('trigger', early ? 'New need signal ends the snooze early' : 'New need signal', P.newNeed + ' Intent +15; the journey restarts with the need-based message.');
+    return true;
+  }
+  if (sig === 'snoozeend'){
+    if (S.stage !== 'snoozed') return false;
+    S.t = S.snoozeUntil; const r = SNOOZE[S.snoozeReason];
+    S.stage = 'offer'; S.misses = 0; S.lastMissCh = null; S.tried = []; S.objection = r.theme;
+    L('trigger', 'Snooze ended', `${r.days}-day snooze for “${r.label}” is over. ${r.theme ? `Next message leads with ${P.T[r.theme].label.toLowerCase()}.` : 'The journey resumes where it left off.'}`);
+    return true;
+  }
+  if (!p) return false;
+  const send = p.at;
+  if (p.kind === 'touch'){
+    const ch = p.ch;
+    if (sig === 'click'){
+      S.t = send + ({ inapp:0.1, email:2, push:0.3, sms:0.3 })[ch];
+      bump(S, 20); S.aff[ch] = clamp(S.aff[ch] + 0.15, 0, 1); engaged(S, ch); S.lastBehavior = { t:S.t, type:'click' };
+      if (p.abandon){ S.stage = 'app'; S.pending = { kind:'app' }; L('good', `Came back from the ${CH[ch].toLowerCase()} nudge and resumed the application`, `Intent +20 · ${CH[ch]} affinity +0.15`); }
+      else { S.stage = 'landing'; S.pending = { kind:'landing', theme:p.theme }; L('good', `Clicked the ${CH[ch].toLowerCase()} CTA`, `Intent +20 · ${CH[ch]} affinity +0.15 · now on the landing page`); }
+      return true;
+    }
+    if (sig === 'viewthru' && !p.abandon){
+      const w = VIEW_WINDOW[ch];
+      S.t = send + Math.min(w * 0.4, 30);
+      bump(S, 10); S.aff[ch] = clamp(S.aff[ch] + 0.05, 0, 1); engaged(S, ch); S.lastBehavior = { t:S.t, type:'visit' };
+      S.stage = 'landing'; S.pending = { kind:'landing', theme:p.theme };
+      L('assist', `No click, but came back on their own to the lending page`, `Credited to the ${CH[ch].toLowerCase()} as a view-through (${w / 24 >= 1 ? Math.round(w / 24) + '-day' : w + '-hour'} exposure window) · intent +10 · ${CH[ch]} affinity +0.05`);
+      S.learn.unshift(`View-through: the ${CH[ch].toLowerCase()} drove a visit without a click. Click-only attribution would have scored this touch as a miss.`);
+      return true;
+    }
+    if (sig === 'noresp' || sig === 'ignore'){
+      if (p.abandon){
+        S.t = send + 3; S.aff[ch] = clamp(S.aff[ch] - 0.1, 0, 1);
+        L('silent', `No return after the ${CH[ch].toLowerCase()} nudge`, `${CH[ch]} affinity −0.10`);
+        S.abStep += 1; S.abLastCh = ch;
+        if (S.abStep >= 2){
+          S.stage = 'offer'; S.misses = 1; S.objection = 'trust'; S.lastMissCh = ch;
+          S.learn.unshift('Abandoned at the application step and didn’t return after two nudges. Likely concern: documents or the personal guarantee. Flag the application step for a UX review.');
+          L('learn', 'Learning: application step needs review', 'Next message addresses the credit check and personal guarantee.');
+        } else S.stage = 'abandoned';
+        S.pending = null; return true;
+      }
+      if (ch === 'inapp'){
+        let x = send; for (let i = 0; i < 2; i++) x = nextAtHour(x + 1, P.sessions, P.weekdays);
+        S.t = x + 1; S.aff.inapp = clamp(S.aff.inapp - 0.15, 0, 1); S.surfaceIdx += 1;
+        L('silent', 'Ignored the in-product card for 3 sessions, and no visit on their own within 3 days', 'In-product affinity −0.15 · next in-product placement moves to a new surface');
+      } else {
+        const w = ({ email:48, push:4, sms:24 })[ch];
+        S.t = send + w; S.aff[ch] = clamp(S.aff[ch] - 0.15, 0, 1);
+        L('silent', `No ${ch === 'email' ? 'click' : 'tap'} on the ${CH[ch].toLowerCase()} within ${w} hours`, `${CH[ch]} affinity −0.15 · treated as silence, not a no · opt-out risk on ${CH[ch].toLowerCase()} rises`);
+      }
+      bump(S, -3); missed(S, ch, p.theme);
+      S.pending = null; return true;
+    }
+    if (sig.startsWith('nn_') && ch === 'inapp' && !p.abandon){
+      const reason = sig.slice(3), r = SNOOZE[reason]; if (!r) return false;
+      S.t = send + 0.1; S.stage = 'snoozed'; S.snoozeReason = reason; S.snoozeUntil = S.t + r.days * 24; S.lastBehavior = { t:S.t, type:'notnow' };
+      L('neg', `Clicked “Not now”: ${r.label.toLowerCase()}`, `Snoozed ${r.days} days. A new need signal can end it early.`);
+      S.pending = null; return true;
+    }
+    if (sig === 'optdown' && ch === 'email'){
+      S.t = send + 2; S.down.email = true; missed(S, ch, p.theme);
+      L('neg', 'Chose “fewer emails” in the preference center', 'Email kept, at half the frequency (96 hours between emails). Far better than an unsubscribe.');
+      S.learn.unshift('The preference center saved the email channel: “fewer emails” instead of unsubscribe.');
+      S.pending = null; return true;
+    }
+    if (sig === 'unsub' || sig === 'stop' || sig === 'pushoff'){
+      const map = { unsub:'email', stop:'sms', pushoff:'push' };
+      if (map[sig] !== ch) return false;
+      S.t = send + 1; missed(S, ch, p.theme);
+      const label = sig === 'unsub' ? 'Unsubscribed from email' : sig === 'stop' ? 'Replied STOP' : 'Turned off push notifications';
+      loseChannel(S, ch, label);
+      L('risk', label, `${CH[ch]} removed permanently; remaining touches re-planned on other channels`);
+      S.pending = null; return true;
+    }
+    return false;
+  }
+  if (p.kind === 'landing'){
+    if (sig === 'start'){
+      S.t += 0.1; bump(S, 15); S.stage = 'app'; S.pending = { kind:'app' }; S.lastBehavior = { t:S.t, type:'start' };
+      L('good', 'Started an application', 'Intent +15'); return true;
+    }
+    if (sig === 'lp_none'){
+      S.t += 0.15; S.lpMisses += 1; S.lastBehavior = { t:S.t, type:'lp' };
+      const th = p.theme; if (!S.tried.includes(th)) S.tried.push(th);
+      const next = P.order.find(k => !S.tried.includes(k));
+      S.objection = next || null; S.stage = 'offer'; S.pending = null;
+      L('neg', 'Left the landing page without taking action', `The “${P.T[th].label}” message got the visit, but the page didn’t answer the customer’s concern.`);
+      S.learn.unshift(`Landing page didn’t convert after the “${P.T[th].label}” message. Flag: test a landing-page variant${next ? ` that leads with ${P.T[next].label.toLowerCase()}` : ''}.`);
+      if (next) L('learn', 'Learning: message and landing page need to work harder', `Next touch addresses “${P.T[next].label}”.`);
+      return true;
+    }
+    return false;
+  }
+  if (p.kind === 'app'){
+    if (sig === 'submit'){
+      S.t += 0.3; S.stage = 'submitted'; S.pending = null; S.intent = 100;
+      L('good', 'Submitted the application', 'Moves to underwriting; the onboarding journey takes over after a decision.'); return true;
+    }
+    if (sig === 'abandon'){
+      S.t += 0.3; S.stage = 'abandoned'; S.abStep = 0; S.abandonAt = S.t; S.abLastCh = null; S.pending = null; S.lastBehavior = { t:S.t, type:'abandon' };
+      L('neg', 'Abandoned the application partway', 'Service moment: an immediate nudge is fine, plus one reminder within 24 hours.'); return true;
+    }
+    return false;
+  }
+  return false;
+}
+function step(S){
+  const d = decide(S);
+  S.decision = d;
+  if (d.type === 'send'){
+    const m = messageFor(S, d);
+    S.pending = { kind:'touch', ch:d.ch, at:d.at, theme:d.theme, abandon:!!d.abandon, msg:m };
+    S.touches.push(d.at); S.lastOut = { ch:d.ch, t:d.at }; S.lastByCh[d.ch] = d.at;
+    S.t = Math.max(S.t, d.at); decayTo(S, S.t);
+    S.log.push({ t:d.at, kind:'send', text:`Sent ${CH[d.ch].toLowerCase()}: ${m.title || m.body}`, sub:`Theme: ${S.P.T[d.theme].label}${m.surface ? ' · ' + m.surface : ''}${d.best && d.best.cal ? ' · timed ' + d.best.cal : ''}` });
+    if (d.abandon) S.abLastCh = d.ch;
+  } else if (d.type === 'wait'){
+    if (S.stage !== 'snoozed') S.stage = 'paused';
+    S.log.push({ t:S.t, kind:'silent', text:'Engine chose to wait', sub:d.why });
+  }
+  return d;
+}
+
+/* ================= COMPLIANCE (pure) ================= */
+const URGENCY = /\b(act now|act fast|last chance|hurry|don('|’)?t miss out|expires (today|tonight|soon)|only \d+ (hours?|days?) left|limited time)\b/i;
+const RULES = [
+  { id:'approved', sev:'high', title:'Says “approved” before any credit decision', why:'Only a completed credit review produces an approval. Use “prequalified” for offers.',
+    test:t => /\b(you('|’| a)re|you have been|you('|’)ve been|been)\s+(pre-?)?approved\b|\bpre-?approved\b|\bapproved for\b|\b(instant|guaranteed|automatic) approval\b/i.test(t) },
+  { id:'guaranteed', sev:'high', title:'Promises a guaranteed outcome', why:'Approval, amount and terms depend on credit review. (A “personal guarantee” disclosure is fine.)',
+    test:t => /\bguarantee[ds]?\b/i.test(t.replace(/personal guarantee/gi, '')) },
+  { id:'rate', sev:'high', title:'Promises a specific rate or APR', why:'Rates depend on the business’s credit profile. Quote a rate only with full required disclosures.',
+    test:t => /\b\d+(\.\d+)?\s?%\s*(apr|a\.p\.r\.|interest|rate)\b|\b(apr|interest rate|rate)\s*(of|at|as low as)\s*\d+(\.\d+)?\s?%|\bat\s+\d+(\.\d+)?\s?%/i.test(t) },
+  { id:'superlative', sev:'med', title:'Uses an unprovable superlative', why:'“Lowest” or “best” rate claims need substantiation and invite UDAAP scrutiny.',
+    test:t => /\b(lowest|best|cheapest)\s+(rates?|prices?|aprs?)\b/i.test(t) },
+  { id:'norisk', sev:'high', title:'Claims no credit check or no risk', why:'Applying includes a credit review, and loans require a personal guarantee. Say “viewing your offer won’t affect your personal credit score” only where true.',
+    test:t => /\b(risk[- ]free|no credit checks?|no personal (risk|liability)|no personal guarantee|free money|easy money)\b/i.test(t) },
+  { id:'urgency', sev:'med', title:'Uses pressure or false urgency', why:'Pressure tactics on credit offers are a UDAAP risk and erode trust.', test:t => URGENCY.test(t) },
+  { id:'qualifier', sev:'med', title:'Offer amount without “subject to credit review”', why:'Any offer amount should say it depends on credit review.',
+    test:t => /(up to\s+\$[\d,.]+k?|(approved|prequalified|qualify|qualified) for\s+(up to\s+)?\$[\d,.]+k?|\$[\d,.]+k?\s+(line|loan|limit|credit line|line of credit|in funding))/i.test(t) && !/(subject to|credit review|may qualify)/i.test(t) },
+  { id:'smsconsent', sev:'high', title:'SMS without marketing consent', why:'TCPA requires prior express written consent for marketing texts. Use email or in-product instead.', ctx:true },
+  { id:'quiet', sev:'high', title:'SMS outside quiet hours', why:'Send texts between 8:00 AM and 9:00 PM in the customer’s time zone.', ctx:true },
+  { id:'stop', sev:'med', title:'SMS missing opt-out language', why:'Include “Reply STOP to opt out.”', ctx:true },
+  { id:'pushlen', sev:'low', title:'Push may be cut off', why:'Keep push copy under about 110 characters.', ctx:true }
+];
+function checkMessage(text, ctx){
+  const out = RULES.filter(r => !r.ctx && r.test(text));
+  const R = id => RULES.find(r => r.id === id);
+  if (ctx.ch === 'sms'){
+    if (!ctx.smsConsent) out.push(R('smsconsent'));
+    const h = ctx.hour; if (h != null && (h < 8 || h >= 21)) out.push(R('quiet'));
+    if (!/reply stop/i.test(text)) out.push(R('stop'));
+  }
+  if (ctx.ch === 'push' && text.length > 110) out.push(R('pushlen'));
+  return out;
+}
+function capFirst(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+function fixMessage(text, ctx){
+  let t = text;
+  t = t.replace(/\b(you('|’| a)re|you have been|you('|’)ve been)\s+(pre-?)?approved\b/gi, m => /^Y/.test(m) ? 'You’re prequalified' : 'you’re prequalified');
+  t = t.replace(/\bpre-?approved\b/gi, m => /^P/.test(m) ? 'Prequalified' : 'prequalified');
+  t = t.replace(/\b(instant|guaranteed|automatic) approval\b/gi, 'a fast decision');
+  t = t.replace(/\bis guaranteed\b/gi, 'is available, subject to credit review');
+  t = t.replace(/\bguaranteed\s+/gi, '');
+  t = t.replace(/\b\d+(\.\d+)?\s?%\s*(apr|a\.p\.r\.|interest|rate)\b/gi, 'a rate based on your business profile');
+  t = t.replace(/\bat\s+a rate based/gi, 'with a rate based');
+  t = t.replace(/\bat\s+\d+(\.\d+)?\s?%/gi, 'with a rate based on your business profile');
+  t = t.replace(/\b(the\s+)?(lowest|best|cheapest)\s+(rates?|prices?|aprs?)\b/gi, 'a rate based on your business profile');
+  let sentences = t.match(/[^.!?]+[.!?]*\s*/g) || [t], removedUrgency = false;
+  sentences = sentences.filter(s => {
+    if (URGENCY.test(s)){ removedUrgency = true; return false; }
+    if (/\b(risk[- ]free|no credit checks?|no personal (risk|liability)|free money|easy money)\b/i.test(s)) return false;
+    return true;
+  });
+  t = sentences.join('').trim();
+  t = t.replace(/\bno personal guarantee\b/gi, 'a personal guarantee is required');
+  if (RULES.find(r => r.id === 'qualifier').test(t)) t = t.replace(/\s*$/, '') + ' Subject to credit review.';
+  if (removedUrgency) t += ' Take a look when it suits you.';
+  if (ctx.ch === 'sms' && !/reply stop/i.test(t)) t += ' Reply STOP to opt out.';
+  return capFirst(t.replace(/\s{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1').trim());
+}
+
+/* ================= EXPERIMENT DATA (illustrative) ================= */
+const EXP = {
+  holdout:{ treatedN:54000, holdoutN:6000, appT:4.1, appH:2.9, fundT:2.6, fundH:1.9, dollarsT:36.4, dollarsH:26.6, optT:0.21, dpdT:2.1, dpdH:2.0 },
+  cap:[2,3,4,5,6].map(c => { const lift = 12000 * (1 - Math.exp(-c / 2)); const opt = 0.35 * Math.pow(c, 1.8); return { c, lift, opt, cost:opt * 900, net:lift - opt * 900 }; }),
+  ign:[3.8,2.6,1.7,1.0,0.6,0.4], ignRef:1.3,
+  snooze:{ days:[7,14,21,30], rows:[
+    { key:'need', re:[4,6,8,9], opt:[1.1,.7,.5,.4] },
+    { key:'later', re:[14,11,8,6], opt:[.3,.3,.3,.2] },
+    { key:'cost', re:[10,9,7,5], opt:[.4,.3,.3,.3] },
+    { key:'have', re:[2,3,4,5], opt:[1.4,1.0,.7,.5] }
+  ]},
+  decay:[38,55,66,74,80,84,87,89,91,92,93,94,95,95,96]
+};
+
+/* ================= UI ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+let WF_READY = false;
+let S = null, personaId = 'greenline', playing = null, sampleFn = null, aiNote = '', showNotNow = false;
+
+function startJourney(){
+  S = newState(PERSONAS[personaId]);
+  S.log.push({ t:0, kind:'trigger', text:'Trigger detected', sub:S.P.trigger });
+  showNotNow = false; aiNote = '';
+  step(S); wfRecord('__start'); render();
+}
+function renderPersonas(){
+  $('personas').innerHTML = Object.values(PERSONAS).map(P => `<button class="pbtn" data-p="${P.id}" aria-pressed="${P.id === personaId}"><span class="av">${P.initials}</span><span><b>${esc(P.name)}</b><small>${esc(P.product)}</small></span></button>`).join('');
+  document.querySelectorAll('.pbtn').forEach(b => b.onclick = () => { if (playing) return; personaId = b.dataset.p; renderPersonas(); startJourney(); });
+  const P = PERSONAS[personaId];
+  $('facts').innerHTML = `<dt>Business</dt><dd>${esc(P.industry)}</dd><dt>Books</dt><dd>${esc(P.revenue)}</dd><dt>Product</dt><dd>${esc(P.product)}</dd><dt>Offer</dt><dd>${esc(P.offer)}</dd><dt>Value</dt><dd>$${P.value.toLocaleString()} risk-adjusted per conversion (illustrative)</dd>`;
+  $('trigger').textContent = P.trigger;
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], idx = [1,2,3,4,5,6,0];
+  let h = '<span></span>' + ['12a','3a','6a','9a','12p','3p','6p','9p'].map(x => `<span class="hd">${x}</span>`).join('');
+  days.forEach((dn, i) => {
+    h += `<span>${dn}</span>`;
+    for (let b = 0; b < 8; b++){ const w = Math.max(rhythmAt(P, b * 3, idx[i]), rhythmAt(P, b * 3 + 1, idx[i]), rhythmAt(P, b * 3 + 2, idx[i])); h += `<span class="c" style="opacity:${(0.08 + 0.92 * w).toFixed(2)}" title="${dn} ${b * 3}:00–${b * 3 + 3}:00 · ${Math.round(w * 100)}"></span>`; }
+  });
+  $('heat').innerHTML = h;
+  $('cal').innerHTML = P.events.map(e => `<li><span class="mono">${esc(fmtDay(e.t))}</span> · ${esc(e.label)}</li>`).join('');
+}
+function render(){
+  $('consent').innerHTML = CHANNELS.map(c => `<span class="${S.consent[c] ? (S.down[c] ? 'down' : '') : 'off'}">${CH[c]}${S.down[c] ? ' (fewer)' : ''}</span>`).join('');
+  $('clock').textContent = `${fmt(S.t)} · Day ${dayNum(S.t)}`;
+  const stageMap = { offer:['Acquisition','info'], landing:['On landing page','info'], app:['Applying','good'], abandoned:['Abandoned application','warn'], submitted:['Application submitted','good'], paused:['Paused','warn'], snoozed:['Snoozed','warn'], servicing:['Suppressed · Servicing','bad'] };
+  const sm = stageMap[S.stage] || ['—',''];
+  $('stagePill').className = 'pill ' + sm[1]; $('stagePill').textContent = sm[0];
+  renderPreview(); renderActions(); renderTimeline(); renderState(); renderDecision(); renderLearn();
+  if (typeof renderWorkflowPanel === 'function' && WF_READY) renderWorkflowPanel(true);
+}
+function renderPreview(){
+  const p = S.pending, d = S.decision, el = $('preview');
+  if (p && p.kind === 'touch'){
+    const m = p.msg; let body = '';
+    if (m.ch === 'inapp') body = `<div class="mock-inapp"><h3>${esc(m.title)}</h3><p>${esc(m.body)}</p><span class="cta">${esc(m.cta)}</span> <span style="font-size:12.5px;color:var(--muted);margin-left:8px">Not now</span></div>`;
+    else if (m.ch === 'email') body = `<div class="mock-email"><div class="label" style="margin-bottom:4px">Subject</div><div class="subj">${esc(m.title)}</div><p>${esc(m.body)}</p><span class="cta">${esc(m.cta)}</span><p style="margin-top:10px;font-size:12px">Manage preferences · Unsubscribe</p></div>`;
+    else if (m.ch === 'push') body = `<div class="mock-push"><span class="ic" aria-hidden="true"></span><p>${esc(m.body)}</p></div>`;
+    else body = `<div class="mock-sms">${esc(m.body)}</div>`;
+    el.innerHTML = `<div class="bar"><span><b>${CH[m.ch]}</b>${m.surface ? ' · ' + esc(m.surface) : ''}</span><span class="mono">${esc(fmt(p.at))}</span></div><div class="body">${body}</div>`;
+  } else if (p && p.kind === 'landing'){
+    el.innerHTML = `<div class="bar"><span><b>Landing page</b> · ${esc(S.P.T[p.theme].label)}</span><span class="mono">${esc(fmt(S.t))}</span></div><div class="body"><div class="mock-inapp"><h3>${esc(S.P.T[p.theme].inapp.title)}</h3><p>Offer details, calculator and FAQs. The page’s job is to answer the concern that brought the customer here.</p><span class="cta">Start application</span></div></div>`;
+  } else if (p && p.kind === 'app'){
+    el.innerHTML = `<div class="bar"><span><b>Application</b> · prefilled from the books</span><span class="mono">${esc(fmt(S.t))}</span></div><div class="body"><div class="mock-inapp"><h3>Step 2 of 3: business details</h3><p>Most fields are already filled in. Remaining: owner details, consent to a credit review, and the personal guarantee acknowledgment${S.P.kind === 'card' ? ' where required' : ''}.</p><span class="cta">Continue</span></div></div>`;
+  } else if (d && d.type === 'done') el.innerHTML = `<div class="body"><div class="donebox"><b>Journey complete.</b> ${esc(d.why)}</div></div>`;
+  else if (d && d.type === 'suppressed') el.innerHTML = `<div class="body"><div class="servbox"><b>Promotion suppressed.</b> ${esc(d.why)}</div></div>`;
+  else if (d && d.type === 'wait') el.innerHTML = `<div class="body"><div class="waitbox"><b>The engine is waiting.</b> ${esc(d.why)}</div></div>`;
+  else el.innerHTML = '';
+}
+const ACTIONS = {
+  touch:{ inapp:[['click','Clicked the CTA','good'],['viewthru','No click, visited lending page within 3 days','assist'],['ignore','Ignored it for 3 sessions','neg'],['notnow','Clicked “Not now”…','neg']],
+          email:[['click','Clicked the email CTA','good'],['viewthru','No click, visited lending page within 7 days','assist'],['noresp','No click and no visit','neg'],['optdown','Chose “fewer emails”','neg'],['unsub','Unsubscribed','bad']],
+          push:[['click','Tapped the push','good'],['viewthru','No tap, visited lending page within 24 hours','assist'],['noresp','No tap in 4 hours','neg'],['pushoff','Turned off notifications','bad']],
+          sms:[['click','Tapped the link','good'],['noresp','No tap in 24 hours','neg'],['stop','Replied STOP','bad']] },
+  abandon:[['click','Came back and resumed','good'],['noresp','Didn’t come back','neg']],
+  landing:[['start','Started an application','good'],['lp_none','Left without taking action','neg']],
+  app:[['submit','Submitted the application','good'],['abandon','Abandoned the application','neg']]
+};
+function currentActions(){
+  const p = S.pending; let list = [];
+  if (p){ list = p.kind === 'touch' ? (p.abandon ? ACTIONS.abandon : ACTIONS.touch[p.ch]) : (ACTIONS[p.kind] || []); }
+  else if (S.stage === 'snoozed') list = [['snoozeend','Let the snooze run out','neg'],['newneed','New need signal (ends snooze early)','good']];
+  else if (S.stage === 'paused') list = [['newneed','Simulate a new need signal','good']];
+  if (S.stage !== 'servicing' && S.stage !== 'submitted') list = list.concat([['risk','Late payment reported','bad']]);
+  return list;
+}
+function renderActions(){
+  const list = currentActions();
+  $('actionsLabel').textContent = S.pending ? 'What does the customer do?' : (S.stage === 'servicing' || S.stage === 'submitted') ? 'Journey ended' : 'What happens next?';
+  $('actions').innerHTML = list.length ? list.map(([k, label, cls]) => `<button class="btn ${cls}" data-sig="${k}" ${playing ? 'disabled' : ''}>${esc(label)}</button>`).join('') : `<button class="btn" data-reset="1" ${playing ? 'disabled' : ''}>Start over</button>`;
+  $('actions').querySelectorAll('[data-sig]').forEach(b => b.onclick = () => { if (b.dataset.sig === 'notnow'){ showNotNow = !showNotNow; renderActions(); return; } doSignal(b.dataset.sig); });
+  $('actions').querySelectorAll('[data-reset]').forEach(b => b.onclick = () => startJourney());
+  const sub = $('subactions');
+  if (showNotNow && S.pending && S.pending.kind === 'touch' && S.pending.ch === 'inapp' && !S.pending.abandon){
+    sub.innerHTML = `<div class="subrow"><div class="label" style="margin-bottom:6px">One tap: why not now?</div><div class="btnrow">${Object.entries(SNOOZE).map(([k, r]) => `<button class="btn neg" data-nn="${k}" ${playing ? 'disabled' : ''}>${esc(r.label)} · ${r.days} days</button>`).join('')}</div></div>`;
+    sub.querySelectorAll('[data-nn]').forEach(b => b.onclick = () => { showNotNow = false; doSignal('nn_' + b.dataset.nn); });
+  } else sub.innerHTML = '';
+}
+function doSignal(sig){
+  const before = sig === 'newneed' ? S.stage : (S.pending ? { ...S.pending } : null);
+  if (!applySignal(S, sig)) return false;
+  if (S.stage === 'landing' || S.stage === 'app') S.decision = { type:'inflow', gates:[], options:[], why:'' };
+  else step(S);
+  aiNote = ''; showNotNow = false;
+  wfRecord(sig, before);
+  render(); return true;
+}
+function renderTimeline(){
+  const ol = $('timeline');
+  ol.innerHTML = S.log.map(e => `<li class="k-${e.kind}"><span class="when">${esc(fmtShort(e.t))}<br>Day ${dayNum(e.t)}</span><span class="dot" aria-hidden="true"></span><span class="what"><b>${esc(e.text)}</b>${e.sub ? `<small>${esc(e.sub)}</small>` : ''}</span></li>`).join('');
+  ol.scrollTop = ol.scrollHeight;
+}
+function renderState(){
+  const i = Math.round(S.intent), band = i >= 70 ? 'hot' : i >= 45 ? 'warm' : 'cold';
+  $('intentVal').textContent = `${i} · ${band}`; $('intentBar').style.width = i + '%';
+  $('affinity').innerHTML = `<div class="label">Channel affinity</div>` + CHANNELS.map(c => {
+    const v = S.aff[c];
+    return `<div class="aff"><span>${CH[c]}</span>${S.consent[c] ? `<div class="meter"><i style="width:${Math.round(v * 100)}%"></i></div><span class="val">${v.toFixed(2)}</span>` : `<span style="color:var(--${S.P.consent[c] ? 'bad' : 'muted'});font-size:12.5px">${S.P.consent[c] ? 'Opted out: channel lost' : 'No consent'}</span><span></span>`}</div>`;
+  }).join('');
+  const theme = S.pending && S.pending.theme ? S.P.T[S.pending.theme].label : (S.objection ? S.P.T[S.objection].label : '—');
+  const risk = CHANNELS.filter(c => S.consent[c] && OPT_BASE[c] > 0).map(c => `${CH[c]} ${(optRisk(S, c, S.t).p * 100).toFixed(1)}%`).join(' · ') || '—';
+  $('stateKv').innerHTML = `<dt>Likely concern</dt><dd>${esc(S.objection ? S.P.T[S.objection].label : 'Not yet known')}</dd><dt>Current theme</dt><dd>${esc(theme)}</dd><dt>Themes without response</dt><dd>${S.tried.length ? esc(S.tried.map(k => S.P.T[k].label).join(', ')) : 'None'}</dd><dt>Touches this week</dt><dd>${touches7d(S, S.t)} of ${WEEK_CAP}</dd><dt>Unanswered in a row</dt><dd>${S.misses}</dd><dt>Opt-out risk per send</dt><dd class="mono" style="font-size:12.5px">${esc(risk)}</dd>`;
+}
+function prepared(d){
+  if (!d) return '';
+  if (d.type === 'send') return `${CH[d.ch]} at ${fmt(d.at)} with the “${S.P.T[d.theme].label}” message. ${d.why}`;
+  if (d.type === 'inflow') return 'The customer is mid-flow. The engine holds every outbound message and watches what they do next.';
+  return d.why;
+}
+function renderDecision(){
+  const d = S.decision, el = $('nba');
+  if (!d){ el.innerHTML = ''; return; }
+  let head = '';
+  if (d.type === 'send'){
+    const m = S.pending && S.pending.msg;
+    const issues = m ? checkMessage(msgText(m), { ch:d.ch, smsConsent:S.consent.sms, hour:at(d.at).getHours() }) : [];
+    const badge = issues.length ? `<span class="pill bad">${issues.length} compliance issue${issues.length > 1 ? 's' : ''}</span>` : `<span class="pill good">Compliance check passed</span>`;
+    head = `<div class="head"><b>${CH[d.ch]} · ${esc(fmtShort(d.at))}</b>${badge}</div><div style="font-size:13.5px">Theme: <b>${esc(S.P.T[d.theme].label)}</b>${d.abandon ? ' · abandonment branch' : ''}</div>`;
+  } else if (d.type === 'wait') head = `<div class="head"><b>Wait</b><span class="pill warn">No touch</span></div>`;
+  else if (d.type === 'suppressed') head = `<div class="head"><b>Suppressed</b><span class="pill bad">Servicing</span></div>`;
+  else if (d.type === 'done') head = `<div class="head"><b>Hand off to onboarding</b><span class="pill good">Converted</span></div>`;
+  else head = `<div class="head"><b>Hold outbound</b><span class="pill info">Customer in flow</span></div>`;
+  const aiOn = $('liveai').checked && sampleFn;
+  el.innerHTML = `<div class="label">Next-best action</div>${head}<div class="explain" id="explain"><span id="explainText">${esc(prepared(d))}</span><small id="explainSrc">${esc(aiNote || 'Prepared explanation from the decision trace')}</small></div>${aiOn ? `<div class="btnrow"><button class="btn" id="aiExplain">Explain with Claude</button></div>` : ''}`;
+  if (aiOn) $('aiExplain').onclick = () => aiExplain(d);
+  $('gates').innerHTML = (d.gates || []).map(g => `<li><span class="${g.ok ? 'ok' : 'no'}">${g.ok ? '✓' : '✗'}</span><span>${esc(g.text)}</span></li>`).join('') || '<li><span class="ok">·</span><span>No outbound decision while the customer is mid-flow.</span></li>';
+  const opts = d.options || [];
+  if (!opts.length){ $('opts').innerHTML = ''; return; }
+  const winCh = d.type === 'send' ? d.ch : null;
+  $('opts').innerHTML = `<tr><th>Option</th><th>When</th><th style="text-align:right">Benefit</th><th style="text-align:right">Cadence</th><th style="text-align:right">Fatigue</th><th style="text-align:right">Opt-out</th><th style="text-align:right">Net</th></tr>` +
+    opts.map(o => o.blocked
+      ? `<tr class="blocked"><td>${CH[o.ch]}</td><td colspan="6">${esc(o.blocked)}</td></tr>`
+      : `<tr class="${o.ch === winCh ? 'win' : ''}"><td>${CH[o.ch]}${o.alt ? `<br><small style="color:var(--muted)">soonest ${esc(fmtShort(o.alt.at))}: $${Math.round(o.alt.net)}</small>` : ''}</td><td style="white-space:nowrap">${esc(fmtShort(o.at))}${o.cal ? '<br><small style="color:var(--muted)">pre-payroll lift</small>' : ''}</td><td class="n">$${Math.round(o.benefit)}</td><td class="n">−$${Math.round(o.cadence)}</td><td class="n">−$${Math.round(o.fatigue + (o.repeat || 0))}</td><td class="n">−$${Math.round(o.opt || 0)}</td><td class="n"><b>$${Math.round(o.net)}</b></td></tr>`).join('') +
+    (d.abandon ? '' : `<tr class="${d.type === 'wait' ? 'win' : ''}"><td>Wait</td><td colspan="5">Until a new signal</td><td class="n">$${MIN_NET} bar</td></tr>`);
+}
+function renderLearn(){
+  $('learn').innerHTML = S.learn.length ? S.learn.map(x => `<li>${esc(x)}</li>`).join('') : `<li style="border-color:var(--line);color:var(--muted)">Nothing yet. Landing-page misses, view-throughs, lost channels and risk events show up here.</li>`;
+}
+
+/* ===== scripted paths ===== */
+const SCRIPTS = { engaged:['click','lp_none','click','start','abandon','noresp','click','submit'], silent:['neg','neg','neg','neg','neg'], risk:['click','lp_none','risk'] };
+function playScript(name){
+  if (playing) return;
+  startJourney();
+  const steps = SCRIPTS[name].slice();
+  playing = { stop:false }; setPlayUI(true);
+  const end = () => { playing = null; setPlayUI(false); render(); };
+  const tick = () => {
+    if (!playing || playing.stop || !steps.length) return end();
+    let sig = steps.shift();
+    if (sig === 'neg'){ const p = S.pending; if (!p) return end(); sig = p.kind === 'touch' && p.ch === 'inapp' && !p.abandon ? 'ignore' : 'noresp'; }
+    if (!doSignal(sig)) return end();
+    playing.timer = setTimeout(tick, 1700);
+  };
+  playing.timer = setTimeout(tick, 1200);
+}
+function setPlayUI(on){
+  ['playEngaged','playSilent','playRisk','reset'].forEach(id => $(id).disabled = on);
+  $('stopPlay').disabled = !on;
+  document.querySelectorAll('.pbtn').forEach(b => b.disabled = on);
+  if (S) renderActions();
+}
+$('playEngaged').onclick = () => playScript('engaged');
+$('playSilent').onclick = () => playScript('silent');
+$('playRisk').onclick = () => { if (playing) return; personaId = 'harbor'; renderPersonas(); playScript('risk'); };
+$('stopPlay').onclick = () => { if (playing){ playing.stop = true; clearTimeout(playing.timer); playing = null; setPlayUI(false); render(); } };
+$('reset').onclick = () => startJourney();
+$('toFlow').onclick = () => $('tab-flow').click();
+
+/* ===== tabs ===== */
+document.querySelectorAll('nav.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav.tabs button').forEach(x => x.setAttribute('aria-selected', x === b ? 'true' : 'false'));
+  ['sim','exp','comp','how','flow'].forEach(v => $('view-' + v).hidden = v !== b.dataset.view);
+  if (b.dataset.view === 'flow' && S) renderWorkflowPanel(true);
+  try { localStorage.setItem('cla-tab', b.dataset.view); } catch(e){}
+});
+
+/* ===== experiments ===== */
+function svgEl(w, h, pad){ return { w, h, ...pad }; }
+function tipGroup(x, y, lines){
+  const wpx = Math.max(...lines.map(l => l.length)) * 6.4 + 16, hpx = lines.length * 15 + 10;
+  const tx = Math.min(Math.max(x - wpx / 2, 0), 520 - wpx), ty = Math.max(y - hpx - 8, 0);
+  return `<g class="tip"><rect x="${tx}" y="${ty}" width="${wpx}" height="${hpx}" rx="4"></rect>${lines.map((l, i) => `<text x="${tx + 8}" y="${ty + 17 + i * 15}">${esc(l)}</text>`).join('')}</g>`;
+}
+function renderExperiments(){
+  const h = EXP.holdout, inc = h.dollarsT - h.dollarsH;
+  $('kpis').innerHTML = [
+    ['Incremental funded $', `+$${inc.toFixed(1)}`, 'per eligible customer, 30 days'],
+    ['Lift vs. holdout', `+${Math.round(inc / h.dollarsH * 100)}%`, `$${h.dollarsT} treated vs $${h.dollarsH} holdout`],
+    ['Opt-out rate', `${h.optT}%`, 'guardrail: under 0.3%'],
+    ['90-day 30+ DPD', `${h.dpdT.toFixed(1)}% vs ${h.dpdH.toFixed(1)}%`, 'guardrail: no worse than holdout +0.2 pts']
+  ].map(([l, v, s]) => `<div class="kpi"><div class="label">${esc(l)}</div><div class="v">${esc(v)}</div><div class="s">${esc(s)}</div></div>`).join('');
+  $('holdoutTable').innerHTML = `<tr><th>30-day outcome</th><th style="text-align:right">Treated (${h.treatedN.toLocaleString()})</th><th style="text-align:right">Holdout (${h.holdoutN.toLocaleString()})</th><th style="text-align:right">Incremental</th></tr>
+    <tr><td>Application rate</td><td class="n">${h.appT}%</td><td class="n">${h.appH}%</td><td class="n">+${(h.appT - h.appH).toFixed(1)} pts</td></tr>
+    <tr><td>Funded rate</td><td class="n">${h.fundT}%</td><td class="n">${h.fundH}%</td><td class="n">+${(h.fundT - h.fundH).toFixed(1)} pts</td></tr>
+    <tr><td>Risk-adjusted funded $ per eligible</td><td class="n">$${h.dollarsT}</td><td class="n">$${h.dollarsH}</td><td class="n">+$${inc.toFixed(1)}</td></tr>
+    <tr><td>Opt-out rate (all channels)</td><td class="n">${h.optT}%</td><td class="n">—</td><td class="n">—</td></tr>
+    <tr><td>90-day 30+ days past due</td><td class="n">${h.dpdT.toFixed(1)}%</td><td class="n">${h.dpdH.toFixed(1)}%</td><td class="n">+${(h.dpdT - h.dpdH).toFixed(1)} pts</td></tr>`;
+  $('holdoutVerdict').textContent = `About ${Math.round(h.fundH / h.fundT * 100)}% of funded customers would have converted without any marketing, so only the gap over the holdout counts as the engine’s impact: $${inc.toFixed(1)} per eligible customer, about $${Math.round(inc * h.treatedN / 1000)}K across the treated group, with both guardrails holding.`;
+
+  // cap chart: bars of net value
+  const cap = EXP.cap, best = cap.reduce((a, b) => b.net > a.net ? b : a);
+  { const W = 520, Hh = 240, L = 54, R = 12, T = 18, B = 34, max = Math.ceil(Math.max(...cap.map(c => c.net)) / 2000) * 2000;
+    const y = v => T + (Hh - T - B) * (1 - v / max), bw = (W - L - R) / cap.length;
+    let s = '';
+    for (let v = 0; v <= max; v += 2000) s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"></line><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">$${v / 1000}K</text>`;
+    cap.forEach((c, i) => {
+      const x = L + i * bw + bw * 0.22, w = bw * 0.56, top = y(c.net);
+      s += `<g><path class="bar ${c === best ? 'win' : ''}" d="M${x},${y(0)} V${top + 4} q0,-4 4,-4 h${w - 8} q4,0 4,4 V${y(0)} Z"></path><text x="${x + w / 2}" y="${Hh - B + 16}" text-anchor="middle">${c.c}/wk</text>${c === best ? `<text class="lbl" x="${x + w / 2}" y="${top - 6}" text-anchor="middle">$${(c.net / 1000).toFixed(1)}K</text>` : ''}<rect class="hit" x="${L + i * bw}" y="${T}" width="${bw}" height="${Hh - T - B}"></rect>${tipGroup(x + w / 2, top, [`Cap ${c.c} per week`, `Incremental $${Math.round(c.lift).toLocaleString()}`, `Opt-outs ${c.opt.toFixed(1)} per 1,000`, `Net $${Math.round(c.net).toLocaleString()}`])}</g>`;
+    });
+    s += `<line class="ax" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"></line>`;
+    $('capChart').innerHTML = s;
+  }
+  $('capTable').innerHTML = `<tr><th>Cap</th><th style="text-align:right">Incremental $ / 1,000</th><th style="text-align:right">Opt-outs / 1,000</th><th style="text-align:right">Lost channel value</th><th style="text-align:right">Net</th></tr>` + cap.map(c => `<tr class="${c === best ? 'win' : ''}"><td>${c.c} per week</td><td class="n">$${Math.round(c.lift).toLocaleString()}</td><td class="n">${c.opt.toFixed(1)}</td><td class="n">−$${Math.round(c.cost).toLocaleString()}</td><td class="n"><b>$${Math.round(c.net).toLocaleString()}</b></td></tr>`).join('');
+  $('capVerdict').textContent = `In this run a cap of ${best.c} wins. Going from ${best.c} to ${best.c + 1} touches adds $${Math.round(cap[best.c - 1].lift - cap[best.c - 2].lift).toLocaleString()} of lift but costs $${Math.round(cap[best.c - 1].cost - cap[best.c - 2].cost).toLocaleString()} in lost channels, so the engine’s starting cap of 4 would be lowered for this segment.`;
+
+  // ignore chart: line with reference
+  { const d = EXP.ign, W = 520, Hh = 240, L = 44, R = 16, T = 18, B = 34, max = 4;
+    const x = i => L + (W - L - R) * (i / (d.length - 1)), y = v => T + (Hh - T - B) * (1 - v / max);
+    let s = '';
+    for (let v = 0; v <= max; v += 1) s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"></line><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}%</text>`;
+    s += `<line class="rf" x1="${L}" x2="${W - R}" y1="${y(EXP.ignRef)}" y2="${y(EXP.ignRef)}"></line><text x="${W - R}" y="${y(EXP.ignRef) - 6}" text-anchor="end" style="fill:var(--ref)">Next-best channel ${EXP.ignRef}%</text>`;
+    s += `<path class="ln" d="${d.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ')}"></path>`;
+    d.forEach((v, i) => { s += `<g><circle class="pt" cx="${x(i)}" cy="${y(v)}" r="5"></circle><text x="${x(i)}" y="${Hh - B + 16}" text-anchor="middle">#${i + 1}</text><rect class="hit" x="${x(i) - 30}" y="${T}" width="60" height="${Hh - T - B}"></rect>${tipGroup(x(i), y(v), [`Impression #${i + 1}`, `Click rate ${v}%`])}</g>`; });
+    s += `<line class="ax" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"></line>`;
+    $('ignChart').innerHTML = s;
+  }
+  const k = EXP.ign.findIndex(v => v < EXP.ignRef);
+  $('ignVerdict').textContent = `The 4th impression earns ${EXP.ign[k]}%, below the ${EXP.ignRef}% the next-best channel would earn, so switching after ${k} ignored impressions is right for this segment. A segment with a slower curve would earn more impressions before switching.`;
+
+  // snooze table
+  const sz = EXP.snooze;
+  const wins = {};
+  $('snoozeTable').innerHTML = `<tr><th>“Not now” reason</th>${sz.days.map(d => `<th style="text-align:right">${d} days</th>`).join('')}</tr>` + sz.rows.map(r => {
+    const scores = r.re.map((v, i) => v - 5 * r.opt[i]); const bi = scores.indexOf(Math.max(...scores)); wins[r.key] = sz.days[bi];
+    return `<tr><td>${esc(SNOOZE[r.key].label)}</td>${r.re.map((v, i) => `<td class="n" style="${i === bi ? 'background:var(--accent-soft);font-weight:600' : ''}">${v}% back<br><small style="color:var(--muted)">${r.opt[i]}% opt-out</small></td>`).join('')}</tr>`;
+  }).join('');
+  $('snoozeVerdict').textContent = `One snooze length doesn’t fit everyone. “Remind me later” and cost concerns do best at ${wins.later} days; customers who don’t need funding or already have it do best at ${wins.need} days, with a new need signal ending the snooze early. The engine uses these per-reason values.`;
+
+  // decay chart
+  { const d = EXP.decay, W = 520, Hh = 240, L = 44, R = 16, T = 18, B = 34;
+    const x = i => L + (W - L - R) * (i / (d.length - 1)), y = v => T + (Hh - T - B) * (1 - v / 100);
+    let s = '';
+    for (let v = 0; v <= 100; v += 25) s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"></line><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}%</text>`;
+    s += `<line class="rf" x1="${x(7)}" x2="${x(7)}" y1="${T}" y2="${y(0)}"></line><text x="${x(7) + 6}" y="${y(0) - 8}" style="fill:var(--ref)">7-day click window</text>`;
+    s += `<path class="ln" d="${d.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ')}"></path>`;
+    d.forEach((v, i) => { s += `<g>${i % 2 === 0 ? `<text x="${x(i)}" y="${Hh - B + 16}" text-anchor="middle">${i}</text>` : ''}<circle class="pt" cx="${x(i)}" cy="${y(v)}" r="${i === 4 || i === 7 ? 5 : 3}"></circle><rect class="hit" x="${x(i) - 14}" y="${T}" width="28" height="${Hh - T - B}"></rect>${tipGroup(x(i), y(v), [`Day ${i}`, `${v}% of applicants`])}</g>`; });
+    s += `<text class="lbl" x="${x(4) + 8}" y="${y(80) + 16}">80% by day 4</text>`;
+    s += `<line class="ax" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"></line>`;
+    $('decayChart').innerHTML = s;
+  }
+  $('decayVerdict').textContent = `80% of applicants who click apply within 4 days and 89% within 7. So clicks get a 7-day attribution window, and intent from a click fades with a 5-day half-life. Impressions without a click get shorter view-through windows (in-product 3 days, push 1 day), checked the same way against the holdout.`;
+}
+
+/* ===== compliance UI ===== */
+const SAMPLES = [
+  { label:'Approval promise', ch:'email', prod:'loan', sms:false, time:'10:00', text:'Congrats! You’re approved for $50K at 8% APR. Act now — this offer expires tonight!' },
+  { label:'Risky SMS', ch:'sms', prod:'loan', sms:false, time:'22:30', text:'Your $35K line of credit is guaranteed. No credit check, risk-free. Tap to claim.' },
+  { label:'Superlative', ch:'push', prod:'loan', sms:false, time:'12:00', text:'Pre-approved: get the lowest rates on a business loan up to $75K. Limited time!' },
+  { label:'Compliant example', ch:'email', prod:'loan', sms:false, time:'07:00', text:'You’re prequalified for a line of credit up to $35K, subject to credit review. Viewing your offer won’t affect your personal credit score.' }
+];
+function renderSamples(){
+  $('samples').innerHTML = SAMPLES.map((s, i) => `<button class="btn" data-s="${i}">${esc(s.label)}</button>`).join('');
+  $('samples').querySelectorAll('[data-s]').forEach(b => b.onclick = () => loadSample(SAMPLES[+b.dataset.s]));
+}
+function loadSample(s){ $('msg').value = s.text; $('ch').value = s.ch; $('prod').value = s.prod; $('smsConsent').checked = s.sms; $('sendTime').value = s.time; runCheck(); }
+function ctxNow(){ const v = $('sendTime').value || '10:00'; return { ch:$('ch').value, prod:$('prod').value, smsConsent:$('smsConsent').checked, hour:parseInt(v.split(':')[0], 10) }; }
+function runCheck(){
+  const text = $('msg').value.trim(), ctx = ctxNow(), isSms = ctx.ch === 'sms';
+  $('smsConsentWrap').hidden = !isSms; $('sendTimeWrap').hidden = !isSms;
+  if (!text){ $('issues').innerHTML = '<li class="empty">Type or load a message to check it.</li>'; $('fixed').textContent = '—'; $('issueCount').textContent = ''; $('issueCount').className = 'pill'; return; }
+  const issues = checkMessage(text, ctx);
+  $('issueCount').textContent = issues.length ? `${issues.length} issue${issues.length > 1 ? 's' : ''}` : 'Passes';
+  $('issueCount').className = 'pill ' + (issues.length ? 'bad' : 'good');
+  $('issues').innerHTML = issues.length ? issues.map(r => `<li class="issue ${r.sev}"><b>${esc(r.title)}</b><small>${esc(r.why)}</small></li>`).join('') : '<li class="issue low"><b>No issues found</b><small>This message passes every rule in this check.</small></li>';
+  const fixed = fixMessage(text, ctx), left = checkMessage(fixed, { ...ctx, smsConsent:true, hour:10 }), notes = [];
+  if (isSms && !ctx.smsConsent) notes.push('No SMS consent: send this by email or in-product instead.');
+  if (isSms && (ctx.hour < 8 || ctx.hour >= 21)) notes.push('Reschedule to 10:00 AM in the customer’s time zone.');
+  $('fixed').innerHTML = (issues.length ? esc(fixed) : esc(text) + ' <span class="pill good">Already compliant</span>') + (left.length ? `<div style="margin-top:6px;font-size:12.5px;color:var(--muted)">Still needs a human edit: ${esc(left.map(r => r.title).join('; '))}</div>` : '') + (notes.length ? `<div style="margin-top:6px;font-size:12.5px">${esc(notes.join(' '))}</div>` : '');
+}
+['msg','ch','prod','smsConsent','sendTime'].forEach(id => $(id).addEventListener('input', runCheck));
+$('rulelist').innerHTML = RULES.map(r => `<li>${esc(r.title)}</li>`).join('');
+
+function renderVariantSelectors(){
+  $('vPersona').innerHTML = Object.values(PERSONAS).map(P => `<option value="${P.id}">${esc(P.name)}</option>`).join('');
+  const fill = () => { const P = PERSONAS[$('vPersona').value]; $('vTheme').innerHTML = Object.entries(P.T).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join(''); };
+  $('vPersona').onchange = () => { fill(); $('variants').innerHTML = ''; };
+  $('vTheme').onchange = () => { $('variants').innerHTML = ''; };
+  fill();
+}
+function showVariants(list, note){
+  $('variants').innerHTML = list.map(v => `<li><span>${esc(v.text)}</span><span class="pill ${v.src === 'AI' ? 'info' : ''}">${v.src}</span></li>`).join('');
+  $('draftNote').textContent = note;
+}
+$('draftBtn').onclick = async () => {
+  const P = PERSONAS[$('vPersona').value], th = P.T[$('vTheme').value];
+  const prep = th.alts.map(text => ({ text, src:'Prepared' }));
+  if (!($('liveai').checked && sampleFn)){ showVariants(prep, 'Prepared lines, each passing the same rules. Turn on Live AI to have Claude write new ones.'); return; }
+  showVariants(prep, 'Prepared lines shown while Claude writes new ones…');
+  $('draftBtn').disabled = true;
+  const prompt = `Write 3 email subject lines for a small-business ${P.kind === 'card' ? 'business credit card' : P.product.toLowerCase()} offer.
+Business: ${P.name} (${P.industry}). Offer: ${P.offer}. Context: ${P.trigger}
+Message theme: "${th.label}". Example of the approved tone: "${th.email.subject}".
+Rules: never say approved, pre-approved or guaranteed; no rates or APRs; no urgency or pressure; no "no credit check" or "risk-free"; under 70 characters; plain, specific, friendly.
+Reply with only a JSON array of 3 strings.`;
+  try {
+    const arr = await sampleFn.json(prompt, { modelTier:'quick' });
+    if (!Array.isArray(arr)) throw { code:'invalid_json' };
+    let replaced = 0;
+    const out = arr.slice(0, 3).map((s, i) => { const text = String(s || '').trim(); if (!text || text.length > 120 || checkMessage(text, { ch:'email' }).length){ replaced++; return prep[i]; } return { text, src:'AI' }; });
+    while (out.length < 3){ out.push(prep[out.length]); replaced++; }
+    showVariants(out, replaced ? `${replaced} AI draft${replaced > 1 ? 's' : ''} failed the rules or came back empty and ${replaced > 1 ? 'were' : 'was'} replaced with a prepared line.` : 'Claude wrote these; each passed the rules above.');
+  } catch (e){ showVariants(prep, 'Live AI wasn’t available for this request, so the prepared lines are shown.'); }
+  finally { $('draftBtn').disabled = false; }
+};
+async function aiExplain(d){
+  if (!sampleFn) return;
+  const btn = $('aiExplain'); if (btn) btn.disabled = true;
+  $('explainSrc').textContent = 'Claude is writing a plain-English explanation…';
+  const trace = { customer:S.P.name, product:S.P.product, decision:d.type, channel:d.ch ? CH[d.ch] : null, sendAt:d.at != null ? fmt(d.at) : null, theme:d.theme ? S.P.T[d.theme].label : null, intent:Math.round(S.intent), affinity:S.aff, recentSignals:S.log.slice(-4).map(e => e.text), options:(d.options || []).map(o => o.blocked ? { channel:CH[o.ch], blocked:o.blocked } : { channel:CH[o.ch], when:fmtShort(o.at), net:Math.round(o.net), cadenceCost:Math.round(o.cadence), optOutCost:Math.round(o.opt || 0) }), engineReason:d.why };
+  const prompt = `You explain a marketing engine's next-best-action decision to a marketing director in 2 or 3 short, plain sentences. No hype, no lists, no promises about approval or rates. Explain why this channel and timing (or waiting) won, and mention the cadence or opt-out trade-off if relevant. Decision data:\n${JSON.stringify(trace)}`;
+  try {
+    const { text } = await sampleFn(prompt, { modelTier:'quick', onText:({ text }) => { const ex = $('explainText'); if (ex) ex.textContent = text; } });
+    const clean = String(text).trim();
+    if (!clean || checkMessage(clean, { ch:'email' }).some(r => r.sev === 'high')) throw { code:'filtered' };
+    aiNote = 'Written by Claude from the decision trace';
+    if ($('explainText')) $('explainText').textContent = clean;
+    $('explainSrc').textContent = aiNote;
+  } catch (e){
+    if ($('explainText')) $('explainText').textContent = prepared(d);
+    if ($('explainSrc')) $('explainSrc').textContent = 'Live AI wasn’t available, so the prepared explanation is shown.';
+  } finally { if ($('aiExplain')) $('aiExplain').disabled = false; }
+}
+
+/* ===== live AI availability ===== */
+$('liveai').checked = false; $('liveai').disabled = true;
+$('liveaiLabel').textContent = 'Live AI (checking…)';
+$('liveai').onchange = () => { $('draftMode').textContent = $('liveai').checked ? 'Live AI' : 'Prepared'; if (S) renderDecision(); };
+(async () => {
+  try { const s = window.claude && window.claude.use ? await window.claude.use('sample') : null; sampleFn = s || null; } catch(e){ sampleFn = null; }
+  $('liveai').disabled = !sampleFn;
+  $('liveaiLabel').textContent = sampleFn ? 'Live AI' : 'Live AI (not available here)';
+  if (!sampleFn) $('liveai').parentElement.title = 'Live AI isn’t available in this view. Everything runs on prepared content, which behaves the same.';
+})();
+
+/* ===== workflow view ===== */
+const NW = 186, NH = 56, CX = i => 20 + 252 * i;
+const WF_NODES = {
+  trigger:{ x:CX(0), y:220, k:'trigger', ic:'bolt', t:'Need signal', s:'Cash gap · bank feed', d:'A behavioral trigger from the books starts the journey: a forecast cash gap, other-issuer card payments, revenue growth.' },
+  gate:{ x:CX(1), y:220, k:'logic', ic:'gate', t:'Eligibility gate', s:'Risk · snooze · cap', d:'Checks Risk-approved eligibility, suppressions, snooze, channel consent and the weekly touch cap.' },
+  state:{ x:CX(2), y:220, k:'logic', ic:'user', t:'Update state', s:'Intent · affinity', d:'Applies intent decay, channel affinity, likely concern, fatigue and opt-out risk.' },
+  score:{ x:CX(3), y:220, k:'logic', ic:'gauge', t:'Score options', s:'Timing · cost · risk', d:'Scores every consented channel at every allowed hour: timed benefit minus cadence, fatigue, repeat and opt-out costs.' },
+  decide:{ x:CX(4), y:220, k:'logic', ic:'branch', t:'Send or wait?', s:'Net must clear $8', d:'Picks the best option, or waits when nothing clears the threshold.' },
+  waitneed:{ x:CX(4), y:60, k:'wait', ic:'clock', t:'Wait for new need', s:'Paused, no touches', d:'The engine holds all outreach until a new need signal arrives.' },
+  compliance:{ x:CX(5), y:220, k:'logic', ic:'shield', t:'Compliance check', s:'Lending rules', d:'Every message clears the lending rules (prequalified wording, no rate promises, credit-review qualifier, SMS consent and quiet hours).' },
+  route:{ x:CX(6), y:220, k:'logic', ic:'branch', t:'Route by channel', s:'Switch', d:'Sends the approved message to the chosen channel at the chosen time.' },
+  ch_inapp:{ x:CX(7), y:40, k:'action', ic:'screen', t:'In-product', s:'Card on a surface', d:'Shown in-session on the surface the engine picked.' },
+  ch_email:{ x:CX(7), y:130, k:'action', ic:'mail', t:'Email', s:'Learned send time', d:'Sent at the customer’s strongest email hour.' },
+  ch_push:{ x:CX(7), y:220, k:'action', ic:'send', t:'Push', s:'Opt-in only', d:'App push, only with opt-in.' },
+  ch_sms:{ x:CX(7), y:310, k:'action', ic:'send', t:'SMS', s:'Consent · quiet hours', d:'Marketing texts only with written consent, 8 AM–9 PM.' },
+  response:{ x:CX(7), y:470, k:'wait', ic:'clock', t:'Response window', s:'3 sessions · 48h · 4h', d:'Waits out the channel’s window so silence becomes an event the engine can act on.' },
+  classify:{ x:CX(6), y:470, k:'logic', ic:'branch', t:'Classify signal', s:'Engaged or silent', d:'Turns what the customer did, or didn’t do, into a signal type: engaged, view-through, silent, not now, opt-out.' },
+  removech:{ x:CX(6), y:340, k:'bad', ic:'stop', t:'Remove channel', s:'Unsubscribe or STOP', d:'The worst outcome: the channel is gone for every future offer. Remaining touches are re-planned.' },
+  replan:{ x:CX(4), y:360, k:'logic', ic:'loop', t:'Re-plan', s:'Back to Update state', d:'Loops the customer back into the engine with the new signal applied.' },
+  landing:{ x:CX(4), y:470, k:'action', ic:'page', t:'Landing page', s:'Offer · calculator', d:'Where clicks and view-throughs arrive. Its job is to answer the customer’s concern.' },
+  lpflag:{ x:CX(3), y:470, k:'learn', ic:'flag', t:'Flag page + theme', s:'Message didn’t land', d:'Leaving without action marks the theme as not landing, flags the page for a test, and sets the next likely concern.' },
+  application:{ x:CX(4), y:610, k:'action', ic:'form', t:'Application', s:'Prefilled from books', d:'Owner details, credit review consent and the personal guarantee acknowledgment.' },
+  abandon:{ x:CX(5), y:610, k:'wait', ic:'clock', t:'Abandonment save', s:'Now + 1 reminder', d:'A service moment: one nudge right away and one reminder within 24 hours on a different channel, with no cadence cost.' },
+  onboarding:{ x:CX(3), y:610, k:'good', ic:'check', t:'Onboarding', s:'Funding · autopay', d:'Submitted applications leave this journey and enter onboarding.' },
+  snooze:{ x:CX(2), y:640, k:'wait', ic:'clock', t:'Snooze by reason', s:'7 or 30 days', d:'“Not now” asks why. Each reason has its own snooze; a new need signal ends it early.' },
+  riskevt:{ x:CX(0), y:470, k:'trigger', ic:'bolt', t:'Risk event', s:'Late payment, any time', d:'Fires whenever Servicing reports a late payment. Overrides every stage.' },
+  servicing:{ x:CX(1), y:470, k:'bad', ic:'stop', t:'Servicing hand-off', s:'All promotion stops', d:'Marketing and Servicing share one suppression list. No offers while an account is past due.' }
+};
+// [from, to, label, fromSide, toSide, curve]
+const WF_EDGES = [
+  ['trigger','gate',''], ['gate','state','pass'], ['state','score',''], ['score','decide',''], ['decide','compliance','send'], ['compliance','route','ok'],
+  ['decide','waitneed','wait','t','b'], ['waitneed','trigger','new need','l','t'],
+  ['route','ch_inapp',''], ['route','ch_email',''], ['route','ch_push',''], ['route','ch_sms',''],
+  ['ch_inapp','response','','r','r',70], ['ch_email','response','','r','r',60], ['ch_push','response','','r','r',50], ['ch_sms','response','','r','r',40],
+  ['response','classify',''], ['classify','landing','click / view-through','l','r'], ['classify','replan','silence','l','r'],
+  ['classify','removech','opt-out','t','b'], ['removech','replan','','l','r'], ['replan','state','','l','b'],
+  ['landing','lpflag','leaves','l','r'], ['lpflag','replan','','t','l'], ['landing','application','starts','b','t'],
+  ['application','onboarding','submits','l','r'], ['application','abandon','abandons','r','l'], ['classify','abandon','no return','b','r'],
+  ['abandon','compliance','nudge','t','b'], ['classify','application','resumed','b','b',150], ['classify','snooze','not now','b','b',210],
+  ['snooze','gate','snooze ends','t','b'], ['gate','servicing','suppressed','b','t'], ['riskevt','servicing','','r','l']
+];
+const ICONS = {
+  bolt:'M11 2 L5 11 H10 L9 18 L15 9 H10 Z', gate:'M3 4 H17 L12 10 V16 L8 18 V10 Z', user:'M10 9 A3.2 3.2 0 1 0 10 2.6 A3.2 3.2 0 1 0 10 9 Z M4 17 C4 13 7 11.5 10 11.5 C13 11.5 16 13 16 17',
+  gauge:'M3 15 A7 7 0 0 1 17 15 M10 15 L13.5 9', branch:'M5 3 V17 M5 10 H9 C12 10 12 5 15 5 M9 10 C12 10 12 15 15 15', clock:'M10 3 A7 7 0 1 0 10.01 3 Z M10 6 V10 L13 12',
+  shield:'M10 2.5 L16.5 5 V10 C16.5 13.5 13.5 16.5 10 17.5 C6.5 16.5 3.5 13.5 3.5 10 V5 Z M7 10 L9 12 L13 8', screen:'M3 4 H17 V13 H3 Z M7 17 H13 M10 13 V17',
+  mail:'M3 5 H17 V15 H3 Z M3 5 L10 11 L17 5', send:'M3 10 L17 3 L13 17 L10 11 Z', page:'M5 2.5 H12 L15 5.5 V17.5 H5 Z M7.5 9 H12.5 M7.5 12 H12.5',
+  form:'M4 3 H16 V17 H4 Z M7 7 H13 M7 10.5 H10 M7 14 L8.5 15.5 L12 12', flag:'M5 18 V3 H15 L12.5 6.5 L15 10 H5', stop:'M10 3 A7 7 0 1 0 10.01 3 Z M6 6 L14 14', check:'M10 3 A7 7 0 1 0 10.01 3 Z M6.5 10 L9 12.5 L13.5 7.5',
+  loop:'M15 7 A6 6 0 1 0 16 12 M15 3 V7 H11'
+};
+const KIND_LABEL = { trigger:'Trigger', logic:'Logic', action:'Action', wait:'Wait', learn:'Learn', good:'Outcome', bad:'Stop' };
+let WF = { counts:{}, path:[], active:null, sel:'state', log:[], timers:[] };
+
+function portXY(n, side){
+  const N = WF_NODES[n];
+  if (side === 'r') return [N.x + NW, N.y + NH / 2];
+  if (side === 'l') return [N.x, N.y + NH / 2];
+  if (side === 't') return [N.x + NW / 2, N.y];
+  return [N.x + NW / 2, N.y + NH];
+}
+function edgeGeom(a, b, f, t, kk){
+  const A = WF_NODES[a], B = WF_NODES[b];
+  let s1 = f, s2 = t;
+  if (!s1){
+    if (B.x >= A.x + NW + 10){ s1 = 'r'; s2 = 'l'; }
+    else if (B.x + NW + 10 <= A.x){ s1 = 'l'; s2 = 'r'; }
+    else if (B.y > A.y){ s1 = 'b'; s2 = 't'; }
+    else { s1 = 't'; s2 = 'b'; }
+  }
+  const [x1, y1] = portXY(a, s1), [x2, y2] = portXY(b, s2);
+  const dir = { r:[1,0], l:[-1,0], t:[0,-1], b:[0,1] };
+  const k = kk || Math.min(160, Math.max(36, Math.hypot(x2 - x1, y2 - y1) * 0.35));
+  const c1 = [x1 + dir[s1][0] * k, y1 + dir[s1][1] * k], c2 = [x2 + dir[s2][0] * k, y2 + dir[s2][1] * k];
+  const m = t => { const u = 1 - t; return [u*u*u*x1 + 3*u*u*t*c1[0] + 3*u*t*t*c2[0] + t*t*t*x2, u*u*u*y1 + 3*u*u*t*c1[1] + 3*u*t*t*c2[1] + t*t*t*y2]; };
+  return { d:`M${x1},${y1} C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${x2},${y2}`, mid:m(0.5) };
+}
+function drawWorkflow(){
+  const svg = $('wf'); if (!svg) return;
+  let s = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z"></path></marker><marker id="ahh" class="hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z"></path></marker></defs>`;
+  const seen = new Set();
+  WF_EDGES.forEach(([a, b, lbl, f, t, kk]) => {
+    const key = a + '>' + b; if (seen.has(key)) return; seen.add(key);
+    const g = edgeGeom(a, b, f, t, kk);
+    const lw = lbl ? lbl.length * 5.9 + 12 : 0;
+    s += `<g class="we" data-e="${key}"><path d="${g.d}" marker-end="url(#ah)"></path>${lbl ? `<rect x="${g.mid[0] - lw / 2}" y="${g.mid[1] - 9}" width="${lw}" height="18" rx="9"></rect><text x="${g.mid[0]}" y="${g.mid[1] + 3.5}" text-anchor="middle">${esc(lbl)}</text>` : ''}</g>`;
+  });
+  for (const [id, N] of Object.entries(WF_NODES)){
+    s += `<g class="wn k-${N.k}" data-n="${id}" tabindex="0" role="button" aria-label="${esc(N.t)}"><rect class="box" x="${N.x}" y="${N.y}" width="${NW}" height="${NH}" rx="10"></rect>
+      <rect class="ib" x="${N.x + 8}" y="${N.y + 11}" width="34" height="34" rx="8"></rect>
+      <g transform="translate(${N.x + 15},${N.y + 18})"><path class="ic" d="${ICONS[N.ic]}"></path></g>
+      <text class="t1" x="${N.x + 50}" y="${N.y + 25}">${esc(N.t)}</text><text class="t2" x="${N.x + 50}" y="${N.y + 41}">${esc(N.s)}</text>
+      <circle class="port" cx="${N.x}" cy="${N.y + NH / 2}" r="3.5"></circle><circle class="port" cx="${N.x + NW}" cy="${N.y + NH / 2}" r="3.5"></circle>
+      <g class="cntg" data-c="${id}"></g></g>`;
+  }
+  svg.innerHTML = s;
+  svg.querySelectorAll('.wn').forEach(g => {
+    const pick = () => { WF.sel = g.dataset.n; paintWorkflow(false); renderInspector(); };
+    g.onclick = pick; g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(); } };
+  });
+}
+function decisionPath(){
+  const d = S.decision; if (!d) return [];
+  if (d.type === 'send') return d.abandon ? ['abandon','compliance','route','ch_' + d.ch,'response'] : ['state','score','decide','compliance','route','ch_' + d.ch,'response'];
+  if (d.type === 'wait') return S.stage === 'snoozed' ? [] : ['state','score','decide','waitneed'];
+  if (d.type === 'suppressed') return ['servicing'];
+  return [];
+}
+function signalPrefix(sig, before){
+  const ab = before && before.kind === 'touch' && before.abandon;
+  switch (sig){
+    case 'click': return ab ? ['response','classify','application'] : ['response','classify','landing'];
+    case 'viewthru': return ['response','classify','landing'];
+    case 'noresp': case 'ignore': return ab && S.stage === 'abandoned' ? ['response','classify'] : ['response','classify','replan'];
+    case 'optdown': return ['response','classify','replan'];
+    case 'unsub': case 'stop': case 'pushoff': return ['response','classify','removech','replan'];
+    case 'start': return ['landing','application'];
+    case 'lp_none': return ['landing','lpflag','replan'];
+    case 'submit': return ['application','onboarding'];
+    case 'abandon': return ['application'];
+    case 'risk': return ['riskevt','servicing'];
+    case 'newneed': return before === 'snoozed' ? ['snooze','gate'] : ['waitneed','trigger','gate'];
+    case 'snoozeend': return ['snooze','gate'];
+    default: return sig && sig.startsWith('nn_') ? ['response','classify','snooze'] : [];
+  }
+}
+function wfRecord(sig, before){
+  let path = sig === '__start' ? ['trigger','gate'] : signalPrefix(sig, before);
+  if (sig !== 'risk') path = path.concat(decisionPath());
+  // drop immediate duplicates (e.g. 'gate' then 'state' twice)
+  path = path.filter((n, i) => n !== path[i - 1]);
+  if (sig === '__start'){ WF.counts = {}; WF.log = []; }
+  path.forEach(n => WF.counts[n] = (WF.counts[n] || 0) + 1);
+  WF.path = path; WF.active = path[path.length - 1] || WF.active;
+  const last = S.log[S.log.length - 1];
+  WF.log.push({ nodes:path.map(n => WF_NODES[n].t).join(' → '), out: last ? last.text : '' });
+  if (WF.log.length > 40) WF.log.shift();
+}
+function paintWorkflow(animate){
+  const svg = $('wf'); if (!svg || !svg.firstChild) return;
+  WF.timers.forEach(clearTimeout); WF.timers = [];
+  svg.querySelectorAll('.wn').forEach(g => { g.classList.remove('hot','active'); g.classList.toggle('sel', g.dataset.n === WF.sel); });
+  svg.querySelectorAll('.we').forEach(g => { g.classList.remove('hot'); g.querySelector('path').setAttribute('marker-end','url(#ah)'); });
+  svg.querySelectorAll('.cntg').forEach(g => { const c = WF.counts[g.dataset.c]; const N = WF_NODES[g.dataset.c]; g.innerHTML = c ? `<circle class="cnt" cx="${N.x + NW - 4}" cy="${N.y + 4}" r="10"></circle><text class="cntt" x="${N.x + NW - 4}" y="${N.y + 7.5}" text-anchor="middle">${c}</text>` : ''; });
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const delay = animate && !reduce && !$('view-flow').hidden ? 160 : 0;
+  const light = i => {
+    const n = WF.path[i];
+    const g = svg.querySelector(`.wn[data-n="${n}"]`); if (g) g.classList.add('hot');
+    if (i > 0){ const e = svg.querySelector(`.we[data-e="${WF.path[i - 1]}>${n}"]`); if (e){ e.classList.add('hot'); e.querySelector('path').setAttribute('marker-end','url(#ahh)'); } }
+  };
+  WF.path.forEach((n, i) => { if (delay) WF.timers.push(setTimeout(() => light(i), i * delay)); else light(i); });
+  const fin = () => { const g = svg.querySelector(`.wn[data-n="${WF.active}"]`); if (g) g.classList.add('active'); };
+  if (delay) WF.timers.push(setTimeout(fin, WF.path.length * delay)); else fin();
+}
+function inspectorOutput(id){
+  const d = S.decision || {}, P = S.P;
+  const j = o => JSON.stringify(o, null, 2);
+  switch (id){
+    case 'trigger': return j({ customer:P.name, product:P.product, offer:P.offer, trigger:P.trigger });
+    case 'gate': return (d.gates || []).map(g => `${g.ok ? '✓' : '✗'} ${g.text}`).join('\n') || 'Not evaluated on this step.';
+    case 'state': return j({ intent:Math.round(S.intent), affinity:Object.fromEntries(Object.entries(S.aff).map(([k, v]) => [CH[k], +v.toFixed(2)])), likelyConcern:S.objection ? P.T[S.objection].label : null, themesWithoutResponse:S.tried.map(k => P.T[k].label), touchesThisWeek:touches7d(S, S.t), unansweredInARow:S.misses, optOutRiskPerSend:Object.fromEntries(CHANNELS.filter(c => S.consent[c] && OPT_BASE[c] > 0).map(c => [CH[c], (optRisk(S, c, S.t).p * 100).toFixed(2) + '%'])) });
+    case 'score': return (d.options || []).length ? d.options.map(o => o.blocked ? `${CH[o.ch].padEnd(11)} blocked: ${o.blocked}` : `${CH[o.ch].padEnd(11)} ${fmtShort(o.at).padEnd(13)} benefit $${Math.round(o.benefit)}  cadence −$${Math.round(o.cadence)}  fatigue −$${Math.round(o.fatigue + (o.repeat || 0))}  opt-out −$${Math.round(o.opt || 0)}  net $${Math.round(o.net)}`).join('\n') : 'No options scored on this step.';
+    case 'decide': return j({ decision:d.type, channel:d.ch ? CH[d.ch] : null, sendAt:d.at != null ? fmt(d.at) : null, theme:d.theme ? P.T[d.theme].label : null, why:d.why || null });
+    case 'compliance': { const m = S.pending && S.pending.kind === 'touch' ? S.pending.msg : null; if (!m) return 'No message on this step.'; const iss = checkMessage(msgText(m), { ch:m.ch, smsConsent:S.consent.sms, hour:at(S.pending.at).getHours() }); return j({ channel:CH[m.ch], result:iss.length ? 'blocked' : 'passed', issues:iss.map(r => r.title), message:msgText(m) }); }
+    case 'route': case 'ch_inapp': case 'ch_email': case 'ch_push': case 'ch_sms': { const p = S.pending; if (!p || p.kind !== 'touch') return 'Nothing queued.'; if (id !== 'route' && 'ch_' + p.ch !== id) return `Idle. Current touch is ${CH[p.ch]}.`; return j({ channel:CH[p.ch], sendAt:fmt(p.at), surface:p.msg.surface || null, headline:p.msg.title || null, body:p.msg.body, cta:p.msg.cta || null }); }
+    case 'response': { const p = S.pending; if (!p || p.kind !== 'touch') return 'Not waiting on a channel.'; return j({ waitingOn:CH[p.ch], window:p.abandon ? '3 hours (abandonment nudge)' : ({ inapp:'3 sessions', email:'48 hours', push:'4 hours', sms:'24 hours' })[p.ch], viewThroughWindow:p.abandon ? null : ({ inapp:'3 days', email:'7 days', push:'1 day', sms:'2 days' })[p.ch] }); }
+    case 'classify': { const last = [...S.log].reverse().find(e => ['good','assist','silent','neg','risk'].includes(e.kind)); return last ? j({ lastSignal:last.text, effect:last.sub }) : 'No customer signal yet.'; }
+    case 'snooze': return S.snoozeReason ? j({ reason:SNOOZE[S.snoozeReason].label, days:SNOOZE[S.snoozeReason].days, until:fmt(S.snoozeUntil), resumesWith:SNOOZE[S.snoozeReason].theme ? P.T[SNOOZE[S.snoozeReason].theme].label : 'previous theme' }) : j(Object.fromEntries(Object.values(SNOOZE).map(r => [r.label, r.days + ' days'])));
+    case 'replan': return 'Loops back to Update state with the latest signal applied.' + (WF.counts.replan ? ` Ran ${WF.counts.replan}×.` : '');
+    case 'lpflag': case 'removech': case 'servicing': case 'onboarding': case 'waitneed': case 'abandon': case 'landing': case 'application': case 'riskevt':
+      return S.learn.length && (id === 'lpflag' || id === 'removech') ? S.learn.filter(l => id === 'lpflag' ? l.includes('Landing page') : l.includes('channel value')).join('\n\n') || 'Not triggered yet.' : (WF.counts[id] ? `Executed ${WF.counts[id]}×. ${id === 'abandon' && S.abandonAt != null ? 'Abandoned at ' + fmt(S.abandonAt) + '.' : ''}` : 'Not executed in this journey yet.');
+  }
+  return '';
+}
+function renderInspector(){
+  const N = WF_NODES[WF.sel]; if (!N) return;
+  $('inspTitle').textContent = N.t;
+  $('inspKind').textContent = KIND_LABEL[N.k]; $('inspKind').className = 'pill ' + ({ trigger:'info', action:'good', good:'good', wait:'warn', learn:'warn', bad:'bad' }[N.k] || '');
+  $('inspDesc').textContent = N.d + (WF.counts[WF.sel] ? ` Ran ${WF.counts[WF.sel]}× in this journey.` : '');
+  $('inspOut').textContent = inspectorOutput(WF.sel);
+}
+function renderWorkflowPanel(animate){
+  if (!$('wf').firstChild) drawWorkflow();
+  $('wfPersona').value = personaId;
+  paintWorkflow(animate);
+  $('wfClock').textContent = `${fmt(S.t)} · Day ${dayNum(S.t)}`;
+  const p = S.pending, d = S.decision;
+  let now = '';
+  if (p && p.kind === 'touch') now = `<b>${CH[p.ch]}</b> sent ${esc(fmtShort(p.at))}: “${esc(p.msg.title || p.msg.body)}”. What does the customer do?`;
+  else if (p && p.kind === 'landing') now = '<b>On the landing page.</b> What does the customer do?';
+  else if (p && p.kind === 'app') now = '<b>In the application.</b> What does the customer do?';
+  else if (d) now = esc(d.why || '');
+  $('wfNow').innerHTML = now;
+  const list = currentActions();
+  $('wfActions').innerHTML = list.length ? list.map(([k, label, cls]) => `<button class="btn ${cls}" data-sig="${k}" ${playing ? 'disabled' : ''}>${esc(label)}</button>`).join('') : `<button class="btn" data-reset="1">Start over</button>`;
+  $('wfActions').querySelectorAll('[data-sig]').forEach(b => b.onclick = () => {
+    if (b.dataset.sig === 'notnow'){ $('wfActions').innerHTML = Object.entries(SNOOZE).map(([k, r]) => `<button class="btn neg" data-nn="${k}">Not now: ${esc(r.label)}</button>`).join(''); $('wfActions').querySelectorAll('[data-nn]').forEach(x => x.onclick = () => doSignal('nn_' + x.dataset.nn)); return; }
+    doSignal(b.dataset.sig);
+  });
+  $('wfActions').querySelectorAll('[data-reset]').forEach(b => b.onclick = () => startJourney());
+  $('wfLog').innerHTML = WF.log.map((e, i) => `<li><span class="n">${i + 1}</span><span><b>${esc(e.out)}</b><br><small style="color:var(--muted)">${esc(e.nodes)}</small></span></li>`).join('');
+  $('wfLog').scrollTop = $('wfLog').scrollHeight;
+  renderInspector();
+}
+$('wfPersona').innerHTML = Object.values(PERSONAS).map(P => `<option value="${P.id}">${esc(P.name)}</option>`).join('');
+$('wfPersona').onchange = () => { if (playing) return; personaId = $('wfPersona').value; renderPersonas(); startJourney(); };
+$('wfEngaged').onclick = () => playScript('engaged');
+$('wfSilent').onclick = () => playScript('silent');
+$('wfRisk').onclick = () => $('playRisk').click();
+$('wfReset').onclick = () => startJourney();
+
+/* ===== boot ===== */
+WF_READY = true;
+renderPersonas(); renderSamples(); renderVariantSelectors(); loadSample(SAMPLES[0]); renderExperiments();
+startJourney();
+try { const v = localStorage.getItem('cla-tab'); if (v && v !== 'sim'){ const b = document.querySelector(`nav.tabs button[data-view="${v}"]`); if (b) b.click(); } } catch(e){}
+</script>
+
+</body>
+</html>
