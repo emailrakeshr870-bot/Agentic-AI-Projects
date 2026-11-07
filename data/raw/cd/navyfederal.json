@@ -1,0 +1,178 @@
+{
+ "brand": "Navy Federal",
+ "source_url": "https://www.navyfederal.org/checking-savings/savings/certificates.html",
+ "page_as_of": "2026-10-16",
+ "rows": [
+  {
+   "product": "Standard Certificate",
+   "term_months": 3,
+   "apy": 1.5,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 3,
+   "apy": 1.5,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 3,
+   "apy": 1.55,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 12,
+   "apy": 4.05,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 12,
+   "apy": 4.05,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 12,
+   "apy": 4.1,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 18,
+   "apy": 4.1,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 18,
+   "apy": 4.1,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 18,
+   "apy": 4.15,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 24,
+   "apy": 3.66,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 24,
+   "apy": 3.66,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 24,
+   "apy": 3.7,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 36,
+   "apy": 4.1,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 36,
+   "apy": 4.1,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 36,
+   "apy": 4.15,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 60,
+   "apy": 3.85,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 60,
+   "apy": 3.85,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 60,
+   "apy": 3.9,
+   "min": 100000
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 84,
+   "apy": 3.85,
+   "min": 1000,
+   "max": 19999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 84,
+   "apy": 3.85,
+   "min": 20000,
+   "max": 99999.99
+  },
+  {
+   "product": "Standard Certificate",
+   "term_months": 84,
+   "apy": 3.9,
+   "min": 100000
+  },
+  {
+   "product": "EasyStart Certificate",
+   "term_months": 12,
+   "apy": 4.0,
+   "min": 50,
+   "notes": "add-on deposits allowed"
+  },
+  {
+   "product": "EasyStart Certificate",
+   "term_months": 18,
+   "apy": 3.7,
+   "min": 50,
+   "notes": "add-on deposits allowed"
+  },
+  {
+   "product": "EasyStart Certificate",
+   "term_months": 24,
+   "apy": 3.6,
+   "min": 50,
+   "notes": "add-on deposits allowed"
+  },
+  {
+   "product": "Special EasyStart Certificate",
+   "term_months": 12,
+   "apy": 4.35,
+   "min": 50,
+   "max": 3000,
+   "promo": 1,
+   "rel": 1,
+   "notes": "requires Navy Federal checking + direct deposit"
+  }
+ ]
+}

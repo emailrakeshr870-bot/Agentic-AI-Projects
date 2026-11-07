@@ -1,0 +1,204 @@
+{
+ "cd": [
+  [
+   "Huntington",
+   "Rates hidden behind a ZIP code"
+  ],
+  [
+   "Security Service",
+   "Rates hidden behind a ZIP code"
+  ],
+  [
+   "PNC",
+   "Rate pages moved"
+  ],
+  [
+   "Bank of America",
+   "Only rate ranges shown"
+  ],
+  [
+   "Bank of Marin",
+   "Rates not published online"
+  ],
+  [
+   "Mechanics Bank",
+   "Rates not published online"
+  ],
+  [
+   "SoFi",
+   "No CD product"
+  ]
+ ],
+ "savings": [
+  [
+   "Citi",
+   "Rates need a ZIP code"
+  ],
+  [
+   "U.S. Bank",
+   "Rates need a ZIP code"
+  ],
+  [
+   "Huntington",
+   "Rates not shown on page"
+  ],
+  [
+   "Golden 1",
+   "Rates load in a way not yet handled"
+  ],
+  [
+   "Suncoast",
+   "Published rate could not be confirmed"
+  ]
+ ],
+ "auto_loan": [
+  [
+   "Ally",
+   "Dealer financing only"
+  ],
+  [
+   "TD Bank",
+   "Dealer financing only"
+  ],
+  [
+   "Wells Fargo",
+   "Dealer financing only"
+  ],
+  [
+   "Capital One",
+   "Rates require prequalification"
+  ],
+  [
+   "LightStream",
+   "Rates require application"
+  ],
+  [
+   "PenFed",
+   "Rates require application"
+  ],
+  [
+   "Bank of America",
+   "Rates load dynamically"
+  ],
+  [
+   "Security Service",
+   "Rates hidden behind a ZIP code"
+  ]
+ ],
+ "heloc": [
+  [
+   "Bank of America",
+   "Rates load dynamically"
+  ],
+  [
+   "Citizens",
+   "Rates not rendered"
+  ],
+  [
+   "KeyBank",
+   "No rate published"
+  ],
+  [
+   "RBFCU",
+   "No rate published"
+  ],
+  [
+   "M&T Bank",
+   "Page shows stale 2024 rates"
+  ],
+  [
+   "Fifth Third",
+   "Page dated Dec 2025"
+  ]
+ ],
+ "personal_loan": [
+  [
+   "LightStream",
+   "Rates load dynamically"
+  ],
+  [
+   "Truist",
+   "Rate fields not rendered"
+  ],
+  [
+   "Discover",
+   "Rates not shown; product status unclear"
+  ],
+  [
+   "PenFed",
+   "No rate published"
+  ],
+  [
+   "Citizens",
+   "No rate published"
+  ],
+  [
+   "Marcus by Goldman Sachs",
+   "No longer offers personal loans"
+  ]
+ ],
+ "credit_card": [
+  [
+   "Apple Card",
+   "APR not published on issuer page"
+  ],
+  [
+   "SoFi",
+   "APR not published"
+  ],
+  [
+   "PenFed",
+   "APR not published"
+  ],
+  [
+   "Citi",
+   "Terms do not render; values unverified"
+  ]
+ ],
+ "mortgage": [
+  [
+   "Chase",
+   "Requires ZIP and personal details"
+  ],
+  [
+   "Bank of America",
+   "Requires personal details"
+  ],
+  [
+   "Wells Fargo",
+   "Requires personal details"
+  ],
+  [
+   "U.S. Bank",
+   "Requires state selection"
+  ],
+  [
+   "Citi",
+   "Requires personal details"
+  ],
+  [
+   "Truist",
+   "Requires personal details"
+  ],
+  [
+   "PNC",
+   "Requires ZIP and personal details"
+  ],
+  [
+   "Rocket Mortgage",
+   "Requires personal details"
+  ],
+  [
+   "Better.com",
+   "Requires personal details"
+  ],
+  [
+   "PenFed",
+   "Requires personal details"
+  ],
+  [
+   "BECU",
+   "Requires personal details"
+  ]
+ ]
+}
