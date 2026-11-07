@@ -9,18 +9,19 @@ the exact prompts, exported n8n workflows or a runnable demo), and results.
 
 ## Latest project
 
-### [Capital Lifecycle Agent (Adaptive NBA)](./capital-lifecycle-agent) · Oct 2026
+### [Agent BizCap](./agent-bizcap) · Nov 2026
 
-An adaptive next-best-action engine for small-business lending lifecycle marketing: lines of credit, term loans and business credit cards. Every customer action or inaction updates the customer's state; the engine scores channel, timing and message against cadence, fatigue and opt-out risk, checks every message against lending compliance rules, and shows how each rule is tested against a holdout.
+An adaptive next-best-action agent for small-business lending lifecycle marketing that follows one credit-eligible business from an invitation to apply (ITA) to a submitted loan application. The strongest signal sets the stream (ITA only → credit signal → customer signal → apply and recover); after every response or silence the agent scores channel, timing and message against fatigue and opt-out risk, explains each decision with its score or rule, and can play a scripted story or a random path.
 
-[Project README](./capital-lifecycle-agent) · [Workflow walkthrough (PDF)](./capital-lifecycle-agent/docs/decks/workflow-walkthrough.pdf) · [Demo source](./capital-lifecycle-agent/index.html)
+[Project README](./agent-bizcap) · [Demo source](./agent-bizcap/index.html) · [Email creatives](./agent-bizcap/examples/email-creatives)
 
-![Capital Lifecycle Agent workflow view](./capital-lifecycle-agent/docs/screenshots/13-workflow-view.png)
+![Agent BizCap workflow view](./agent-bizcap/screenshots/05-workflow-view.png)
 
 ## All projects (newest first)
 
 | Added | Project | Problem | Approach |
 |---|---|---|---|
+| Nov 2026 | [Agent BizCap](./agent-bizcap) | Lending lifecycle marketing sends the same ITA offer on the same calendar to every eligible business, ignoring credit changes, needs in the books and self-directed intent | Signal-led NBA agent: four streams set by the strongest signal (ITA, credit, customer, apply and recover); channel × time × message scored against fatigue and opt-out risk, with hard rules, a 30-day recovery cadence, a workflow view and a random-path mode |
 | Oct 2026 | [Capital Lifecycle Agent (Adaptive NBA)](./capital-lifecycle-agent) | Small-business lending lifecycle (lines of credit, term loans, business credit cards) runs on static journeys that ignore how each customer responds, wasting touches and risking opt-outs | Adaptive next-best-action engine: every action or inaction updates customer state; channel × time × message is scored against cadence, fatigue and opt-out risk, with lending compliance checks, holdout-based experiments and an n8n-style workflow view |
 | Sep 2026 | [Lifecycle Delinquency Comms Engine](./lifecycle-delinquency-comms-engine) | Compliant, personalized collections communications at scale require constant re-evaluation of consent, risk, and behavior signals | Dynamic-adaptive comms architecture (8-layer design) + working n8n proof-of-concept generating FDCPA-compliant, tone-calibrated email/SMS by DPD stage |
 | Sep 2026 | [Last-Mile Delivery Exception Handler](./last-mile-delivery-exception-handler) | Manual triage of delivery exceptions is slow, inconsistent, and costly at ~10% of shipment volume | Multi-agent pipeline (resolution agent + critic, communication agent + critic) grounded in a RAG policy playbook, with tier-aware messaging and its own evaluation harness |

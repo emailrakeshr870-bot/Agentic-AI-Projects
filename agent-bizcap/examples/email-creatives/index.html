@@ -1,0 +1,162 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#E9EDF1;font-family:Inter,Arial,sans-serif;color:#1F2933}
+.mail{width:600px;background:#fff;margin:0;border-radius:0;overflow:hidden}
+.inbox{background:#F6F8FA;border-bottom:1px solid #DDE3E8;padding:12px 22px;font-size:12.5px;line-height:1.5}
+.inbox b{color:#0E2A47}
+.inbox .pre{color:#6B7782}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 22px}
+.logo{border:1.5px dashed #AEB8C2;color:#7B8792;font-size:11px;padding:5px 12px;border-radius:5px;letter-spacing:.06em}
+.tag{font-size:11px;color:#6B7782}
+.hero svg{display:block}
+.body{padding:22px 30px 6px}
+h1{margin:0 0 10px;font-size:25px;line-height:1.2;letter-spacing:-.01em}
+p{margin:0 0 14px;font-size:14.5px;line-height:1.55;color:#3A4651}
+.vp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 18px}
+.vp div{border-radius:8px;padding:10px 11px;font-size:12.5px;line-height:1.4}
+.vp b{display:block;font-size:13px;margin-bottom:2px}
+.cta{display:inline-block;color:#fff;font-weight:700;font-size:15px;padding:12px 22px;border-radius:7px;text-decoration:none}
+.use{margin:18px 0 6px;border-left:4px solid;padding:8px 12px;font-size:13px;line-height:1.5}
+.fine{padding:14px 30px 20px;font-size:10.5px;line-height:1.5;color:#7B8792;border-top:1px solid #EEF1F4;margin-top:16px}
+/* trades */
+.trades h1{color:#16324F}.trades .vp div{background:#FFF1E6}.trades .vp b{color:#C2410C}.trades .cta{background:#C2410C}.trades .use{border-color:#C2410C;background:#FFF7F1}
+/* makers */
+.makers h1{color:#5B2E1F}.makers .vp div{background:#F3F1EA}.makers .vp b{color:#7A5C2E}.makers .cta{background:#8C4A32}.makers .use{border-color:#8C4A32;background:#FAF5F0}
+.makers h1,.makers .body p{font-family:Georgia,'Times New Roman',serif}
+/* generic */
+.generic h1{color:#0E2A47}.generic .vp div{background:#EEF3F7}.generic .vp b{color:#0F5C7C}.generic .cta{background:#0F5C7C}
+</style></head>
+<body>
+
+<!-- ============ TRADES ============ -->
+<div class="mail trades" id="trades">
+  <div class="inbox"><b>Subject:</b> Take the next job without waiting on the last invoice<br><span class="pre">Fund the van, tools or materials for the busy season, then pay it back monthly</span></div>
+  <div class="hdr"><span class="logo">LOGO</span><span class="tag">For contractors, plumbers and HVAC pros</span></div>
+  <div class="hero">
+  <svg width="600" height="230" viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="600" height="230" fill="#DCEBF5"/>
+    <circle cx="510" cy="58" r="30" fill="#FFD7A8"/>
+    <!-- house frame under construction -->
+    <g transform="translate(330,48)">
+      <polygon points="0,70 95,10 190,70" fill="none" stroke="#B9874F" stroke-width="7" stroke-linejoin="round"/>
+      <g stroke="#C99A62" stroke-width="7"><line x1="20" y1="70" x2="20" y2="160"/><line x1="70" y1="70" x2="70" y2="160"/><line x1="120" y1="70" x2="120" y2="160"/><line x1="170" y1="70" x2="170" y2="160"/></g>
+      <line x1="10" y1="72" x2="180" y2="72" stroke="#B9874F" stroke-width="7"/>
+      <line x1="10" y1="118" x2="180" y2="118" stroke="#C99A62" stroke-width="6"/>
+      <!-- HVAC unit -->
+      <rect x="196" y="122" width="56" height="42" rx="4" fill="#9AA9B6"/><circle cx="224" cy="143" r="13" fill="#7E8E9C"/><g stroke="#C9D3DC" stroke-width="2"><line x1="224" y1="131" x2="224" y2="155"/><line x1="212" y1="143" x2="236" y2="143"/></g>
+    </g>
+    <rect y="206" width="600" height="24" fill="#B7C4CF"/>
+    <!-- van -->
+    <g transform="translate(40,96)">
+      <rect x="0" y="0" width="190" height="88" rx="10" fill="#F4F6F8"/>
+      <path d="M190 22 h40 q14 0 22 14 l20 34 v18 h-82z" fill="#F4F6F8"/>
+      <path d="M198 30 h30 q8 0 13 8 l14 24 h-57z" fill="#9CC3DE"/>
+      <rect x="0" y="52" width="272" height="10" fill="#C2410C"/>
+      <rect x="18" y="16" width="120" height="26" rx="4" fill="#16324F"/>
+      <text x="78" y="34" text-anchor="middle" font-family="Inter,Arial" font-weight="700" font-size="13" fill="#fff">YOUR NAME HERE</text>
+      <g fill="#2B3640"><circle cx="52" cy="92" r="20"/><circle cx="218" cy="92" r="20"/></g>
+      <g fill="#AEB8C2"><circle cx="52" cy="92" r="8"/><circle cx="218" cy="92" r="8"/></g>
+      <!-- ladder on roof -->
+      <g stroke="#7B8792" stroke-width="5"><line x1="10" y1="-10" x2="170" y2="-10"/><line x1="10" y1="-2" x2="170" y2="-2"/></g>
+      <g stroke="#7B8792" stroke-width="3"><line x1="30" y1="-10" x2="30" y2="-2"/><line x1="60" y1="-10" x2="60" y2="-2"/><line x1="90" y1="-10" x2="90" y2="-2"/><line x1="120" y1="-10" x2="120" y2="-2"/><line x1="150" y1="-10" x2="150" y2="-2"/></g>
+    </g>
+    <!-- toolbox + pipe wrench -->
+    <g transform="translate(418,166)">
+      <rect x="0" y="6" width="58" height="34" rx="4" fill="#C2410C"/><rect x="18" y="0" width="22" height="8" rx="3" fill="none" stroke="#16324F" stroke-width="4"/><rect x="0" y="18" width="58" height="4" fill="#9A3412"/>
+    </g>
+    
+  </svg>
+  </div>
+  <div class="body">
+    <h1>Big job lined up? Fund the truck, tools and materials up front.</h1>
+    <p>In the trades, you often pay for materials and equipment weeks before your customer pays you. A QuickBooks Capital term loan lets you add a second service van, replace aging equipment or stock up before the busy season, then pay it back in fixed monthly payments.</p>
+    <div class="vp">
+      <div><b>Fast</b>A decision in minutes; funds in 1–2 business days if approved</div>
+      <div><b>Easy</b>Your application is pre-filled from the books you already keep</div>
+      <div><b>No surprises</b>See your rate, payment and total cost before you commit</div>
+    </div>
+    <a class="cta">See what you qualify for</a>
+    <div class="use"><b>How trades businesses use it:</b> a second van so a new tech can run calls · a hydro-jetter or new equipment instead of renting · materials for a large commercial bid</div>
+  </div>
+  <div class="fine">Checking won’t affect your personal credit score. Loans are subject to credit review and approval. No origination fees or prepayment penalties.<br>Illustrative creative for discussion · imagery is placeholder · not affiliated with Intuit</div>
+</div>
+
+<!-- ============ MAKERS ============ -->
+<div class="mail makers" id="makers">
+  <div class="inbox"><b>Subject:</b> Ready for craft-fair and holiday season?<br><span class="pre">Buy clay, metals, paper and packaging now, and pay it back as the orders come in</span></div>
+  <div class="hdr"><span class="logo">LOGO</span><span class="tag">For artists, jewelers, potters and card makers</span></div>
+  <div class="hero">
+  <svg width="600" height="230" viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="600" height="230" fill="#F3E9DC"/>
+    <!-- shelf wall -->
+    <rect x="0" y="0" width="600" height="150" fill="#EEDFCC"/>
+    <rect x="30" y="70" width="250" height="8" rx="2" fill="#B98B5E"/>
+    <!-- small pots on shelf -->
+    <path d="M52 70 q-8 -24 6 -38 h22 q14 14 6 38z" fill="#C46F4E"/><rect x="57" y="28" width="24" height="6" rx="2" fill="#A8573A"/>
+    <path d="M110 70 q-14 -14 -4 -30 h30 q10 16 -4 30z" fill="#7F9C86"/>
+    <path d="M168 70 q-10 -30 4 -50 q8 -6 16 0 q14 20 4 50z" fill="#D9A46C"/>
+    <ellipse cx="236" cy="62" rx="26" ry="9" fill="#5E7A8A"/><path d="M210 62 q26 22 52 0z" fill="#4C6676"/>
+    <!-- framed art -->
+    <g transform="translate(330,22)"><rect width="110" height="84" rx="3" fill="#FFFDF8" stroke="#8C4A32" stroke-width="6"/><circle cx="36" cy="34" r="14" fill="#E3A45B"/><path d="M8 76 l30 -26 l22 16 l18 -22 l26 32z" fill="#7F9C86"/></g>
+    <g transform="translate(460,34)"><rect width="74" height="60" rx="3" fill="#FFFDF8" stroke="#5B2E1F" stroke-width="5"/><path d="M10 48 q16 -34 28 -10 q12 -26 26 10z" fill="#C46F4E"/></g>
+    <!-- table -->
+    <rect x="0" y="150" width="600" height="80" fill="#B98B5E"/><rect x="0" y="150" width="600" height="10" fill="#A27449"/>
+    <!-- big vase -->
+    <g transform="translate(40,46) scale(0.72)"><path d="M70 152 q-30 -40 0 -70 q-8 -12 6 -16 h30 q14 4 6 16 q30 30 0 70z" fill="#8C4A32"/><path d="M62 118 h58" stroke="#E3A45B" stroke-width="5"/></g>
+    <!-- greeting cards fanned -->
+    <g transform="translate(190,104)">
+      <rect x="0" y="12" width="64" height="44" rx="3" fill="#FFFDF8" transform="rotate(-12 32 34)" stroke="#D8C7B1"/>
+      <rect x="26" y="6" width="64" height="44" rx="3" fill="#FCE9D9" transform="rotate(4 58 28)" stroke="#D8C7B1"/>
+      <rect x="54" y="10" width="64" height="44" rx="3" fill="#FFFDF8" transform="rotate(14 86 32)" stroke="#D8C7B1"/>
+      <path d="M78 36 q6 -10 12 0 q6 -10 12 0 q-6 12 -12 16 q-6 -4 -12 -16z" fill="#C46F4E" transform="rotate(14 90 40)"/>
+    </g>
+    <!-- necklace on a tray -->
+    <ellipse cx="400" cy="178" rx="78" ry="18" fill="#7A5C2E" opacity=".35"/>
+    <path d="M345 150 q55 60 110 0" fill="none" stroke="#D9B45C" stroke-width="3"/>
+    <circle cx="400" cy="181" r="9" fill="#5E7A8A" stroke="#D9B45C" stroke-width="3"/>
+    <g fill="#D9B45C"><circle cx="362" cy="166" r="3"/><circle cx="380" cy="175" r="3"/><circle cx="420" cy="175" r="3"/><circle cx="438" cy="166" r="3"/></g>
+    <!-- paintbrushes in jar -->
+    <g transform="translate(500,96)"><rect x="0" y="22" width="44" height="54" rx="6" fill="#BFD3D9" opacity=".85"/><g stroke-width="4"><line x1="12" y1="30" x2="4" y2="-6" stroke="#8C4A32"/><line x1="22" y1="30" x2="24" y2="-12" stroke="#5B2E1F"/><line x1="32" y1="30" x2="42" y2="-4" stroke="#7A5C2E"/></g><circle cx="4" cy="-8" r="4" fill="#C46F4E"/><circle cx="24" cy="-14" r="4" fill="#5E7A8A"/><circle cx="42" cy="-6" r="4" fill="#E3A45B"/></g>
+  </svg>
+  </div>
+  <div class="body">
+    <h1>Your busiest season starts now. Be ready for it.</h1>
+    <p>Holiday markets, craft fairs and wholesale orders mean buying clay, metals, paper and packaging months before you sell. A QuickBooks Capital term loan helps you stock up on materials, add a new kiln or press, or build inventory, then pay it back in fixed monthly payments.</p>
+    <div class="vp">
+      <div><b>Fast</b>A decision in minutes; funds in 1–2 business days if approved</div>
+      <div><b>Easy</b>Pre-filled from your books, so you can get back to the studio</div>
+      <div><b>No surprises</b>See your rate, payment and total cost before you commit</div>
+    </div>
+    <a class="cta">See your options</a>
+    <div class="use"><b>How makers use it:</b> a second kiln to double firing capacity · metals and stones bought in bulk · inventory and booth fees for holiday markets</div>
+  </div>
+  <div class="fine">Checking won’t affect your personal credit score. Loans are subject to credit review and approval. No origination fees or prepayment penalties.<br>Illustrative creative for discussion · imagery is placeholder · not affiliated with Intuit</div>
+</div>
+
+<!-- ============ GENERIC (control) ============ -->
+<div class="mail generic" id="generic">
+  <div class="inbox"><b>Subject:</b> Funding to grow your business<br><span class="pre">See if you prequalify for a term loan</span></div>
+  <div class="hdr"><span class="logo">LOGO</span><span class="tag">QuickBooks Capital</span></div>
+  <div class="hero">
+  <svg width="600" height="230" viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+    <rect width="600" height="230" fill="#E4EDF4"/>
+    <g fill="#0F5C7C"><rect x="170" y="140" width="40" height="60" rx="4" opacity=".45"/><rect x="230" y="112" width="40" height="88" rx="4" opacity=".6"/><rect x="290" y="84" width="40" height="116" rx="4" opacity=".75"/><rect x="350" y="52" width="40" height="148" rx="4"/></g>
+    <path d="M160 150 L250 118 L310 92 L410 44" stroke="#E3A45B" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="410" cy="44" r="8" fill="#E3A45B"/>
+    <rect x="140" y="200" width="320" height="4" fill="#9FB3C3"/>
+  </svg>
+  </div>
+  <div class="body">
+    <h1>Grow your business with a term loan</h1>
+    <p>Get the funding you need to cover expenses, buy equipment or expand. A QuickBooks Capital term loan offers fixed monthly payments, and you can check whether you prequalify in minutes.</p>
+    <div class="vp">
+      <div><b>Fast</b>A decision in minutes; funds in 1–2 business days if approved</div>
+      <div><b>Easy</b>Your application is pre-filled from your books</div>
+      <div><b>No surprises</b>See your rate, payment and total cost before you commit</div>
+    </div>
+    <a class="cta">See if you prequalify</a>
+  </div>
+  <div class="fine">Checking won’t affect your personal credit score. Loans are subject to credit review and approval. No origination fees or prepayment penalties.<br>Illustrative creative for discussion · imagery is placeholder · not affiliated with Intuit</div>
+</div>
+</body></html>

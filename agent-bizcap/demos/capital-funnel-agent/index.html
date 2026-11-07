@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Concept demo: an adaptive next-best-action engine that moves one synthetic small business through four lifecycle journeys toward a term loan.">
+<title>Capital Funnel Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: journey band on top, then three working columns (customer · current touch · engine) that stack on narrow screens */
+:root{
+  --bg:#F4F6F8; --surface:#FFFFFF; --sunk:#EDF1F4; --line:#D8DFE5;
+  --ink:#16222E; --muted:#5B6670; --navy:#0E2A47; --teal:#0F7C7C; --teal-soft:#E1F1EF;
+  --amber:#B7791F; --amber-soft:#FBF1E1; --red:#B23B3B; --red-soft:#FBEAEA; --green:#2F7D4F;
+  --on-dark:#FFFFFF;
+  --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161D; --surface:#17212B; --sunk:#1E2A36; --line:#2C3A47;
+  --ink:#E6ECF1; --muted:#9AA8B5; --navy:#8FB4DA; --teal:#4FC0B5; --teal-soft:#16302F;
+  --amber:#E2A84B; --amber-soft:#2E2618; --red:#E07A7A; --red-soft:#331C1F; --green:#6CC495; --on-dark:#0F161D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F161D; --surface:#17212B; --sunk:#1E2A36; --line:#2C3A47;
+  --ink:#E6ECF1; --muted:#9AA8B5; --navy:#8FB4DA; --teal:#4FC0B5; --teal-soft:#16302F;
+  --amber:#E2A84B; --amber-soft:#2E2618; --red:#E07A7A; --red-soft:#331C1F; --green:#6CC495; --on-dark:#0F161D; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{margin:0;text-wrap:balance}
+button{font:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+.top h1{font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+.top p{margin:2px 0 0;color:var(--muted);max-width:68ch}
+.badge{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted);background:var(--surface)}
+.controls{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 14px;font-weight:600}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:var(--on-dark)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+/* journey band */
+.band{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.stage{position:relative;border-radius:8px;padding:9px 10px 9px 14px;background:var(--sunk);color:var(--muted);min-width:0}
+.stage b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.stage span{font-size:12.5px;display:block}
+.stage .why{font-size:11.5px;color:var(--muted);margin-top:4px;font-style:italic;min-height:1em}
+.stage.done{background:var(--teal-soft);color:var(--teal)}
+.stage.now{background:var(--navy);color:var(--on-dark)}
+.stage.now .why{color:var(--on-dark);opacity:.8}
+.stage.exit{background:var(--red-soft);color:var(--red)}
+/* columns */
+.cols{display:grid;grid-template-columns:280px minmax(0,1fr) 360px;gap:14px;align-items:start}
+@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.cols .right{grid-column:1 / -1}}
+@media (max-width:720px){.cols{grid-template-columns:minmax(0,1fr)}.band{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;border-radius:999px;padding:3px 9px;background:var(--sunk);color:var(--ink)}
+.chip.off{text-decoration:line-through;color:var(--muted)}
+.chip.on{background:var(--teal-soft);color:var(--teal);font-weight:600}
+.signals{display:flex;flex-direction:column;gap:6px}
+.sig{font-size:12.5px;border-left:3px solid var(--line);padding:4px 8px;color:var(--muted)}
+.sig.lit{border-color:var(--amber);color:var(--ink);background:var(--amber-soft)}
+.clock{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.clock b{color:var(--ink);font-weight:500}
+.pill{font-family:var(--f-body);font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--sunk);color:var(--navy)}
+/* touch mockups */
+.touch{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.touch .th{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;background:var(--sunk);font-size:12.5px;font-weight:600}
+.touch .tb{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.touch .subj{font-weight:700;font-size:16px;color:var(--ink)}
+.touch .cta{align-self:flex-start;background:var(--teal);color:var(--on-dark);border-radius:6px;padding:7px 12px;font-weight:600;font-size:13px}
+.touch .fine{font-size:11.5px;color:var(--muted)}
+.phone{max-width:380px;border-radius:14px;background:var(--sunk);padding:10px}
+.notif{background:var(--surface);border-radius:12px;padding:10px 12px;border:1px solid var(--line);font-size:13.5px}
+.notif .app{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.bubble{background:var(--surface);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:9px 12px;font-size:13.5px;max-width:320px}
+.steps{display:flex;flex-direction:column;gap:6px}
+.stp{display:flex;gap:10px;align-items:baseline;font-size:13px;padding:6px 8px;border-radius:6px}
+.stp .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.stp.done{color:var(--muted)} .stp.done .n{color:var(--green)}
+.stp.current{background:var(--amber-soft);font-weight:600}
+.sys{border-radius:10px;padding:14px;background:var(--sunk);font-size:14px}
+.sys.good{background:var(--teal-soft)} .sys.bad{background:var(--red-soft)}
+/* responses */
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border-radius:8px;padding:8px 12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;text-align:left}
+.opt.pos{border-color:var(--teal);color:var(--teal)} .opt.mid{border-color:var(--amber);color:var(--amber)} .opt.neg{border-style:dashed}
+.opt.ev{border-color:var(--navy);color:var(--navy)}
+.opt.risk{border-color:var(--red);color:var(--red)}
+.events{display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+/* cadence strip */
+.cad{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.cd{border-radius:6px;padding:5px 4px;text-align:center;background:var(--sunk);font-size:11px;color:var(--muted);min-width:0}
+.cd b{display:block;font-size:11.5px;color:var(--ink)}
+.cd.fired{background:var(--teal-soft);color:var(--teal)} .cd.fired b{color:var(--teal)}
+.cd.now{background:var(--navy);color:var(--on-dark)} .cd.now b{color:var(--on-dark)}
+@media (max-width:720px){.cad{grid-template-columns:repeat(5,minmax(0,1fr))}}
+/* ledger */
+.ledger{display:flex;flex-direction:column;gap:0;max-height:300px;overflow:auto}
+.lg{display:grid;grid-template-columns:86px 10px minmax(0,1fr);gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:12.5px}
+.lg .t{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.lg .d{width:8px;height:8px;border-radius:50%;margin-top:5px;background:var(--muted)}
+.lg .d.send{background:var(--navy)} .lg .d.pos{background:var(--teal)} .lg .d.neg{background:var(--amber)} .lg .d.move{background:var(--red)}
+/* engine panel */
+.meter{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .3s}
+@media (prefers-reduced-motion:reduce){.meter i{transition:none}}
+.nba{border:2px solid var(--navy);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.nba h3{font-size:16px;color:var(--navy)}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:12.5px}
+.checks li::before{content:"✓ ";color:var(--green);font-weight:700}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{text-align:left;padding:6px 6px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+tr.pick td{background:var(--teal-soft)}
+.st{font-weight:700;font-size:11.5px}
+.st.pick{color:var(--teal)} .st.hold{color:var(--amber)} .st.block{color:var(--muted)}
+.concern{background:var(--amber-soft);border-radius:8px;padding:8px 10px;font-size:12.5px}
+/* tabs */
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--navy);color:var(--on-dark)}
+.rule{display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;padding:0 5px;border-radius:4px;background:var(--sunk);color:var(--muted);margin-left:4px;white-space:nowrap}
+.formula{font-family:var(--f-mono);font-size:12px;background:var(--sunk);border-radius:8px;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
+.formula b{color:var(--teal);font-weight:600}
+/* workflow */
+.wfwrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background-color:var(--sunk);background-image:radial-gradient(var(--line) 1.1px,transparent 1.1px);background-size:22px 22px}
+#wf{display:block;width:100%;min-width:1280px;height:auto}
+#wf text{font-family:var(--f-body)}
+.lane rect{fill:var(--surface);opacity:.55}
+.lane text{fill:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em}
+.wn{cursor:pointer}
+.wn .box{fill:var(--surface);stroke:var(--line);stroke-width:1.4}
+.wn.unv{opacity:.55}
+.wn.vis .box{stroke:var(--teal);stroke-width:1.8}
+.wn.sel .box{stroke:var(--ink);stroke-width:2.4}
+.wn.now .box{stroke:var(--teal);stroke-width:3;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.3}}
+.wn .bar{fill:var(--teal)} .wn.k-wait .bar{fill:var(--amber)} .wn.k-app .bar{fill:var(--navy)} .wn.k-good .bar{fill:var(--green)} .wn.k-bad .bar{fill:var(--red)}
+.wn .t1{fill:var(--ink);font-size:12.5px;font-weight:700}
+.wn .t2{fill:var(--muted);font-size:10.5px}
+.wn .cnt{fill:var(--teal)} .wn .cntt{fill:var(--on-dark);font-size:10px;font-weight:700}
+.we path{fill:none;stroke:var(--muted);stroke-width:1.3;opacity:.28}
+.we.done path{stroke:var(--teal);opacity:.85;stroke-width:2}
+.we.hot path{stroke:var(--teal);opacity:1;stroke-width:2.8;stroke-dasharray:7 5;animation:flow .7s linear infinite}
+.we.ev path{stroke-dasharray:3 4}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.we rect{fill:var(--surface);stroke:var(--teal)} .we text{fill:var(--teal);font-size:10.5px;font-weight:700}
+#wf marker path{fill:var(--muted)} #wf marker.on path{fill:var(--teal)}
+@media (prefers-reduced-motion:reduce){.wn.now .box,.we.hot path{animation:none}}
+.wfgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:1000px){.wfgrid{grid-template-columns:minmax(0,1fr)}}
+.runlog{list-style:none;margin:0;padding:0;font-size:12.5px;display:flex;flex-direction:column;gap:4px;max-height:280px;overflow:auto}
+.runlog li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px}
+.runlog .n{font-family:var(--f-mono);color:var(--muted);font-size:11px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+/* rules */
+.rgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.rgrid{grid-template-columns:minmax(0,1fr)}}
+.rgrid .wide{grid-column:1 / -1}
+.steps5{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+@media (max-width:900px){.steps5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.s5{background:var(--sunk);border-radius:8px;padding:8px 10px;font-size:12.5px}
+.s5 b{display:block;color:var(--navy);font-size:13px}
+.rt td:first-child{font-family:var(--f-mono);font-size:12px;color:var(--teal);white-space:nowrap;font-weight:600}
+.foot{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Capital Funnel Agent</h1>
+      <p>One business, four journeys. Every action or inaction is a signal: the engine re-plans after each response and moves the customer between journeys as their signals change.</p>
+    </div>
+    <div class="controls">
+      <span class="badge">Concept demo · synthetic data · not affiliated with Intuit</span>
+      <button class="btn primary" id="play" type="button">▶ Play the story</button>
+      <button class="btn" id="stepBtn" type="button">Next story step</button>
+      <button class="btn" id="reset" type="button">Reset</button>
+    </div>
+  </div>
+
+  <div class="band" id="band" aria-label="Journey progress"></div>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" type="button" aria-selected="true" data-view="sim">Journey simulator</button>
+    <button role="tab" type="button" aria-selected="false" data-view="flow">Workflow view</button>
+    <button role="tab" type="button" aria-selected="false" data-view="rules">How the NBA decides</button>
+  </nav>
+
+  <div class="cols" id="view-sim">
+    <!-- customer -->
+    <section class="card left" aria-label="Customer">
+      <div class="label">Customer · synthetic</div>
+      <div><h2 style="font-size:17px">Harbor Coffee Roasters</h2><div style="color:var(--muted);font-size:13px">Roaster and wholesale supplier · 14 employees</div></div>
+      <dl class="kv">
+        <dt>Books</dt><dd>$1.4M revenue · 4 years on QuickBooks</dd>
+        <dt>Trend</dt><dd>Wholesale revenue up 32% this year</dd>
+        <dt>Status</dt><dd>Credit-eligible (per Credit and Risk) · no Intuit loan</dd>
+        <dt>Product</dt><dd>Term loan</dd>
+        <dt>Rhythm</dt><dd>Checks email 7–8 AM; logs in evenings</dd>
+      </dl>
+      <div>
+        <div class="label" style="margin-bottom:6px">Signals seen</div>
+        <div class="signals" id="signals"></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:6px">Channels</div>
+        <div class="chips" id="channels"></div>
+      </div>
+    </section>
+
+    <!-- current touch -->
+    <section class="card" aria-label="Current touch">
+      <div class="clock"><span id="clock"></span><span class="pill" id="jpill"></span></div>
+      <div id="touch"></div>
+      <div id="cadWrap" hidden>
+        <div class="label" style="margin-bottom:6px">Journey 4 cadence · 30-day offer</div>
+        <div class="cad" id="cad"></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:6px" id="askLabel">What does the customer do?</div>
+        <div class="opts" id="opts"></div>
+        <div class="events" id="events"></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:4px">Journey ledger · every action and inaction</div>
+        <div class="ledger" id="ledger"></div>
+      </div>
+    </section>
+
+    <!-- engine -->
+    <section class="card right" aria-label="Decision engine">
+      <div class="label">Customer state · updates after every signal</div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span>Intent</span><span id="intentTxt" style="font-family:var(--f-mono)"></span></div>
+        <div class="meter" role="meter" aria-label="Intent" id="intentMeter"><i id="intentBar"></i></div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:4px">Likelihood to submit. Clicks add points; starting an application sets 90, and only submitting reaches 100.</div>
+      </div>
+      <dl class="kv" id="stateKv"></dl>
+      <div class="concern" id="concern"></div>
+      <div class="nba" id="nba"></div>
+      <div>
+        <div class="label" style="margin-bottom:6px">Decision trace</div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+      <div class="tbl-wrap"><table id="cands"></table></div>
+    </section>
+  </div>
+
+  <section id="view-flow" class="card" hidden>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:flex-end">
+      <div><h2 style="font-size:17px;color:var(--navy)">The journey as a workflow</h2>
+      <div style="color:var(--muted);font-size:13px">Same engine as the simulator, drawn as nodes. Play the story or click a response below and watch the path light up; click any node to inspect it.</div></div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>Touch</span><span><i style="background:var(--navy)"></i>Application</span><span><i style="background:var(--amber)"></i>Wait or pause</span><span><i style="background:var(--green)"></i>Goal</span><span><i style="background:var(--red)"></i>Stop</span><span>Dashed = the step just taken · dotted = an event (signal, intent, risk) · pulsing = where the customer is now</span></div>
+    </div>
+    <div class="wfwrap"><svg id="wf" viewBox="0 0 1600 610" role="img" aria-label="Journey workflow: nodes for every touch across Journeys 1 to 4"></svg></div>
+    <div class="wfgrid">
+      <div class="stack" style="display:flex;flex-direction:column;gap:10px">
+        <div class="label">Customer step</div>
+        <div class="clock" id="wfClock"></div>
+        <div id="wfNow" style="font-size:13.5px"></div>
+        <div class="opts" id="wfOpts"></div>
+        <div class="events" id="wfEvents"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="label" id="inspTitle">Node inspector</div>
+        <div id="insp"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="label">Execution log · newest last</div>
+        <ol class="runlog" id="wfLog"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-rules" class="rgrid" hidden>
+    <div class="card wide">
+      <h2 style="font-size:17px;color:var(--navy)">How the next best action is chosen</h2>
+      <div style="color:var(--muted);font-size:13px;max-width:90ch">Rules first, then a score. Hard rules decide what is allowed; a simple score picks among what’s left; every response updates the inputs for the next decision. All weights below are illustrative starting points that get tuned with holdout tests.</div>
+      <div class="steps5">
+        <div class="s5"><b>1 · Gate</b>Eligibility, risk, consent, quiet hours, weekly cap, snooze</div>
+        <div class="s5"><b>2 · Journey</b>The strongest signal sets the journey (P1)</div>
+        <div class="s5"><b>3 · Candidates</b>Channels allowed in that journey, at their next good time</div>
+        <div class="s5"><b>4 · Score</b>Affinity × timing × stage value × concern match − costs</div>
+        <div class="s5"><b>5 · Pick or wait</b>Highest score wins; below 0.03 the engine waits</div>
+        <div class="s5"><b>6 · Learn</b>Response or silence updates intent, affinity and concern</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">The score</div>
+      <div class="formula"><b>score</b> = affinity(channel) × timing × stage value × concern match
+        − fatigue − opt-out risk
+
+<b>affinity</b>    learned response rate for the channel
+              start: in-product 0.55 · email 0.45 · push 0.30 · SMS 0.25
+              ignored touch × 0.85 · click or tap × 1.2 (max 0.9)
+<b>timing</b>      1.0 at their moment (email 7–8 AM, in session,
+              minutes after leaving) · 0.8 otherwise
+<b>stage value</b> J1 0.3 · J2 0.5 · J3 0.8 · J4 1.0
+<b>concern</b>     1.2 when the message answers the likely concern
+<b>fatigue</b>     0.02 × touches in the last 7 days
+<b>opt-out</b>     base(channel) × (1 + misses in a row) × 5
+              base: email 0.002 · push 0.002 · SMS 0.004 · in-product 0
+
+send if score ≥ <b>0.03</b>, else wait</div>
+      <div class="label" style="margin-top:2px">Live: the current step’s decision</div>
+      <div class="formula" id="liveCalc"></div>
+      <div style="font-size:12.5px;color:var(--muted)">In production, affinity, timing and opt-out risk come from Data Science models; the structure stays the same.</div>
+    </div>
+    <div class="card">
+      <div class="label">Intent score (likelihood to submit)</div>
+      <table class="rt"><tbody>
+        <tr><td>+10 to +30</td><td>Clicks, blog reads, calculator use, a Lending tab visit, a need signal</td></tr>
+        <tr><td>× 0.8</td><td>Each ignored touch before the application</td></tr>
+        <tr><td>90</td><td>Starts an application (abandoning keeps it at 90)</td></tr>
+        <tr><td>−3, floor 80</td><td>Each ignored Journey 4 reminder while the offer is live</td></tr>
+        <tr><td>95 · 100</td><td>Resumes from the link · submits</td></tr>
+      </tbody></table>
+      <div class="label" style="margin-top:4px">Likely concern</div>
+      <div style="font-size:13px">Inferred from where they dropped off, pages viewed, “Not now” reasons and help searches. Left at the payment table → cost; read requirements twice → “Will I qualify?”; left on the guarantee step → personal guarantee.</div>
+    </div>
+    <div class="card">
+      <div class="label">Gates · checked before anything is scored</div>
+      <table class="rt"><tbody id="gateRules"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="label">Journey policy rules</div>
+      <table class="rt"><tbody id="policyRules"></tbody></table>
+    </div>
+  </section>
+  <div class="foot"><span>Built by Rakesh R. Iyer · concept demo for a lifecycle marketing discussion</span><span>All businesses, amounts and responses are fictional. Copy is illustrative.</span></div>
+</div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const START = new Date(2026, 9, 6); // Tue Oct 6, 2026
+const J = { J1:'Journey 1 · Unaware', J2:'Journey 2 · Signal', J3:'Journey 3 · Intent', J4:'Journey 4 · Apply', DONE:'Submitted', EXIT:'Exited' };
+const CAD = [0,1,2,5,10,15,25,29,30];
+const daysLeft = d => 30 - d;
+
+/* ---------- node graph: every touch the engine can send, and what each response does ---------- */
+const N = {
+ j1_e1:{j:'J1',dd:0,time:'7:40 AM',ch:'email',
+   touch:{subject:'Cash gaps happen to healthy businesses',body:'Uneven cash flow is usually a sign of a business in motion, not one in trouble. Here’s how roasters and other owners plan for slow months and big purchases, using the books they already keep.',cta:'Read the blog'},
+   nba:'Email 1 · education',why:'No signal or intent yet, so the engine starts Journey 1 with education. Sent at 7:40 AM, when this owner usually reads email.',
+   cands:[['Email','Tue 7:40 AM','Widest reach for an unaware customer','pick'],['In-product','Next login','Held until after Email 1','hold'],['Push','—','Not used for awareness','block'],['SMS','—','Reserved for application moments','block']],
+   opts:[{l:'No response in 48 hours',k:'neg',to:'j1_ip',fx:{miss:1,led:'No click on Email 1 in 48 hours'}},{l:'Opened the blog',k:'pos',to:'j1_ip',fx:{intent:10,led:'Read the blog on planning for slow months'}}]},
+ j1_ip:{j:'J1',dd:3,time:'8:12 PM',ch:'inapp',where:'Cash Flow page',
+   touch:{subject:'How owners use a term loan to grow',body:'Planning a big purchase? See how other businesses use a term loan to fund equipment without draining cash.',cta:'Read the blog'},
+   nba:'In-product tip card',why:'Customer logged in. The tip card follows Email 1, and points to the same blog.',
+   cands:[['In-product','This session','Customer is logged in now','pick'],['Email','Day 7','Next scheduled email','hold'],['Push','—','Not used for awareness','block']],
+   opts:[{l:'Opened the blog',k:'pos',to:'j1_e2',fx:{intent:10,led:'Opened the blog from the tip card'}},{l:'Ignored for 3 sessions',k:'neg',to:'j1_e2',fx:{miss:1,led:'Tip card ignored for 3 sessions'}}]},
+ j1_e2:{j:'J1',dd:4,time:'7:40 AM',ch:'email',
+   touch:{subject:'How owners like you fund growth',body:'Three owners, three choices: a personal card, a line of credit and a term loan. What each one costs, and when each one fits.',cta:'Compare your options'},
+   nba:'Email 2 · owner stories',why:'Day 7 of Journey 1. Theme moves from education to comparison.',
+   cands:[['Email','Tue 7:40 AM','Scheduled Journey 1 touch','pick'],['In-product','—','Shown this week already','hold']],
+   opts:[{l:'No response in 48 hours',k:'neg',to:'j1_e3',fx:{miss:1,led:'No click on Email 2'}},{l:'Clicked through',k:'pos',to:'j1_e3',fx:{intent:10,led:'Compared options on the landing page'}}]},
+ j1_e3:{j:'J1',dd:7,time:'7:40 AM',ch:'email',
+   touch:{subject:'Explore with no pressure',body:'Curious what you’d qualify for? Checking whether you prequalify won’t affect your personal credit score.',cta:'See how it works'},
+   nba:'Email 3 · no pressure',why:'Last email in the Journey 1 series.',
+   cands:[['Email','Tue 7:40 AM','Final Journey 1 email','pick']],
+   opts:[{l:'No response',k:'neg',to:'j1_pause',fx:{miss:1,led:'No click on Email 3'}},{l:'Clicked through',k:'pos',to:'j1_pause',fx:{intent:10,led:'Read how QuickBooks Capital works'}}]},
+ j1_pause:{j:'J1',dd:2,time:'9:00 AM',ch:'sys',tone:'',
+   sys:'Journey 1 series complete. The engine sends monthly cash flow content and waits for a signal or intent. Nothing else goes out.',
+   nba:'Wait',why:'No signal, no intent. Sending more would raise opt-out risk without lifting intent.',cands:[['All channels','—','Waiting for a signal','hold']],opts:[]},
+
+ j2_card:{j:'J2',dd:0,time:'7:15 AM',ch:'inapp',where:'Bills page, next to the quote',
+   touch:{subject:'Your $48K roaster quote',body:'Spread the cost instead of paying it all at once. See term loan options that fit your cash flow.',cta:'See your options'},
+   nba:'In-product card at the moment of need',why:'Need signal matched to product: an equipment purchase points to a term loan. In-product leads because the need is visible where they work. Response window: 3 sessions.',
+   cands:[['In-product','Next login','The need is on this page','pick'],['Email','If not logged in by Day 2','Fallback','hold'],['Push','—','After in-product and email','hold'],['SMS','—','Reserved for application moments','block']],
+   opts:[{l:'Explored the payment calculator, then left',k:'mid',to:'j2_email',fx:{intent:15,concern:'Cost and payment',ev:'4 minutes on the payment calculator; left from the payment table',led:'Clicked through; left the landing page from the payment table',learn:'Landing page didn’t answer cost: flag it for a test'}},
+         {l:'Started an application',k:'pos',to:'app',fx:{intent:30,led:'Started an application from the card'}},
+         {l:'No response in 3 sessions',k:'neg',to:'j2_silent',fx:{miss:1,led:'Card ignored for 3 sessions'}},
+         {l:'Not now: “Maybe later”',k:'neg',to:'j2_snooze',fx:{led:'Dismissed: “Maybe later”'}}]},
+ j2_email:{j:'J2',dd:1,time:'7:40 AM',ch:'email',
+   touch:{subject:'See your payment before you commit',body:'For a $48K equipment loan, see an example monthly payment and the total cost up front. No origination fees or prepayment penalties. Subject to credit review.',cta:'See your payment'},
+   nba:'Email · leads with the likely concern',why:'Next-day follow-up, so it doesn’t feel like being watched. It leads with the inferred concern: cost and payment.',
+   cands:[['Email','Next morning 7:40 AM','Answers the concern in more depth','pick'],['In-product','Next login','Card stays, theme changes to cost','hold'],['Push','—','Too soon after a click','block']],
+   opts:[{l:'No response in 48 hours',k:'neg',to:'j2_push',fx:{miss:1,led:'No click on the payment email'}},{l:'Clicked and started an application',k:'pos',to:'app',fx:{intent:25,led:'Started an application from the email'}}]},
+ j2_silent:{j:'J2',dd:2,time:'7:40 AM',ch:'email',
+   touch:{subject:'Planning the roaster upgrade?',body:'See term loan options sized to your quote, and what they cost, before you commit. Checking won’t affect your personal credit score.',cta:'See your options'},
+   nba:'Email · same need, new channel',why:'In-product went unanswered, so the next touch moves to email and rotates the theme to credit-score safe.',
+   cands:[['Email','Tue 7:40 AM','Next channel by affinity','pick'],['Push','Day 4','If email is silent','hold']],
+   opts:[{l:'No response in 48 hours',k:'neg',to:'j2_push',fx:{miss:1,led:'No click on the email'}},{l:'Clicked and started an application',k:'pos',to:'app',fx:{intent:25,led:'Started an application from the email'}}]},
+ j2_push:{j:'J2',dd:2,time:'12:10 PM',ch:'push',
+   touch:{subject:'Planning the roaster upgrade? See term loan options sized to your $48K quote.'},
+   nba:'Push · one try',why:'Two touches unanswered. Push has the next-best affinity; one push only.',
+   cands:[['Push','12:10 PM','Opted in; lunch break is a good moment','pick'],['Email','—','Two emails unanswered','hold']],
+   opts:[{l:'No response',k:'neg',to:'j2_pause',fx:{miss:1,led:'Push not opened'}},{l:'Tapped and started an application',k:'pos',to:'app',fx:{intent:25,led:'Tapped the push and started an application'}}]},
+ j2_snooze:{j:'J2',dd:0,time:'7:16 AM',ch:'sys',sys:'Snoozed 7 days for “Maybe later”. The engine sends nothing until then.',nba:'Wait 7 days',why:'“Not now” is a signal. “Maybe later” snoozes 7 days; “I don’t need it” would snooze 30.',cands:[['All channels','7 days','Snoozed by reason','hold']],
+   opts:[{l:'7 days later',k:'mid',to:'j2_silent',fx:{led:'Snooze ended'}}]},
+ j2_pause:{j:'J2',dd:2,time:'9:00 AM',ch:'sys',sys:'Three misses in a row. Paused until a new signal appears.',nba:'Pause',why:'Each miss lowered channel affinity. Another send would cost more in opt-out risk than it could earn.',cands:[['All channels','—','Paused','hold']],opts:[]},
+
+ j3_prompt:{j:'J3',dd:3,time:'9:05 PM',ch:'inapp',where:'Lending tab, same session',
+   touch:{subject:'See if you prequalify',body:'Checking won’t affect your personal credit score. See your rate, payment and total cost before you commit.',cta:'Check if you prequalify'},
+   nba:'In-product prompt, same session',why:'Self-directed intent: the customer opened the Lending tab on their own. Answer in the moment.',
+   cands:[['In-product','Now','Customer is here, with intent','pick'],['Email','Within 24h','If they leave without acting','hold']],
+   opts:[{l:'Checked and started the application',k:'pos',to:'app',fx:{intent:20,led:'Checked prequalification; started the application'}},
+         {l:'Viewed requirements, then left',k:'mid',to:'j3_email',fx:{intent:10,concern:'Will I qualify?',ev:'Opened the requirements section twice',led:'Read requirements; left without acting'}},
+         {l:'Left without action',k:'neg',to:'j3_story',fx:{miss:1,led:'Left the Lending tab'}}]},
+ j3_email:{j:'J3',dd:1,time:'7:40 AM',ch:'email',
+   touch:{subject:'What you need to apply',body:'Most of what a lender asks for is already in QuickBooks. Businesses with $50K+ in revenue over the past year generally may qualify, and checking won’t affect your personal credit score.',cta:'Check if you prequalify'},
+   nba:'Email · answers what they looked at',why:'They read the requirements, so the email answers “Will I qualify?”',
+   cands:[['Email','Next morning','Answers the concern','pick'],['In-product','Next login','Prompt stays on the Lending tab','hold']],
+   opts:[{l:'Clicked and started the application',k:'pos',to:'app',fx:{intent:20,led:'Started the application from the email'}},{l:'No response',k:'neg',to:'j3_story',fx:{miss:1,led:'No click'}}]},
+ j3_story:{j:'J3',dd:2,time:'7:40 AM',ch:'email',
+   touch:{subject:'How a roaster funded a second machine',body:'An owner like you on choosing a term loan, what it cost and how quickly the funds arrived.',cta:'Check if you prequalify'},
+   nba:'Email · owner story',why:'Silent after the session. Intent fades with a 5-day half-life, so the cadence slows.',
+   cands:[['Email','Day 2','Owner story theme','pick'],['Push','Day 4','If opted in and still silent','hold']],
+   opts:[{l:'Started the application',k:'pos',to:'app',fx:{intent:20,led:'Started the application'}},{l:'No new intent for 30 days',k:'neg',to:'j3_decay',fx:{miss:1,led:'No activity for 30 days'}}]},
+ j3_decay:{j:'J1',dd:30,time:'9:00 AM',ch:'sys',sys:'Intent faded with no new activity in 30 days. Back to Journey 1 education.',nba:'Return to Journey 1',why:'Intent decays; without new signals the customer drops back a stage.',cands:[['All channels','—','Back to Journey 1','hold']],opts:[]},
+
+ app:{j:'J3',dd:0,time:'9:12 PM',ch:'app',
+   nba:'Application, pre-filled from QuickBooks',why:'Most of the application is filled in from QuickBooks and progress saves at every step.',
+   cands:[['In-product','Now','Application in progress','pick']],
+   opts:[{l:'Submitted the application',k:'pos',to:'done',fx:{intent:10,led:'Submitted the application'}},
+         {l:'Left at the offer screen',k:'neg',to:'j4_d0',fx:{concern:'Cost and payment',ev:'Left after viewing the payment and total cost',led:'Abandoned at the offer screen'}},
+         {l:'Left at the personal guarantee step',k:'neg',to:'j4_d0',fx:{concern:'Personal guarantee',ev:'Left on the personal guarantee page',led:'Abandoned at the personal guarantee step'}}]},
+
+ j4_d0:{j:'J4',cd:0,dd:0,time:'9:14 PM',ch:'push',
+   touch:{subject:'Your application is saved. About 2 minutes left. Tap to pick up where you left off.'},
+   nba:'Push now · deep link to the saved step',why:'Abandonment is a service moment, so it goes out right away. Waterfall: push (opted in) → SMS → email. The in-product card turns on and stays until they resume.',
+   cands:[['Push','Now','1st choice: opted in','pick'],['SMS','—','2nd choice, used only without push','hold'],['Email','—','3rd choice','hold'],['In-product','Every login','Always on in Journey 4','pick']]},
+ j4_d1:{j:'J4',cd:1,dd:1,time:'7:40 AM',ch:'email',nba:'Email · fast, plus their concern',why:'24 hours, no action. The email leads with the framework’s “fast” promise and answers the concern from the step where they left.',
+   cands:[['Email','7:40 AM','Their reading time','pick'],['In-product','Every login','Card stays on','pick'],['Push / SMS','Day 2','Next follow-up','hold']]},
+ j4_d2:{j:'J4',cd:2,dd:1,time:'12:30 PM',ch:'sms',
+   touch:{subject:'QuickBooks: your loan application is saved, about 2 min left: qb.example/resume. Reply STOP to opt out.'},
+   nba:'SMS · push or SMS, never both',why:'Push went unanswered on Day 0, so SMS gets this turn. Consent on file; outside quiet hours.',
+   cands:[['SMS','12:30 PM','Push ignored on Day 0','pick'],['Push','—','Not both on the same day','block'],['In-product','Every login','Card stays on','pick']]},
+ j4_d5:{j:'J4',cd:5,dd:3,time:'7:40 AM',ch:'email',nba:'Email · no surprises',why:'Value proposition: confident. 25 days left on the offer.',cands:[['Email','7:40 AM','Scheduled follow-up','pick'],['In-product','Every login','Card stays on','pick']]},
+ j4_d10:{j:'J4',cd:10,dd:5,time:'7:40 AM',ch:'email',nba:'Email · speed to funds',why:'Value proposition: fast funding. 20 days left.',cands:[['Email','7:40 AM','Scheduled follow-up','pick'],['In-product','Every login','Card stays on','pick']]},
+ j4_d15:{j:'J4',cd:15,dd:5,time:'7:40 AM',ch:'email',nba:'Email · halfway',why:'Value proposition: easy. Halfway through the offer window.',cands:[['Email','7:40 AM','Scheduled follow-up','pick'],['In-product','Every login','Card stays on','pick']]},
+ j4_d25:{j:'J4',cd:25,dd:10,time:'7:40 AM',ch:'email',nba:'Email · 5 days left',why:'Urgency builds: 5 days left, plus no origination fees or prepayment penalties.',cands:[['Email','7:40 AM','Scheduled follow-up','pick'],['In-product','Every login','Card stays on','pick']]},
+ j4_d29:{j:'J4',cd:29,dd:4,time:'7:40 AM',ch:'email',nba:'Last call · email plus one push or SMS',why:'The offer expires in 24 hours. Email plus one short push or SMS, never both.',cands:[['Email','7:40 AM','Last call','pick'],['SMS or push','12:30 PM','One of the two','pick'],['In-product','Every login','Card stays on','pick']]},
+ j4_d30:{j:'J4',cd:30,dd:1,time:'9:00 AM',ch:'sys',sys:'The offer expired. The customer leaves Journey 4 and returns to Journey 2 or 3 if signals come back.',nba:'Exit',why:'Offer window closed.',cands:[['All channels','—','Journey 4 complete','hold']],opts:[]},
+
+ app2:{j:'J4',dd:0,time:'',ch:'app',resumed:true,
+   nba:'Resumed application',why:'Deep link opened the saved step. Every reminder pauses while they work.',cands:[['In-product','Now','Application in progress','pick']],
+   opts:[{l:'Submitted the application',k:'pos',to:'done',fx:{intent:10,led:'Submitted the application'}},{l:'Left again',k:'neg',to:'NEXTJ4',fx:{led:'Left the application again'}}]},
+ done:{j:'DONE',dd:0,time:'',ch:'sys',tone:'good',sys:'Application submitted. Every reminder stops and the in-product card turns off. Next: credit decision and onboarding.',nba:'Stop · hand off',why:'Goal reached. No more promotional touches.',cands:[['All channels','—','Journey complete','block']],opts:[]},
+ risk:{j:'EXIT',dd:0,time:'',ch:'sys',tone:'bad',sys:'Cash flow is getting worse. All promotion stops; the customer is excluded from the promotional journey.',nba:'Stop all promotion',why:'Customers with worsening cash flow are excluded from promotional journeys.',cands:[['All channels','—','Suppressed','block']],opts:[]},
+};
+
+// Journey 4 emails, written from the framework (Decision / Apply messaging) with the days left
+const J4MAIL = {
+ 1:c=>({subject:'You’re minutes from a decision',body:(c==='Personal guarantee'
+   ?'Your application is saved where you left it, on the personal guarantee step. Here’s what the guarantee means in plain language, and you’ll see it before you sign. '
+   :'Your application is pre-filled from QuickBooks and saved where you left off. Before you sign you’ll see your rate, payment schedule and total cost, so there are no surprises. ')+'29 days left on your offer.',cta:'Finish your application'}),
+ 5:()=>({subject:'No surprises: see your payment before you sign',body:'Your rate, payment schedule and total cost are shown before you commit. 25 days left on your offer. Subject to credit review.',cta:'See your payment'}),
+ 10:()=>({subject:'Funds in 1–2 business days, if approved',body:'Finish now and get the roaster ordered sooner. Decision in minutes. 20 days left on your offer.',cta:'Finish your application'}),
+ 15:()=>({subject:'Halfway: your application is right where you left it',body:'Progress saves as you go, so you can pick up exactly where you stopped. 15 days left on your offer.',cta:'Pick up where you left off'}),
+ 25:()=>({subject:'5 days left on your offer',body:'No origination fees or prepayment penalties. About 2 minutes to finish.',cta:'Finish your application'}),
+ 29:()=>({subject:'Your offer expires in 24 hours',body:'This is the last reminder. Finish now: about 2 minutes left.',cta:'Finish now'}),
+};
+const J4ORDER = ['j4_d0','j4_d1','j4_d2','j4_d5','j4_d10','j4_d15','j4_d25','j4_d29','j4_d30'];
+J4ORDER.slice(0,-1).forEach((id,i)=>{
+  const next = J4ORDER[i+1];
+  const o=[{l:'Resumed from the link',k:'pos',to:'app2',fx:{intent:15,led:'Resumed the application from the deep link'}},{l:'No response',k:'neg',to:next,fx:{miss:1,led:'No response'}}];
+  if(id==='j4_d2') o.push({l:'Replied STOP',k:'neg',to:next,fx:{stopSms:true,led:'Replied STOP: SMS removed for good'}});
+  N[id].opts=o;
+});
+
+const EVENTS = {
+  signal:{l:'⚡ A need appears in the books', allow:['J1'], to:'j2_card', dd:2, fx:{intent:10,signal:'Equipment quote: $48K roaster saved in Bills',signal2:'Cash forecast: paying in cash would leave under 2 weeks of payroll',led:'Need signal: $48K roaster quote; paying in cash would squeeze payroll',move:true}},
+  lending:{l:'Visits the Lending tab on their own', allow:['J1','J2'], to:'j3_prompt', dd:3, fx:{intent:20,signal:'Opened the Lending tab on their own',led:'Self-directed intent: opened the Lending tab',move:true}},
+  risk:{l:'Cash flow gets worse', allow:['J1','J2','J3','J4'], to:'risk', dd:1, cls:'risk', fx:{led:'Risk: cash flow getting worse',move:true}},
+};
+
+const STORY = [
+  {opt:'No response in 48 hours'},{opt:'Opened the blog'},{ev:'signal'},
+  {opt:'Explored the payment calculator, then left'},{opt:'No response in 48 hours'},{ev:'lending'},
+  {opt:'Checked and started the application'},{opt:'Left at the offer screen'},
+  {opt:'No response'},{opt:'No response'},{opt:'Resumed from the link'},{opt:'Submitted the application'}
+];
+
+let S, timer=null, storyIx=0;
+function fresh(){
+  S={node:'j1_e1',day:0,time:'7:40 AM',intent:5,concern:null,ev:null,miss:0,touchesWeek:1,sms:true,push:true,email:true,inapp:false,
+     signals:[],ledger:[],visited:{J1:true},trans:{},j4start:null,j4fired:[],j4next:null,history:[],
+     aff:{inapp:.55,email:.45,push:.30,sms:.25},path:['j1_e1'],edges:[],sends:[{day:0,ch:'email'}]};
+  log('send',sendText('j1_e1'));
+}
+function clockText(day,time){const d=new Date(START);d.setDate(d.getDate()+day);return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+(time?', '+time:'')+' · Day '+day;}
+function log(kind,text){S.ledger.unshift({t:clockText(S.day,S.time).split(' · ')[0],kind,text});}
+function touchOf(id){const n=N[id];if(n.touch)return n.touch;if(n.cd!==undefined&&J4MAIL[n.cd])return J4MAIL[n.cd](S.concern);return null;}
+function chName(c){return {email:'Email',push:'Push',sms:'SMS',inapp:'In-product',app:'Application',sys:'Engine'}[c];}
+function sendText(id){const n=N[id],t=touchOf(id);if(n.ch==='sys'||n.ch==='app')return null;return 'Sent '+chName(n.ch)+': '+(t?t.subject:'');}
+
+function go(to,fx,ddOverride){
+  fx=fx||{};
+  if(to==='NEXTJ4') to=S.j4next||'j4_d1';
+  const prevJ=N[S.node].j, from=S.node, fch=N[from].ch;
+  // learning: channel affinity moves with every response or silence
+  if(['email','inapp','push','sms'].includes(fch)){
+    if(fx.miss) S.aff[fch]=+(S.aff[fch]*0.85).toFixed(3);
+    else if(fx.k==='pos'||fx.k==='mid') S.aff[fch]=Math.min(.9,+(S.aff[fch]*1.2).toFixed(3));
+  }
+  S.edges.push({from,to,l:fx.lab||'',ev:!!fx.move});
+  if(fx.led) log(fx.move?'move':(fx.intent>0?'pos':'neg'),fx.led);
+  if(fx.intent) S.intent=Math.min(100,S.intent+fx.intent);
+  const toJ=(N[to]||{}).j, inJ4=prevJ==='J4'||toJ==='J4';
+  if(fx.miss){S.miss+=1;S.intent=inJ4?Math.max(80,S.intent-3):Math.max(0,Math.round(S.intent*0.8));}else if(fx.intent){S.miss=0;}
+  // stage floors: actions outrank any score built from clicks
+  if(to==='app'||(N[S.node].ch==='app'&&toJ==='J4')) S.intent=Math.max(S.intent,90);
+  if(to==='app2') S.intent=95;
+  if(to==='done') S.intent=100;
+  if(fx.concern){S.concern=fx.concern;S.ev=fx.ev;}
+  if(fx.signal) S.signals.push(fx.signal);
+  if(fx.signal2) S.signals.push(fx.signal2);
+  if(fx.stopSms) S.sms=false;
+  if(fx.learn) log('neg','Learned: '+fx.learn);
+  const n=N[to];
+  S.day+= (ddOverride!==undefined?ddOverride:n.dd);
+  S.time=n.time||S.time;
+  if(n.j!==prevJ && !(to==='app2')){S.trans[n.j]=fx.led||'';}
+  S.visited[n.j]=true;
+  if(n.j==='J4'&&S.j4start===null) S.j4start=S.day;
+  if(n.cd!==undefined){S.j4fired.push(n.cd); const ix=J4ORDER.indexOf(to); S.j4next=J4ORDER[ix+1]||'j4_d30'; S.inapp=true;}
+  if(to==='app2'||to==='done'||to==='risk'||to==='j4_d30') S.inapp=false;
+  if(to==='app2'||to==='app') S.time=S.time||'9:12 PM';
+  S.node=to; S.path.push(to);
+  const st=sendText(to); if(st){log('send',st);S.sends.push({day:S.day,ch:n.ch});}
+  if(to==='app'&&N.app) log('pos','Application opened, pre-filled from QuickBooks');
+  render();
+}
+
+
+/* ---------- NBA rules and score ---------- */
+function fxOf(o){return Object.assign({k:o.k||'ev',lab:o.l},o.fx);}
+const RULES={
+ G1:'Credit-eligible, as set by Credit and Risk',
+ G2:'Worsening cash flow stops all promotion',
+ G3:'Consent per channel; STOP or unsubscribe removes it for good',
+ G4:'Quiet hours: no push or SMS 10 PM–8 AM',
+ G5:'Weekly cap: 4 touches (in-product cards don’t count)',
+ G6:'“Not now” snooze: 7 days for “Maybe later”, 30 for “I don’t need it”',
+ P1:'Journey = strongest signal: application activity > intent > need > none',
+ P2:'Channel roles: Journey 1 uses email and in-product; push from Journey 2; SMS only for application moments',
+ P3:'Journey 4: Day 0 waterfall push → SMS → email; in-product card always on',
+ P4:'Push or SMS, never both on the same day',
+ P5:'After a click, follow up the next morning, not the same hour',
+ P6:'3 misses in a row → pause until a new signal; 30 quiet days → back one journey',
+ P7:'Submit or offer expiry ends the journey; every reminder stops',
+ P8:'One touch per moment; other channels wait as the fallback if it’s silent',
+ P9:'Journey 4 cadence: Day 0, 1, 2, 5, 10, 15, 25, 29; offer expires Day 30',
+ P10:'Nothing goes out while the customer is in the application',
+};
+const SYSRULE={j1_pause:'P6',j2_snooze:'G6',j2_pause:'P6',j3_decay:'P6',j4_d30:'P7',done:'P7',risk:'G2',app:'P10',app2:'P10'};
+const CM={j2_email:1,j3_email:1,j4_d1:1,j4_d5:1};
+const STAGE={J1:.3,J2:.5,J3:.8,J4:1};
+const OPTB={email:.002,push:.002,sms:.004,inapp:0};
+const MIN_SCORE=.03;
+function ruleOf(note){
+  const m=[[/Not used for awareness|Reserved for application/i,'P2'],[/Too soon after a click/i,'P5'],[/1st choice|2nd choice|3rd choice/i,'P3'],
+   [/Not both|One of the two/i,'P4'],[/STOP/i,'G3'],[/Snoozed/i,'G6'],[/Suppressed/i,'G2'],[/Paused|Waiting for a signal|Back to Journey 1/i,'P6'],
+   [/Journey 4 complete|Journey complete/i,'P7'],[/Always on|Card stays on/i,'P3'],[/Application in progress/i,'P10'],[/Scheduled follow-up|Last call|Their reading time|Next follow-up/i,'P9']];
+  for(const [re,t] of m) if(re.test(note)) return t; return 'P8';
+}
+function touchesWeek(){return S.sends.filter(x=>x.day>S.day-7&&x.day<=S.day).length;}
+function scoreOf(id,ch){
+  const n=N[id]; ch=ch||n.ch; if(!STAGE[n.j]||!(ch in OPTB)) return null;
+  const aff=S.aff[ch], timing=(ch==='inapp'||n.time==='7:40 AM'||id==='j4_d0')?1:.8, stage=STAGE[n.j],
+        cm=(CM[id]&&S.concern)?1.2:1, fat=+(0.02*Math.max(0,touchesWeek()-1)).toFixed(3), opt=+(OPTB[ch]*(1+S.miss)*5).toFixed(3);
+  const total=aff*timing*stage*cm-fat-opt;
+  return {aff,timing,stage,cm,fat,opt,total:+total.toFixed(3)};
+}
+const f2=x=>(+x).toFixed(2);
+function calcText(id){
+  const n=N[id];
+  if(SYSRULE[id]) return `Rule ${SYSRULE[id]}: ${RULES[SYSRULE[id]]}.\nNo touch is scored at this step.`;
+  const c=scoreOf(id); if(!c) return '';
+  const extra = n.cd!==undefined?`\nTiming from rule P9 (Day ${n.cd}); the score confirms it’s worth sending.`:'';
+  return `${chName(n.ch)}: ${f2(c.aff)} affinity × ${f2(c.timing)} timing × ${f2(c.stage)} stage × ${f2(c.cm)} concern\n  − ${f2(c.fat)} fatigue − ${f2(c.opt)} opt-out risk\n= <b>${f2(c.total)}</b> ${c.total>=MIN_SCORE?'≥':'<'} 0.03 → ${c.total>=MIN_SCORE?'send':'wait'}${extra}`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const n=N[S.node], jcur=n.j;
+  // band
+  const order=['J1','J2','J3','J4','DONE'];
+  const why={J2:S.trans.J2,J3:S.trans.J3,J4:S.trans.J4,DONE:S.trans.DONE};
+  $('band').innerHTML=order.map(k=>{
+    let cls='stage';
+    if(jcur==='EXIT'&&k===Object.keys(S.visited).filter(x=>order.includes(x)).pop()) cls+=' exit';
+    else if(k===jcur) cls+=' now'; else if(S.visited[k]) cls+=' done';
+    const nm={J1:['Journey 1','Unaware'],J2:['Journey 2','Need signal'],J3:['Journey 3','Intent'],J4:['Journey 4','Apply · recover'],DONE:['Outcome','Submitted']}[k];
+    return `<div class="${cls}"><b>${nm[0]}</b><span>${nm[1]}</span><div class="why">${why[k]?esc(trim(why[k])):''}</div></div>`;
+  }).join('');
+  // clock
+  $('clock').innerHTML='<b>'+esc(clockText(S.day,S.time))+'</b>';
+  $('jpill').textContent=J[jcur];
+  // signals & channels
+  const base=['Steady revenue, no gap forecast'];
+  $('signals').innerHTML=(S.signals.length?S.signals:base).map(s=>`<div class="sig ${S.signals.length?'lit':''}">${esc(s)}</div>`).join('');
+  $('channels').innerHTML=[['Email',S.email],['Push',S.push],['SMS',S.sms],['In-product card',S.inapp]].map(([l,on])=>{
+    const c = l==='In-product card'?(on?'chip on':'chip'):(on?'chip':'chip off');
+    return `<span class="${c}">${l}${l==='In-product card'?(on?': on':': off'):''}</span>`;}).join('');
+  // touch
+  $('touch').innerHTML=renderTouch(S.node);
+  // cadence
+  const inJ4 = jcur==='J4' || (S.j4start!==null && (S.node==='done'));
+  $('cadWrap').hidden=!(S.j4start!==null);
+  if(S.j4start!==null){
+    const curCd=n.cd;
+    $('cad').innerHTML=CAD.map(d=>{const fired=S.j4fired.includes(d);const cls=d===curCd?'cd now':(fired?'cd fired':'cd');
+      const lab=d===0?'now':(d===30?'expires':daysLeft(d)+' left');return `<div class="${cls}"><b>Day ${d}</b>${lab}</div>`;}).join('');
+  }
+  // options
+  const opts=(n.opts||[]);
+  $('askLabel').textContent=opts.length?'What does the customer do?':(jcur==='DONE'||jcur==='EXIT'||S.node==='j4_d30'?'Journey complete':'The engine is waiting');
+  $('opts').innerHTML=opts.map((o,i)=>`<button class="opt ${o.k}" type="button" data-o="${i}">${esc(o.l)}</button>`).join('');
+  const evs=Object.entries(EVENTS).filter(([k,e])=>e.allow.includes(jcur)&&!(S.node==='app'||S.node==='app2'));
+  $('events').hidden=!evs.length;
+  $('events').innerHTML=evs.length?'<div class="label">Something changes</div><div class="opts">'+evs.map(([k,e])=>`<button class="opt ${e.cls||'ev'}" type="button" data-e="${k}">${esc(e.l)}</button>`).join('')+'</div>':'';
+  // ledger
+  $('ledger').innerHTML=S.ledger.map(l=>`<div class="lg"><span class="t">${esc(l.t)}</span><span class="d ${l.kind}"></span><span>${esc(l.text)}</span></div>`).join('');
+  // engine
+  $('intentTxt').textContent=S.intent+' · '+(S.intent>=100?'submitted':S.intent>=90?'in application':S.intent>=80?'hot · offer live':S.intent>=70?'hot':S.intent>=35?'warm':'cold');
+  $('intentBar').style.width=S.intent+'%';$('intentMeter').setAttribute('aria-valuenow',S.intent);
+  $('stateKv').innerHTML=[
+    ['Journey',J[jcur]],
+    ['Unanswered in a row',String(S.miss)],
+    ['Touches this week',Math.min(4,1+(S.miss%3))+' of 4'],
+    ['Next if silent', jcur==='J4'&&S.j4next?nodeLabel(S.j4next):(n.opts&&n.opts.find(o=>o.k==='neg')?nodeLabel(n.opts.find(o=>o.k==='neg').to):'—')],
+  ].map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+  $('concern').innerHTML=S.concern?`<b>Likely concern: ${esc(S.concern)}</b><br><span style="color:var(--muted)">Evidence: ${esc(S.ev)}</span>`:'<b>Likely concern: not known yet</b><br><span style="color:var(--muted)">Inferred later from pages viewed, where they drop off, or a “Not now” reason</span>';
+  $('nba').innerHTML=`<div class="label">Next best action</div><h3>${esc(n.nba)}</h3><div style="font-size:13px">${esc(n.why)}</div><div class="formula">${calcText(S.node)}</div>`;
+  if($('liveCalc')) $('liveCalc').innerHTML=`<span style="color:var(--muted)">${esc(clockText(S.day,S.time))} · ${esc(n.nba)}</span>
+`+calcText(S.node);
+  const checks=['Credit-eligible, per Credit and Risk','No worsening cash flow',`Consent: email ✓ · push ${S.push?'✓':'✗'} · SMS ${S.sms?'✓':'✗ (STOP)'}`,'Weekly cap and quiet hours respected'];
+  if(jcur==='EXIT') checks.splice(1,1);
+  $('checks').innerHTML=checks.map(c=>`<li>${esc(c)}</li>`).join('');
+  const rows=(n.cands||[]).map(r=>{let [ch,when,note,st]=r; if(ch==='SMS'&&!S.sms&&st==='pick'){st='block';note='Customer replied STOP';}
+    const chk={'Email':'email','Push':'push','SMS':'sms','In-product':'inapp'}[ch];
+    let tag; if(st==='pick'&&chk===n.ch&&!SYSRULE[S.node]){const c=scoreOf(S.node);tag=c?f2(c.total):'';} else if(/unanswered|by affinity/i.test(note)&&chk){const c=scoreOf(S.node,chk);tag=c?'score '+f2(c.total):ruleOf(note);} else tag=ruleOf(note);
+    return `<tr class="${st==='pick'?'pick':''}"><td>${esc(ch)}</td><td>${esc(when)}</td><td>${esc(note)}</td><td><span class="st ${st}">${{pick:'Chosen',hold:'Held',block:'Blocked'}[st]}</span><br><span class="rule" title="${esc(RULES[tag]||'Score from the formula')}">${esc(tag)}</span></td></tr>`;}).join('');
+  $('cands').innerHTML='<thead><tr><th>Option</th><th>When</th><th>Why</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody>';
+  $('stepBtn').disabled = storyIx>=STORY.length;
+  renderFlow();
+}
+function nodeLabel(id){const n=N[id];if(!n)return '—';const c=chName(n.ch),b=n.nba||'';return (c==='Engine'||b.startsWith(c)||b.startsWith('Last call')?'':c+' · ')+b;}
+function trim(s){return s.length>58?s.slice(0,56)+'…':s;}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function renderTouch(id){
+  const n=N[id],t=touchOf(id),when=esc(clockText(S.day,S.time).split(' · ')[0]);
+  if(n.ch==='email') return `<div class="touch"><div class="th"><span>Email</span><span style="font-family:var(--f-mono);font-weight:400">${when}</span></div><div class="tb"><div class="label">Subject</div><div class="subj">${esc(t.subject)}</div><div>${esc(t.body)}</div><span class="cta">${esc(t.cta)}</span><div class="fine">Manage preferences · Unsubscribe</div></div></div>`;
+  if(n.ch==='inapp') return `<div class="touch"><div class="th"><span>In-product · ${esc(n.where)}</span><span style="font-family:var(--f-mono);font-weight:400">${when}</span></div><div class="tb"><div class="subj">${esc(t.subject)}</div><div>${esc(t.body)}</div><div style="display:flex;gap:10px;align-items:center"><span class="cta">${esc(t.cta)}</span><span class="fine">Not now ▾</span></div></div></div>`;
+  if(n.ch==='push') return `<div class="phone"><div class="notif"><div class="app"><span>QuickBooks · push</span><span>${esc(S.time)}</span></div>${esc(t.subject)}</div></div><div class="fine" style="font-size:12px;color:var(--muted)">Deep link opens the exact step where they left.</div>`;
+  if(n.ch==='sms') return S.sms?`<div class="phone"><div class="label" style="margin-bottom:6px">SMS · ${esc(S.time)}</div><div class="bubble">${esc(t.subject)}</div></div>`:`<div class="sys">SMS is off for this customer (replied STOP). The engine uses push for this follow-up instead.</div>`;
+  if(n.ch==='app'){
+    const steps=[['Business details','Pre-filled from QuickBooks','done'],['Loan amount','$48,000 for the roaster','done'],['Offer review','Rate, payment schedule and total cost','current'],['Personal guarantee and e-sign','Review, then sign','todo']];
+    return `<div class="touch"><div class="th"><span>${n.resumed?'Application · resumed from deep link':'Application · pre-filled from QuickBooks'}</span><span>about 2 min left</span></div><div class="tb"><div class="steps">${steps.map((s,i)=>`<div class="stp ${s[2]}"><span class="n">${s[2]==='done'?'✓':i+1}</span><span><b>${esc(s[0])}</b> · ${esc(s[1])}</span></div>`).join('')}</div><div class="fine">Prequalified amounts and terms are subject to credit review.</div></div></div>`;
+  }
+  return `<div class="sys ${n.tone||''}">${esc(n.sys)}</div>`;
+}
+
+
+/* ---------- workflow view ---------- */
+const W=136,Hh=50;
+const WF={
+ j1_e1:[160,40,'Email 1 · education'], j1_ip:[320,40,'Tip card'], j1_e2:[480,40,'Email 2 · stories'], j1_e3:[640,40,'Email 3 · no pressure'], j1_pause:[800,40,'Wait · monthly news'],
+ j2_card:[320,185,'Card at the need'], j2_email:[480,145,'Email · their worry'], j2_silent:[480,215,'Email · new channel'], j2_snooze:[320,265,'Snooze 7 days'], j2_push:[640,180,'Push · one try'], j2_pause:[800,180,'Pause'],
+ j3_prompt:[480,385,'Prompt · in session'], j3_email:[640,355,'Email · qualify?'], j3_story:[640,425,'Email · owner story'], j3_decay:[800,425,'Back to Journey 1'],
+ app:[980,290,'Application'], app2:[1180,410,'Resumed app'], done:[1420,290,'Submitted'], risk:[1420,40,'Stop all promotion'],
+ j4_d0:[160,535,'Day 0 · push'], j4_d1:[310,535,'Day 1 · email'], j4_d2:[460,535,'Day 2 · SMS'], j4_d5:[610,535,'Day 5 · email'], j4_d10:[760,535,'Day 10 · email'],
+ j4_d15:[910,535,'Day 15 · email'], j4_d25:[1060,535,'Day 25 · email'], j4_d29:[1210,535,'Day 29 · last call'], j4_d30:[1360,535,'Day 30 · expires'],
+};
+const LANES=[['JOURNEY 1 · UNAWARE',8,107],['JOURNEY 2 · NEED SIGNAL',125,210],['JOURNEY 3 · INTENT',345,145],['JOURNEY 4 · APPLY · RECOVER',505,95]];
+let sel=null;
+function kindOf(id){const n=N[id];if(id==='done')return 'k-good';if(id==='risk')return 'k-bad';if(n.ch==='app')return 'k-app';if(n.ch==='sys')return 'k-wait';return 'k-touch';}
+function sub2(id){const n=N[id];if(id==='risk')return 'from any journey';if(id==='done')return 'goal';const ch=chName(n.ch);return (n.j==='DONE'||n.j==='EXIT'?'':n.j.replace('J','J')+' · ')+ch;}
+function edgePath(a,b){
+  const [ax,ay]=WF[a],[bx,by]=WF[b];
+  if(a==='app'&&b==='j4_d0') return `M${ax+W/2},${ay+Hh} V505 H${bx+W/2} V${by-4}`;
+  if(bx>=ax+W-4){const x1=ax+W,y1=ay+Hh/2,x2=bx-4,y2=by+Hh/2,mx=(x1+x2)/2;return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;}
+  if(by>ay){const x1=ax+W/2,y1=ay+Hh,x2=bx+W/2,y2=by-4,my=(y1+y2)/2;return `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;}
+  const x1=ax+W/2,y1=ay,x2=bx+W/2,y2=by+Hh+4,my=(y1+y2)/2;return `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+}
+function midOf(a,b){const [ax,ay]=WF[a],[bx,by]=WF[b];return [(ax+bx+W)/2,(ay+by+Hh)/2];}
+const STATIC_EDGES=(()=>{const e=[],seen={};for(const id in N){(N[id].opts||[]).forEach(o=>{if(o.to==='NEXTJ4'||!WF[o.to])return;const k=id+'>'+o.to;if(!seen[k]){seen[k]=1;e.push([id,o.to]);}});}
+  e.push(['j4_d29','j4_d30']);return e;})();
+function renderFlow(){
+  const svg=$('wf'); if(!svg) return;
+  const visits={}; S.path.forEach(id=>visits[id]=(visits[id]||0)+1);
+  const taken={}; S.edges.forEach(e=>taken[e.from+'>'+e.to]=e);
+  const last=S.edges[S.edges.length-1];
+  let h=`<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker><marker id="arOn" class="on" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>`;
+  h+=LANES.map(([t,y,hh])=>`<g class="lane"><rect x="10" y="${y}" width="1395" height="${hh}" rx="10"/><text x="22" y="${y+15}">${t}</text></g>`).join('');
+  h+=`<g class="lane"><text x="985" y="280">APPLY</text><text x="1425" y="280">OUTCOME</text></g>`;
+  // static edges
+  STATIC_EDGES.forEach(([a,b])=>{const k=a+'>'+b;const t=taken[k];const isLast=last&&last.from===a&&last.to===b;
+    h+=`<g class="we ${isLast?'hot':t?'done':''}"><path d="${edgePath(a,b)}" marker-end="url(#${t?'arOn':'ar'})"/></g>`;});
+  // dynamic edges: events and re-entries not in the static graph
+  S.edges.forEach((e,i)=>{if(!WF[e.from]||!WF[e.to])return;if(STATIC_EDGES.some(([a,b])=>a===e.from&&b===e.to))return;const isLast=i===S.edges.length-1;
+    h+=`<g class="we ev ${isLast?'hot':'done'}"><path d="${edgePath(e.from,e.to)}" marker-end="url(#arOn)"/></g>`;});
+  // nodes
+  for(const id in WF){const [x,y,t]=WF[id];const v=visits[id]||0;
+    const cls=['wn',kindOf(id),v?'vis':'unv',id===S.node?'now':'',id===sel?'sel':''].join(' ');
+    h+=`<g class="${cls}" data-node="${id}" tabindex="0" role="button" aria-label="${esc(t)}"><rect class="box" x="${x}" y="${y}" width="${W}" height="${Hh}" rx="9"/><rect class="bar" x="${x}" y="${y+8}" width="4" height="${Hh-16}" rx="2"/>`+
+      `<text class="t1" x="${x+12}" y="${y+21}">${esc(t)}</text><text class="t2" x="${x+12}" y="${y+38}">${esc(sub2(id))}</text>`+
+      (v>1?`<circle class="cnt" cx="${x+W-4}" cy="${y+4}" r="9"/><text class="cntt" x="${x+W-4}" y="${y+7.5}" text-anchor="middle">${v}</text>`:'')+`</g>`;}
+  // label on the last edge
+  if(last&&WF[last.from]&&WF[last.to]&&last.l){let [mx,my]=midOf(last.from,last.to);if(Math.abs(WF[last.from][1]-WF[last.to][1])<30)my-=Hh/2+14;const lab=trimTo(last.l,34);const w=lab.length*6.1+14;
+    h+=`<g class="we hot"><rect x="${mx-w/2}" y="${my-10}" width="${w}" height="20" rx="10"/><text x="${mx}" y="${my+4}" text-anchor="middle">${esc(lab)}</text></g>`;}
+  svg.innerHTML=h;
+  // customer step panel
+  const n=N[S.node];
+  $('wfClock').innerHTML='<b>'+esc(clockText(S.day,S.time))+'</b><span class="pill">'+esc(J[n.j])+'</span>';
+  const t=touchOf(S.node);
+  $('wfNow').innerHTML=`<b>${esc(n.nba)}</b>`+(t?`<div style="color:var(--muted);margin-top:2px">“${esc(t.subject)}”</div>`:(n.sys?`<div style="color:var(--muted);margin-top:2px">${esc(n.sys)}</div>`:''));
+  $('wfOpts').innerHTML=(n.opts||[]).map((o,i)=>`<button class="opt ${o.k}" type="button" data-o="${i}">${esc(o.l)}</button>`).join('');
+  const evs=Object.entries(EVENTS).filter(([k,e])=>e.allow.includes(n.j)&&!(S.node==='app'||S.node==='app2'));
+  $('wfEvents').hidden=!evs.length;
+  $('wfEvents').innerHTML=evs.length?'<div class="label">Something changes</div><div class="opts">'+evs.map(([k,e])=>`<button class="opt ${e.cls||'ev'}" type="button" data-e="${k}">${esc(e.l)}</button>`).join('')+'</div>':'';
+  $('wfLog').innerHTML=S.edges.map((e,i)=>`<li><span class="n">${i+1}</span><span>${esc(e.l||'')} → <b>${esc(WF[e.to]?WF[e.to][2]:e.to)}</b></span></li>`).join('')||'<li><span class="n">0</span><span>Started: Email 1 sent</span></li>';
+  const lg=$('wfLog'); lg.scrollTop=lg.scrollHeight;
+  renderInspector(sel||S.node);
+}
+function trimTo(s,k){return s.length>k?s.slice(0,k-1)+'…':s;}
+function renderInspector(id){
+  const n=N[id]; if(!n) return;
+  $('inspTitle').textContent='Node inspector · '+(WF[id]?WF[id][2]:id)+(id===S.node?' (current)':'');
+  const t=touchOf(id);
+  const out=(n.opts||[]).map(o=>`• ${o.l} → ${WF[o.to]?WF[o.to][2]:(o.to==='NEXTJ4'?'next Journey 4 touch':o.to)}`).join('\n');
+  $('insp').innerHTML=`<div style="font-size:13px"><b>${esc(n.nba)}</b><div style="color:var(--muted)">${esc(n.why)}</div></div>`+
+    (t?`<div style="font-size:12.5px"><span class="label">Message</span><br>${esc(t.subject)}</div>`:'')+
+    `<div class="formula">${calcText(id)}${id!==S.node&&!SYSRULE[id]?'\n(scored with the customer’s current state)':''}</div>`+
+    (out?`<div class="formula">Responses from here:\n${esc(out)}</div>`:'');
+}
+function showView(v){
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===v)));
+  $('view-sim').hidden=v!=='sim'; $('view-flow').hidden=v!=='flow'; $('view-rules').hidden=v!=='rules';
+}
+$('wf').addEventListener('click',e=>{const g=e.target.closest('[data-node]');if(!g)return;sel=g.dataset.node===sel?null:g.dataset.node;renderFlow();});
+$('wf').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('[data-node]');if(!g)return;e.preventDefault();sel=g.dataset.node;renderFlow();});
+$('gateRules').innerHTML=Object.entries(RULES).filter(([k])=>k[0]==='G').map(([k,v])=>`<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('');
+$('policyRules').innerHTML=Object.entries(RULES).filter(([k])=>k[0]==='P').map(([k,v])=>`<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('');
+
+/* ---------- interactions ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.o!==undefined){stopPlay();const o=N[S.node].opts[+b.dataset.o];go(o.to,fxOf(o));}
+  else if(b.dataset.e){stopPlay();const ev=EVENTS[b.dataset.e];go(ev.to,fxOf(ev),ev.dd);}
+  else if(b.dataset.view){showView(b.dataset.view);}
+});
+function storyStep(){
+  if(storyIx>=STORY.length) return false;
+  const s=STORY[storyIx];
+  if(s.ev){const ev=EVENTS[s.ev];if(!ev.allow.includes(N[S.node].j)) return false;go(ev.to,fxOf(ev),ev.dd);}
+  else{const o=(N[S.node].opts||[]).find(x=>x.l===s.opt); if(!o) return false; go(o.to,fxOf(o));}
+  storyIx++; $('stepBtn').disabled = storyIx>=STORY.length; return true;
+}
+function stopPlay(){if(timer){clearInterval(timer);timer=null;$('play').textContent='▶ Play the story';}}
+$('play').onclick=()=>{
+  if(timer){stopPlay();return;}
+  if(storyIx>=STORY.length||S.node!==expectedNode()){reset();}
+  $('play').textContent='❚❚ Pause';
+  timer=setInterval(()=>{if(!storyStep())stopPlay();},1700);
+};
+$('stepBtn').onclick=()=>{stopPlay(); if(S.node!==expectedNode()) reset(); storyStep();};
+$('reset').onclick=()=>{stopPlay();reset();};
+let trail=['j1_e1'];
+function expectedNode(){return trail[storyIx]||null;}
+function reset(){storyIx=0;sel=null;fresh();render();}
+// precompute story trail
+(function(){fresh();const save=[];trail=[S.node];for(let i=0;i<STORY.length;i++){const s=STORY[i];let to,fx,dd;if(s.ev){to=EVENTS[s.ev].to;fx=fxOf(EVENTS[s.ev]);dd=EVENTS[s.ev].dd;}else{const o=N[S.node].opts.find(x=>x.l===s.opt);to=o.to;fx=fxOf(o);}
+  const r=render; render=()=>{}; go(to,fx,dd); render=r; trail.push(S.node);} })();
+reset();
+})();
+</script>
+
+</body>
+</html>
