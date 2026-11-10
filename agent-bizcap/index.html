@@ -198,7 +198,6 @@ tr.pick td{background:var(--teal-soft)}
   <nav class="tabs" role="tablist" aria-label="Views">
     <button role="tab" type="button" aria-selected="true" data-view="sim">Journey simulator</button>
     <button role="tab" type="button" aria-selected="false" data-view="flow">Workflow view</button>
-    <button role="tab" type="button" aria-selected="false" data-view="rules">How the NBA decides</button>
   </nav>
 
   <div class="cols" id="view-sim">
@@ -287,62 +286,6 @@ tr.pick td{background:var(--teal-soft)}
     </div>
   </section>
 
-  <section id="view-rules" class="rgrid" hidden>
-    <div class="card wide">
-      <h2 style="font-size:17px;color:var(--navy)">How the next best action is chosen</h2>
-      <div style="color:var(--muted);font-size:13px;max-width:90ch">Rules first, then a score. Hard rules decide what is allowed; a simple score picks among what’s left; every response updates the inputs for the next decision. All weights below are illustrative starting points that get tuned with holdout tests.</div>
-      <div class="steps5">
-        <div class="s5"><b>1 · Gate</b>Credit-eligible + ITA, risk, consent, quiet hours, weekly cap, snooze</div>
-        <div class="s5"><b>2 · Stream</b>The strongest signal sets the stream (P1)</div>
-        <div class="s5"><b>3 · Candidates</b>Channels allowed in that stream, at their next good time</div>
-        <div class="s5"><b>4 · Score</b>Affinity × timing × stage value × concern match − costs</div>
-        <div class="s5"><b>5 · Pick or wait</b>Highest score wins; below 0.03 the engine waits</div>
-        <div class="s5"><b>6 · Learn</b>Response or silence updates intent, affinity and concern</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="label">The score</div>
-      <div class="formula"><b>score</b> = affinity(channel) × timing × stage value × concern match
-        − fatigue − opt-out risk
-
-<b>affinity</b>    learned response rate for the channel
-              start: in-product 0.55 · email 0.45 · push 0.30 · SMS 0.25
-              ignored touch × 0.85 · click or tap × 1.2 (max 0.9)
-<b>timing</b>      1.0 at their moment (email 7–8 AM, in session,
-              minutes after leaving) · 0.8 otherwise
-<b>stage value</b> ITA only 0.3 · Credit signal 0.5
-              Customer signal 0.7 · Apply and recover 1.0
-<b>concern</b>     1.2 when the message answers the likely concern
-<b>fatigue</b>     0.02 × touches in the last 7 days
-<b>opt-out</b>     base(channel) × (1 + misses in a row) × 5
-              base: email 0.002 · push 0.002 · SMS 0.004 · in-product 0
-
-send if score ≥ <b>0.03</b>, else wait</div>
-      <div class="label" style="margin-top:2px">Live: the current step’s decision</div>
-      <div class="formula" id="liveCalc"></div>
-      <div style="font-size:12.5px;color:var(--muted)">In production, affinity, timing and opt-out risk come from Data Science models; the structure stays the same.</div>
-    </div>
-    <div class="card">
-      <div class="label">Intent score (likelihood to submit)</div>
-      <table class="rt"><tbody>
-        <tr><td>+10 to +30</td><td>Clicks, blog reads, calculator use, a Lending tab visit, a credit or customer signal</td></tr>
-        <tr><td>× 0.8</td><td>Each ignored touch before the application</td></tr>
-        <tr><td>90</td><td>Starts an application (abandoning keeps it at 90)</td></tr>
-        <tr><td>−3, floor 80</td><td>Each ignored recovery reminder while the offer is live</td></tr>
-        <tr><td>95 · 100</td><td>Resumes from the link · submits</td></tr>
-      </tbody></table>
-      <div class="label" style="margin-top:4px">Likely concern</div>
-      <div style="font-size:13px">Inferred from where they dropped off, pages viewed, “Not now” reasons and help searches. Left at the payment table → cost; read requirements twice → “Will I qualify?”; left on the guarantee step → personal guarantee.</div>
-    </div>
-    <div class="card">
-      <div class="label">Gates · checked before anything is scored</div>
-      <table class="rt"><tbody id="gateRules"></tbody></table>
-    </div>
-    <div class="card">
-      <div class="label">Journey policy rules</div>
-      <table class="rt"><tbody id="policyRules"></tbody></table>
-    </div>
-  </section>
   <div class="foot"><span>Built by Rakesh R. Iyer · concept demo for a lifecycle marketing discussion</span><span>All businesses, amounts and responses are fictional. Copy is illustrative.</span></div>
 </div>
 
@@ -786,12 +729,10 @@ function renderInspector(id){
 }
 function showView(v){
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===v)));
-  $('view-sim').hidden=v!=='sim'; $('view-flow').hidden=v!=='flow'; $('view-rules').hidden=v!=='rules';
+  $('view-sim').hidden=v!=='sim'; $('view-flow').hidden=v!=='flow';
 }
 $('wf').addEventListener('click',e=>{const g=e.target.closest('[data-node]');if(!g)return;sel=g.dataset.node===sel?null:g.dataset.node;renderFlow();});
 $('wf').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const g=e.target.closest('[data-node]');if(!g)return;e.preventDefault();sel=g.dataset.node;renderFlow();});
-$('gateRules').innerHTML=Object.entries(RULES).filter(([k])=>k[0]==='G').map(([k,v])=>`<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('');
-$('policyRules').innerHTML=Object.entries(RULES).filter(([k])=>k[0]==='P').map(([k,v])=>`<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join('');
 
 /* ---------- interactions ---------- */
 document.addEventListener('click',e=>{

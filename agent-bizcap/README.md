@@ -73,7 +73,7 @@ The strongest signal always wins: **application activity > customer signal > cre
 
 ---
 
-## Three views
+## Two views, plus a random mode
 
 **Journey simulator.** Shows the customer, the touch they're seeing and the engine's reasoning side by side: intent score, channel status, credit message, likely concern, the next best action with its score, the decision trace, and every candidate channel with the score or rule that chose, held or blocked it.
 
@@ -81,10 +81,6 @@ The strongest signal always wins: **application activity > customer signal > cre
 
 ![Workflow view](screenshots/05-workflow-view.png)
 ![Node inspector and execution log](screenshots/06-node-inspector.png)
-
-**How the NBA decides.** The full rule set and scoring formula, plus a live calculation for the current step.
-
-![How the NBA decides](screenshots/07-how-the-nba-decides.png)
 
 **Random path.** The same engine, with customer behavior drawn at random, so no two runs are alike.
 
