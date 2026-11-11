@@ -6,7 +6,7 @@
 
 Agent BizCap follows one credit-eligible small business from an **invitation to apply (ITA)** to a submitted loan application. Every action *or inaction* is a signal: after each response or silence, the engine updates the customer's state, picks the next best touch (or decides to wait), and moves the customer to a higher-priority stream as stronger signals appear.
 
-> **Concept demo.** All businesses, amounts, scores and responses are synthetic. Copy is illustrative. Not affiliated with, endorsed by, or built for Intuit or QuickBooks.
+> **Concept demo on synthetic data; not affiliated with any lender.** All businesses, amounts, scores and responses are synthetic. Copy is illustrative.
 
 ![Agent BizCap: a credit signal sets the message](screenshots/02-credit-signal.png)
 
