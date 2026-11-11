@@ -4,7 +4,7 @@ An interactive concept demo of an **adaptive next-best-action (NBA) engine** for
 
 Every customer action, and every inaction, is a signal. After each touch the engine waits out a response window, updates the customer's state, and decides the next touch (channel, time, message) or decides to wait. It weighs cadence, fatigue and opt-out risk, keeps every message compliant with lending marketing rules, and shows how each rule would be tested against a holdout.
 
-> **Concept demo.** Synthetic customers, illustrative numbers. Not affiliated with or endorsed by Intuit or any lender. The scoring is a transparent rule set, not a trained model.
+> **Concept demo on synthetic data; not affiliated with any lender.** Synthetic customers, illustrative numbers. The scoring is a transparent rule set, not a trained model.
 
 ![Journey simulator](docs/screenshots/03-abandonment-branch.png)
 
