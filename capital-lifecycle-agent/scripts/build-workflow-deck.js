@@ -54,7 +54,7 @@ function stepSlide(t, img, cols, notes){
 const G = '0E7C5A', B = '2B5BA8', W = '9A5B00', RD = 'AE2A21', K = '0F2230';
 
 section('Overview');
-titleSlide('The journey as a workflow', 'An adaptive next-best-action engine for small-business lines of credit, term loans and credit cards, shown node by node', 'This deck walks through the Workflow view of the demo. Each slide is a snapshot of the live engine after one customer action or inaction. Dashed green is the path that just ran; the pulsing node is where the customer is now.', 'Concept demo · synthetic data · not affiliated with Intuit');
+titleSlide('The journey as a workflow', 'An adaptive next-best-action engine for small-business lines of credit, term loans and credit cards, shown node by node', 'This deck walks through the Workflow view of the demo. Each slide is a snapshot of the live engine after one customer action or inaction. Dashed green is the path that just ran; the pulsing node is where the customer is now.', 'Concept demo on synthetic data; not affiliated with any lender');
 
 stepSlide('One loop, from need signal to response', '01-start.png', [
   ['Trigger', 'Greenline’s forecast shows an $18K gap before Nov 20', B],
