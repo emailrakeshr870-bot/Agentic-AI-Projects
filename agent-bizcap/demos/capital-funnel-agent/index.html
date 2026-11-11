@@ -184,7 +184,7 @@ tr.pick td{background:var(--teal-soft)}
       <p>One business, four journeys. Every action or inaction is a signal: the engine re-plans after each response and moves the customer between journeys as their signals change.</p>
     </div>
     <div class="controls">
-      <span class="badge">Concept demo · synthetic data · not affiliated with Intuit</span>
+      <span class="badge">Concept demo on synthetic data; not affiliated with any lender</span>
       <button class="btn primary" id="play" type="button">▶ Play the story</button>
       <button class="btn" id="stepBtn" type="button">Next story step</button>
       <button class="btn" id="reset" type="button">Reset</button>
@@ -204,9 +204,9 @@ tr.pick td{background:var(--teal-soft)}
       <div class="label">Customer · synthetic</div>
       <div><h2 style="font-size:17px">Harbor Coffee Roasters</h2><div style="color:var(--muted);font-size:13px">Roaster and wholesale supplier · 14 employees</div></div>
       <dl class="kv">
-        <dt>Books</dt><dd>$1.4M revenue · 4 years on QuickBooks</dd>
+        <dt>Books</dt><dd>$1.4M revenue · 4 years on the platform</dd>
         <dt>Trend</dt><dd>Wholesale revenue up 32% this year</dd>
-        <dt>Status</dt><dd>Credit-eligible (per Credit and Risk) · no Intuit loan</dd>
+        <dt>Status</dt><dd>Credit-eligible (per Credit and Risk) · no existing loan with us</dd>
         <dt>Product</dt><dd>Term loan</dd>
         <dt>Rhythm</dt><dd>Checks email 7–8 AM; logs in evenings</dd>
       </dl>
@@ -316,7 +316,7 @@ const N = {
    touch:{subject:'Explore with no pressure',body:'Curious what you’d qualify for? Checking whether you prequalify won’t affect your personal credit score.',cta:'See how it works'},
    nba:'Email 3 · no pressure',why:'Last email in the Journey 1 series.',
    cands:[['Email','Tue 7:40 AM','Final Journey 1 email','pick']],
-   opts:[{l:'No response',k:'neg',to:'j1_pause',fx:{miss:1,led:'No click on Email 3'}},{l:'Clicked through',k:'pos',to:'j1_pause',fx:{intent:10,led:'Read how QuickBooks Capital works'}}]},
+   opts:[{l:'No response',k:'neg',to:'j1_pause',fx:{miss:1,led:'No click on Email 3'}},{l:'Clicked through',k:'pos',to:'j1_pause',fx:{intent:10,led:'Read how BizCap loans work'}}]},
  j1_pause:{j:'J1',dd:2,time:'9:00 AM',ch:'sys',tone:'',
    sys:'Journey 1 series complete. The engine sends monthly cash flow content and waits for a signal or intent. Nothing else goes out.',
    nba:'Wait',why:'No signal, no intent. Sending more would raise opt-out risk without lifting intent.',cands:[['All channels','—','Waiting for a signal','hold']],opts:[]},
@@ -356,7 +356,7 @@ const N = {
          {l:'Viewed requirements, then left',k:'mid',to:'j3_email',fx:{intent:10,concern:'Will I qualify?',ev:'Opened the requirements section twice',led:'Read requirements; left without acting'}},
          {l:'Left without action',k:'neg',to:'j3_story',fx:{miss:1,led:'Left the Lending tab'}}]},
  j3_email:{j:'J3',dd:1,time:'7:40 AM',ch:'email',
-   touch:{subject:'What you need to apply',body:'Most of what a lender asks for is already in QuickBooks. Businesses with $50K+ in revenue over the past year generally may qualify, and checking won’t affect your personal credit score.',cta:'Check if you prequalify'},
+   touch:{subject:'What you need to apply',body:'Most of what a lender asks for is already in your books. Businesses with $50K+ in revenue over the past year generally may qualify, and checking won’t affect your personal credit score.',cta:'Check if you prequalify'},
    nba:'Email · answers what they looked at',why:'They read the requirements, so the email answers “Will I qualify?”',
    cands:[['Email','Next morning','Answers the concern','pick'],['In-product','Next login','Prompt stays on the Lending tab','hold']],
    opts:[{l:'Clicked and started the application',k:'pos',to:'app',fx:{intent:20,led:'Started the application from the email'}},{l:'No response',k:'neg',to:'j3_story',fx:{miss:1,led:'No click'}}]},
@@ -368,7 +368,7 @@ const N = {
  j3_decay:{j:'J1',dd:30,time:'9:00 AM',ch:'sys',sys:'Intent faded with no new activity in 30 days. Back to Journey 1 education.',nba:'Return to Journey 1',why:'Intent decays; without new signals the customer drops back a stage.',cands:[['All channels','—','Back to Journey 1','hold']],opts:[]},
 
  app:{j:'J3',dd:0,time:'9:12 PM',ch:'app',
-   nba:'Application, pre-filled from QuickBooks',why:'Most of the application is filled in from QuickBooks and progress saves at every step.',
+   nba:'Application, pre-filled from their books',why:'Most of the application is filled in from their books and progress saves at every step.',
    cands:[['In-product','Now','Application in progress','pick']],
    opts:[{l:'Submitted the application',k:'pos',to:'done',fx:{intent:10,led:'Submitted the application'}},
          {l:'Left at the offer screen',k:'neg',to:'j4_d0',fx:{concern:'Cost and payment',ev:'Left after viewing the payment and total cost',led:'Abandoned at the offer screen'}},
@@ -381,7 +381,7 @@ const N = {
  j4_d1:{j:'J4',cd:1,dd:1,time:'7:40 AM',ch:'email',nba:'Email · fast, plus their concern',why:'24 hours, no action. The email leads with the framework’s “fast” promise and answers the concern from the step where they left.',
    cands:[['Email','7:40 AM','Their reading time','pick'],['In-product','Every login','Card stays on','pick'],['Push / SMS','Day 2','Next follow-up','hold']]},
  j4_d2:{j:'J4',cd:2,dd:1,time:'12:30 PM',ch:'sms',
-   touch:{subject:'QuickBooks: your loan application is saved, about 2 min left: qb.example/resume. Reply STOP to opt out.'},
+   touch:{subject:'BizCap: your loan application is saved, about 2 min left: bizcap.example/resume. Reply STOP to opt out.'},
    nba:'SMS · push or SMS, never both',why:'Push went unanswered on Day 0, so SMS gets this turn. Consent on file; outside quiet hours.',
    cands:[['SMS','12:30 PM','Push ignored on Day 0','pick'],['Push','—','Not both on the same day','block'],['In-product','Every login','Card stays on','pick']]},
  j4_d5:{j:'J4',cd:5,dd:3,time:'7:40 AM',ch:'email',nba:'Email · no surprises',why:'Value proposition: confident. 25 days left on the offer.',cands:[['Email','7:40 AM','Scheduled follow-up','pick'],['In-product','Every login','Card stays on','pick']]},
@@ -402,7 +402,7 @@ const N = {
 const J4MAIL = {
  1:c=>({subject:'You’re minutes from a decision',body:(c==='Personal guarantee'
    ?'Your application is saved where you left it, on the personal guarantee step. Here’s what the guarantee means in plain language, and you’ll see it before you sign. '
-   :'Your application is pre-filled from QuickBooks and saved where you left off. Before you sign you’ll see your rate, payment schedule and total cost, so there are no surprises. ')+'29 days left on your offer.',cta:'Finish your application'}),
+   :'Your application is pre-filled from your books and saved where you left off. Before you sign you’ll see your rate, payment schedule and total cost, so there are no surprises. ')+'29 days left on your offer.',cta:'Finish your application'}),
  5:()=>({subject:'No surprises: see your payment before you sign',body:'Your rate, payment schedule and total cost are shown before you commit. 25 days left on your offer. Subject to credit review.',cta:'See your payment'}),
  10:()=>({subject:'Funds in 1–2 business days, if approved',body:'Finish now and get the roaster ordered sooner. Decision in minutes. 20 days left on your offer.',cta:'Finish your application'}),
  15:()=>({subject:'Halfway: your application is right where you left it',body:'Progress saves as you go, so you can pick up exactly where you stopped. 15 days left on your offer.',cta:'Pick up where you left off'}),
@@ -477,7 +477,7 @@ function go(to,fx,ddOverride){
   if(to==='app2'||to==='app') S.time=S.time||'9:12 PM';
   S.node=to; S.path.push(to);
   const st=sendText(to); if(st){log('send',st);S.sends.push({day:S.day,ch:n.ch});}
-  if(to==='app'&&N.app) log('pos','Application opened, pre-filled from QuickBooks');
+  if(to==='app'&&N.app) log('pos','Application opened, pre-filled from their books');
   render();
 }
 
@@ -603,11 +603,11 @@ function renderTouch(id){
   const n=N[id],t=touchOf(id),when=esc(clockText(S.day,S.time).split(' · ')[0]);
   if(n.ch==='email') return `<div class="touch"><div class="th"><span>Email</span><span style="font-family:var(--f-mono);font-weight:400">${when}</span></div><div class="tb"><div class="label">Subject</div><div class="subj">${esc(t.subject)}</div><div>${esc(t.body)}</div><span class="cta">${esc(t.cta)}</span><div class="fine">Manage preferences · Unsubscribe</div></div></div>`;
   if(n.ch==='inapp') return `<div class="touch"><div class="th"><span>In-product · ${esc(n.where)}</span><span style="font-family:var(--f-mono);font-weight:400">${when}</span></div><div class="tb"><div class="subj">${esc(t.subject)}</div><div>${esc(t.body)}</div><div style="display:flex;gap:10px;align-items:center"><span class="cta">${esc(t.cta)}</span><span class="fine">Not now ▾</span></div></div></div>`;
-  if(n.ch==='push') return `<div class="phone"><div class="notif"><div class="app"><span>QuickBooks · push</span><span>${esc(S.time)}</span></div>${esc(t.subject)}</div></div><div class="fine" style="font-size:12px;color:var(--muted)">Deep link opens the exact step where they left.</div>`;
+  if(n.ch==='push') return `<div class="phone"><div class="notif"><div class="app"><span>BizCap · push</span><span>${esc(S.time)}</span></div>${esc(t.subject)}</div></div><div class="fine" style="font-size:12px;color:var(--muted)">Deep link opens the exact step where they left.</div>`;
   if(n.ch==='sms') return S.sms?`<div class="phone"><div class="label" style="margin-bottom:6px">SMS · ${esc(S.time)}</div><div class="bubble">${esc(t.subject)}</div></div>`:`<div class="sys">SMS is off for this customer (replied STOP). The engine uses push for this follow-up instead.</div>`;
   if(n.ch==='app'){
-    const steps=[['Business details','Pre-filled from QuickBooks','done'],['Loan amount','$48,000 for the roaster','done'],['Offer review','Rate, payment schedule and total cost','current'],['Personal guarantee and e-sign','Review, then sign','todo']];
-    return `<div class="touch"><div class="th"><span>${n.resumed?'Application · resumed from deep link':'Application · pre-filled from QuickBooks'}</span><span>about 2 min left</span></div><div class="tb"><div class="steps">${steps.map((s,i)=>`<div class="stp ${s[2]}"><span class="n">${s[2]==='done'?'✓':i+1}</span><span><b>${esc(s[0])}</b> · ${esc(s[1])}</span></div>`).join('')}</div><div class="fine">Prequalified amounts and terms are subject to credit review.</div></div></div>`;
+    const steps=[['Business details','Pre-filled from your books','done'],['Loan amount','$48,000 for the roaster','done'],['Offer review','Rate, payment schedule and total cost','current'],['Personal guarantee and e-sign','Review, then sign','todo']];
+    return `<div class="touch"><div class="th"><span>${n.resumed?'Application · resumed from deep link':'Application · pre-filled from your books'}</span><span>about 2 min left</span></div><div class="tb"><div class="steps">${steps.map((s,i)=>`<div class="stp ${s[2]}"><span class="n">${s[2]==='done'?'✓':i+1}</span><span><b>${esc(s[0])}</b> · ${esc(s[1])}</span></div>`).join('')}</div><div class="fine">Prequalified amounts and terms are subject to credit review.</div></div></div>`;
   }
   return `<div class="sys ${n.tone||''}">${esc(n.sys)}</div>`;
 }
