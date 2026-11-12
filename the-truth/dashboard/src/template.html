@@ -1,0 +1,408 @@
+<title>The Truth – Unbiased Pricing Tracker of Banking Products</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header (name + audience switch) over a product tab strip and one shared scenario bar; saver view = ranked list + labeled ad rail; bank view = peer controls, KPI row, charts, peer table, coverage. */
+:root{
+  --paper:#F4F7F6; --surface:#FFFFFF; --ink:#11262A; --muted:#5A6E70; --line:#D6E0DE;
+  --accent:#16775A; --accent-soft:#E2F1EB; --you:#C2410C; --you-soft:#FCE9DE;
+  --promo:#8A5A00; --promo-soft:#FBF0D9; --ad-hatch:#E7ECEB; --bench:#3B5B8C;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0D1A1C; --surface:#142629; --ink:#E4EEEC; --muted:#93A7A8; --line:#27403F;
+  --accent:#4CC79C; --accent-soft:#173A31; --you:#FB9A63; --you-soft:#3A2418;
+  --promo:#F3C46B; --promo-soft:#3A2F14; --ad-hatch:#1B3133; --bench:#8FB2E8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0D1A1C; --surface:#142629; --ink:#E4EEEC; --muted:#93A7A8; --line:#27403F;
+  --accent:#4CC79C; --accent-soft:#173A31; --you:#FB9A63; --you-soft:#3A2418;
+  --promo:#F3C46B; --promo-soft:#3A2F14; --ad-hatch:#1B3133; --bench:#8FB2E8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+a{color:var(--accent)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding-block:14px}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font-size:22px}
+.brand .tag{font-size:13px;color:var(--muted)}
+.switch{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.switch button{border:0;background:none;padding:7px 16px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted)}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:12px 4px;scrollbar-width:thin}
+.tab{border:1px solid transparent;background:none;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:500}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.tab small{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:5px}
+.controls{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:flex-end;padding-block:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 11px;cursor:pointer;font-family:var(--mono);font-size:13px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+select,input[type=number]{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0;max-width:100%}
+input[type=number]{width:140px;font-family:var(--mono)}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;border-radius:5px;padding:2px 7px;white-space:nowrap}
+.b-promo{background:var(--promo-soft);color:var(--promo)}
+.b-rel{background:var(--you-soft);color:var(--you)}
+.b-type{background:var(--accent-soft);color:var(--accent)}
+.b-unv{border:1px dashed var(--line);color:var(--muted)}
+.pledge{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);border-radius:10px;padding:12px 14px;font-size:14px}
+.pledge strong{font-family:var(--display)}
+.saver{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:28px;align-items:start;margin-top:16px}
+@media (max-width:860px){.saver{grid-template-columns:minmax(0,1fr)}}
+.results{display:flex;flex-direction:column;gap:10px;min-width:0}
+.res{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.res .rk{font-family:var(--mono);color:var(--muted);font-size:13px;grid-row:span 2;align-self:start;padding-top:3px}
+.res .nm{font-weight:600;font-size:16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.res .big{font-family:var(--display);font-size:28px;font-weight:700;line-height:1;text-align:right;grid-row:span 2;white-space:nowrap}
+.res .big small{font-family:var(--body);font-size:12px;font-weight:500;color:var(--muted);display:block;margin-top:4px}
+.res .meta{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;min-width:0}
+.res .meta span{min-width:0;overflow-wrap:anywhere}
+.res.top1{border-color:var(--accent)}
+.summary{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;font-size:14px;color:var(--muted)}
+.summary b{color:var(--ink)}
+.rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
+@media (max-width:860px){.rail{position:static}}
+.ad{border:1px dashed var(--muted);border-radius:10px;padding:12px;min-height:150px;display:flex;flex-direction:column;gap:6px;
+  background:repeating-linear-gradient(135deg,transparent 0 10px,var(--ad-hatch) 10px 11px)}
+.ad p{margin:0;font-size:13px;color:var(--muted)}
+.ad.wide{min-height:90px}
+.note{font-size:13px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .v{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.1}
+.kpi .s{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.kpi.you{border-color:var(--you)} .kpi.you .v{color:var(--you)}
+.panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px}
+@media (max-width:860px){.panels{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.panel h3{font-size:17px}
+.panel .sub{font-size:13px;color:var(--muted);margin:0}
+svg text{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.r,th.r{text-align:right}
+tr.me td{background:var(--you-soft)}
+pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.gaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.gap{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}
+.gap b{display:block}
+.section-gap{margin-top:16px}
+.sample{margin:12px 0 0;background:var(--promo-soft);color:var(--ink);border-radius:10px;padding:10px 14px;font-size:13.5px}
+.sample strong{color:var(--promo)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:18px;color:var(--muted)}
+footer{margin-top:28px;font-size:12.5px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>The Truth</h1><span class="tag">Unbiased pricing tracker of banking products · prototype · 10 products · snapshot of 16 Oct 2026</span></div>
+    <div class="switch" role="group" aria-label="Audience">
+      <button id="tab-saver" aria-pressed="true">For consumers</button>
+      <button id="tab-bank" aria-pressed="false">For banks</button>
+    </div>
+  </header>
+  <p class="sample"><strong>Sample set, not the whole market.</strong> This prototype covers <span id="n-inst">59</span> banks, credit unions, online banks and lenders, read from their own websites on one day (16 Oct 2026). Rankings show the best offer within this sample only. Figures may have changed since; always confirm with the institution. Not financial advice.</p>
+  <nav class="tabs" role="tablist" aria-label="Product" id="ptabs"></nav>
+  <div class="controls" id="scenario"></div>
+
+  <main id="view-saver">
+    <div class="pledge"><span aria-hidden="true">✓</span><div><strong>Ranked by the numbers only.</strong> No institution can pay to move up. Ads appear only in the labeled spaces beside and below the results.</div></div>
+    <div class="saver">
+      <section class="results" aria-live="polite">
+        <div class="summary" id="s-summary"></div>
+        <div id="s-list" class="results"></div>
+        <div class="ad wide"><span class="label">Advertisement</span><p>Bottom rail ad slot. Shown below results, never between them.</p></div>
+      </section>
+      <aside class="rail" aria-label="Advertisements">
+        <div class="ad"><span class="label">Advertisement</span><p>Side rail ad slot (300×250). Display inventory only; no effect on rankings.</p></div>
+        <div class="ad"><span class="label">Advertisement</span><p>Second side rail slot.</p></div>
+        <p class="note">Every figure comes from the institution's own website, with a link to the page and the time we read it. Dashed "Unverified" badges mark values collected automatically and not yet re-checked by hand.</p>
+      </aside>
+    </div>
+  </main>
+
+  <main id="view-bank" hidden>
+    <div class="controls">
+      <div class="field"><label class="label" for="b-me">Your institution</label><select id="b-me"></select></div>
+      <div class="field"><label class="label" for="b-size">Peer asset size</label>
+        <select id="b-size"><option value="all">All sizes</option><option value="0-10">Under $10B</option><option value="10-50">$10B–$50B</option><option value="50-250">$50B–$250B</option><option value="250-">$250B+</option></select></div>
+      <div class="field"><label class="label" for="b-seg">Peer segment</label>
+        <select id="b-seg"><option value="all">All segments</option><option value="large national">Large national banks</option><option value="regional">Regional banks</option><option value="community">Community banks</option><option value="online/fintech">Online banks &amp; fintechs</option><option value="credit union">Credit unions</option></select></div>
+    </div>
+    <div class="kpis" id="b-kpis"></div>
+    <div class="panels">
+      <section class="panel"><h3>Where you sit among peers</h3><p class="sub" id="b-strip-sub"></p><div id="b-strip"></div></section>
+      <section class="panel" id="b-curve-panel"><h3 id="b-curve-title">Across terms</h3><p class="sub" id="b-curve-sub"></p><div id="b-curve"></div></section>
+    </div>
+    <section class="panel section-gap"><h3>Peer comparison</h3><p class="sub" id="b-tbl-sub"></p><div class="tblwrap"><table id="b-tbl"></table></div></section>
+    <div class="panels">
+      <section class="panel"><h3>Same answer for your agents</h3><p class="sub">Banks query the same data through the API or MCP server. This call reproduces the view above.</p><pre id="b-mcp"></pre></section>
+      <section class="panel"><h3>Not trackable from public pages</h3><p class="sub" id="b-gaps-sub">Institutions in the tracked set without usable figures for this product, and why.</p><div class="gaps" id="b-gaps"></div></section>
+    </div>
+  </main>
+
+  <footer>The Truth is a prototype built from one day of collection across a sample of banks, credit unions, online banks and lenders. No institution paid for inclusion or placement, and ad slots are placeholders. Asset sizes from FDIC and NCUA Q2 2026 call reports; national averages from the FDIC's National Rates (Sept 21, 2026). Big-bank deposit rates were captured for ZIP 94105 unless marked. Not financial advice.</footer>
+</div>
+
+<script>
+const DATA = __DATA__;
+const INST = Object.fromEntries(DATA.inst.map(i => [i.id, i]));
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pct = v => v == null ? "—" : (+v).toFixed(2) + "%";
+const money = v => v == null ? "—" : "$" + Math.round(v).toLocaleString("en-US");
+const bn = v => v == null ? "—" : v >= 1e12 ? "$" + (v/1e12).toFixed(1) + "T" : "$" + (v/1e9).toFixed(v < 1e10 ? 1 : 0) + "B";
+const termName = t => t % 12 === 0 && t >= 12 ? (t/12) + (t === 12 ? " year" : " years") : t + (t === 1 ? " month" : " months");
+const kind = i => i.type === "credit union" ? "cu" : (i.seg === "online/fintech") ? "online" : "bank";
+const kindName = i => i.type === "nonbank lender" ? "Online lender" : ({cu:"Credit union", online:"Online bank", bank:"Bank"})[kind(i)];
+const host = u => { try { return new URL(u).hostname.replace(/^www\./,""); } catch { return "source"; } };
+const fmtDate = s => new Date(s).toLocaleString("en-US", {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+const median = a => { if (!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=Math.floor(s.length/2); return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };
+const pay = (amt, apr, months) => { const r = apr/1200; return r ? amt * r / (1 - Math.pow(1+r, -months)) : amt/months; };
+const earn = (amt, apy, t) => amt * (Math.pow(1 + apy/100, t/12) - 1);
+const bench = (p, t) => (DATA.bench.find(b => b.p === p && (t == null ? b.t == null : b.t === t)) || {}).v;
+
+/* rows by product (CD rows normalized to the offer shape) */
+const ROWS = {cd: DATA.cd.map(r => ({pt:"cd", i:r.i, p:r.p, apy:r.apy, tmin:r.t, tmax:r.t, amin:r.mn, amax:r.mx, promo:r.promo, rel:r.rel, note:r.note, src:r.src, at:r.at, mk:r.mk, ver:1}))};
+DATA.offers.forEach(o => (ROWS[o.pt] = ROWS[o.pt] || []).push(o));
+
+/* scenario state shared by both views */
+const S = {pt:"cd", term:12, amt:10000, state:"CA", rel:false, vehicle:"New vehicle", lterm:60, laamt:25000, lterm2:36, pamt:15000, heq:"line", mort:"30-year fixed",
+  card:"apr", nofee:false, intro:false, chk:"fee", btype:"all"};
+
+const inState = r => S.state === "" ? r.mk === "US" : (r.mk === "US" || r.mk === S.state);
+const amtOk = (r, a) => (r.amin == null || r.amin <= a) && (r.amax == null || a <= r.amax);
+const termOk = (r, t) => (r.tmin == null || r.tmin <= t) && (r.tmax == null || t <= r.tmax);
+
+/* Each product: label, how to filter, the ranked value, direction, and how to describe a row */
+const P = {
+  cd: {label:"CDs", unit:"APY", better:"high", metric:r=>r.apy, ctl:["term","amt","state","rel"],
+    keep:r=>r.tmin===S.term && amtOk(r,S.amt) && (S.rel||!r.rel),
+    meta:r=>[esc(r.p), "Min " + (r.amin ? money(r.amin) : "none listed"), "Earns ~" + money(earn(S.amt, r.apy, S.term))],
+    title:()=>`${termName(S.term)} CD for ${money(S.amt)}`, curve:"term", benchKey:()=>bench("cd", S.term)},
+  savings: {label:"Savings", unit:"APY", better:"high", metric:r=>r.apy, ctl:["amt","state","rel"],
+    keep:r=>amtOk(r,S.amt) && (S.rel||!r.rel), meta:r=>[esc(r.p), r.open!=null?"Open with "+money(r.open):"", r.fee!=null?(r.fee?money(r.fee)+"/mo fee":"No monthly fee"):"", "1-yr interest ~"+money(S.amt*r.apy/100)],
+    title:()=>`Savings for ${money(S.amt)}`, benchKey:()=>bench("savings")},
+  money_market: {label:"Money market", unit:"APY", better:"high", metric:r=>r.apy, ctl:["amt","state","rel"],
+    keep:r=>amtOk(r,S.amt) && (S.rel||!r.rel), meta:r=>[esc(r.p), r.amin!=null?"Tier from "+money(r.amin):"", "1-yr interest ~"+money(S.amt*r.apy/100)],
+    title:()=>`Money market for ${money(S.amt)}`, benchKey:()=>bench("money_market")},
+  checking: {label:"Checking", unit:"", better:"low", metric:r=>S.chk==="fee"?r.fee:r.od, ctl:["chk","state"],
+    keep:r=>(S.chk==="fee"?r.fee:r.od)!=null, fmt:v=>v===0?"$0":money(v),
+    sub:()=>S.chk==="fee"?"per month":"per overdraft",
+    meta:r=>[esc(r.p), "Monthly fee "+(r.fee==null?"—":r.fee?money(r.fee):"$0"), "Overdraft "+(r.od==null?"—":r.od?money(r.od):"$0"), r.waiver&&r.fee?"Waived with "+esc(r.waiver):"", r.atm?"ATM: "+esc(r.atm):""],
+    title:()=>S.chk==="fee"?"Checking by lowest monthly fee":"Checking by lowest overdraft fee"},
+  bonus: {label:"Bonuses", unit:"", better:"high", metric:r=>r.bamt, ctl:["btype","state"], fmt:v=>money(v), sub:()=>"bonus",
+    keep:r=>r.bamt!=null && (S.btype==="all" || (S.btype==="savings") === /saving/i.test(r.p)),
+    meta:r=>[esc(r.p), esc(r.breq||""), r.bexp?"Ends "+esc(r.bexp):"No end date listed"], title:()=>"Account-opening bonuses"},
+  auto_loan: {label:"Auto loans", unit:"APR", better:"low", metric:r=>r.lo, ctl:["vehicle","lterm","laamt","state"],
+    keep:r=>r.p.toLowerCase()===S.vehicle.toLowerCase() && termOk(r,S.lterm), curve:"lterm",
+    meta:r=>[esc(r.basis||""), r.tmin?`Terms ${r.tmin}–${r.tmax||r.tmin} mo`:"", r.hi?"Up to "+pct(r.hi):"", "Payment ~"+money(pay(S.laamt, r.lo, S.lterm))+"/mo at this rate"],
+    title:()=>`${S.vehicle} loan, ${S.lterm} months`},
+  heloc: {label:"Home equity", unit:"APR", better:"low", metric:r=>r.lo, ctl:["heq","state"],
+    keep:r=>(S.heq==="loan") === /home equity loan/i.test(r.p+" "+(r.note||"")),
+    meta:r=>[esc(r.p), r.ia!=null?`Intro ${pct(r.ia)} for ${r.im||"?"} mo`:"", r.hi?"Range to "+pct(r.hi):"", r.amax?"Lines to "+money(r.amax):""],
+    title:()=>S.heq==="loan"?"Fixed home equity loans":"Home equity lines of credit (rate after any intro)"},
+  personal_loan: {label:"Personal loans", unit:"APR from", better:"low", metric:r=>r.lo, ctl:["pamt","lterm2","state"],
+    keep:r=>amtOk(r,S.pamt) && termOk(r,S.lterm2),
+    meta:r=>[r.hi?`Range ${pct(r.lo)}–${pct(r.hi)}`:esc(r.basis||""), r.ofmax!=null?`Origination fee ${r.ofmin??0}–${r.ofmax}%`:(r.ofmin===0?"No origination fee":""), r.auto?`Includes ${r.auto}% autopay discount`:"", "Best-case payment ~"+money(pay(S.pamt, r.lo, S.lterm2))+"/mo"],
+    title:()=>`${money(S.pamt)} personal loan, ${S.lterm2} months`},
+  credit_card: {label:"Credit cards", unit:"APR from", better:"low", metric:r=>S.card==="apr"?r.lo:(r.im||0), ctl:["card","state"],
+    betterFn:()=>S.card==="apr"?"low":"high", fmt:v=>S.card==="apr"?pct(v):v+" mo", sub:()=>S.card==="apr"?"lowest purchase APR":"0% intro period",
+    keep:r=>(!S.nofee||!r.afee) && (!S.intro||r.ia===0),
+    meta:r=>[esc(r.p), `APR ${pct(r.lo)}–${pct(r.hi)}`, "Annual fee "+(r.afee?money(r.afee):"$0"), r.ia===0?`0% intro ${r.im} mo`:"", r.breq?"Bonus: "+esc(r.breq):""],
+    title:()=>S.card==="apr"?"Cards by lowest purchase APR":"Cards by longest 0% intro APR"},
+  mortgage: {label:"Mortgages", unit:"APR", better:"low", metric:r=>r.lo, ctl:["mort","state"],
+    keep:r=>r.p===S.mort,
+    meta:r=>[esc(r.basis||""), r.pts!=null?`Points ${r.pts}`:"Points not stated", esc((r.note||"").replace(/^extracted by Exa agent, not yet verified;\s*/,""))],
+    title:()=>`${S.mort} purchase, published sample rates`},
+};
+const ORDER = ["cd","savings","money_market","checking","bonus","auto_loan","heloc","personal_loan","credit_card","mortgage"];
+const better = p => P[p].betterFn ? P[p].betterFn() : P[p].better;
+const fmtv = (p, v) => P[p].fmt ? P[p].fmt(v) : pct(v);
+const isMoney = p => p === "checking" || p === "bonus";
+const tick = (p, v) => isMoney(p) ? "$" + v : (p === "credit_card" && S.card === "intro") ? v + "m" : v + "%";
+const fmtDiff = (p, d) => (d >= 0 ? "+" : "−") + (isMoney(p) ? "$" + Math.abs(Math.round(d)) : (p === "credit_card" && S.card === "intro") ? Math.abs(Math.round(d)) + " mo" : Math.abs(d).toFixed(2) + " pts");
+
+function best(p, keepInst = () => true, ignoreState = false){
+  const map = new Map(), dir = better(p);
+  for (const r of ROWS[p] || []){
+    if (!keepInst(INST[r.i]) || !P[p].keep(r) || (!ignoreState && !inState(r))) continue;
+    const v = P[p].metric(r); if (v == null) continue;
+    const b = map.get(r.i);
+    if (!b || (dir === "high" ? v > P[p].metric(b) : v < P[p].metric(b))) map.set(r.i, r);
+  }
+  return [...map.values()].sort((a,b) => (dir === "high" ? P[p].metric(b) - P[p].metric(a) : P[p].metric(a) - P[p].metric(b)) || INST[a.i].name.localeCompare(INST[b.i].name));
+}
+
+/* product tabs */
+const ptabs = document.getElementById("ptabs");
+ptabs.innerHTML = ORDER.map(k => `<button class="tab" role="tab" id="pt-${k}" aria-selected="${k===S.pt}" data-k="${k}">${P[k].label}<small>${new Set((ROWS[k]||[]).map(r=>r.i)).size}</small></button>`).join("");
+ptabs.onclick = e => { const b = e.target.closest(".tab"); if (!b) return; S.pt = b.dataset.k; ptabs.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.k === S.pt)); buildScenario(); render(); };
+
+/* scenario controls */
+const STATES = [...new Set(Object.values(ROWS).flat().map(r => r.mk).filter(m => m && m !== "US"))].sort();
+const CTL = {
+  term: () => `<div class="field"><span class="label">Term</span><div class="chips" data-chips="term">${[3,6,9,12,18,24,36,60].map(t=>`<button class="chip" data-v="${t}" aria-pressed="${t===S.term}">${t<12||t%12?t+"m":t/12+"y"}</button>`).join("")}</div></div>`,
+  amt: () => `<div class="field"><label class="label" for="c-amt">Deposit</label><input id="c-amt" data-k="amt" type="number" min="0" step="500" value="${S.amt}"></div>`,
+  state: () => `<div class="field"><label class="label" for="c-state">Where you live</label><select id="c-state" data-k="state"><option value="">Anywhere (national offers)</option>${STATES.map(s=>`<option ${s===S.state?"selected":""}>${s}</option>`).join("")}</select></div>`,
+  rel: () => `<label class="check"><input id="c-rel" data-k="rel" type="checkbox" ${S.rel?"checked":""}> Include rates that need another account</label>`,
+  chk: () => sel("c-chk","chk","Rank by",[["fee","Lowest monthly fee"],["od","Lowest overdraft fee"]]),
+  btype: () => sel("c-btype","btype","Account",[["all","All bonuses"],["checking","Checking"],["savings","Savings"]]),
+  vehicle: () => sel("c-veh","vehicle","Vehicle",[["New vehicle","New"],["Used vehicle","Used"],["Refinance","Refinance"]]),
+  lterm: () => sel("c-lterm","lterm","Term",[36,48,60,72,84].map(t=>[t,t+" months"])),
+  laamt: () => `<div class="field"><label class="label" for="c-laamt">Amount financed</label><input id="c-laamt" data-k="laamt" type="number" min="1000" step="1000" value="${S.laamt}"></div>`,
+  heq: () => sel("c-heq","heq","Product",[["line","HELOC (line of credit)"],["loan","Home equity loan (fixed)"]]),
+  pamt: () => `<div class="field"><label class="label" for="c-pamt">Loan amount</label><input id="c-pamt" data-k="pamt" type="number" min="500" step="500" value="${S.pamt}"></div>`,
+  lterm2: () => sel("c-lterm2","lterm2","Term",[24,36,48,60,72,84].map(t=>[t,t+" months"])),
+  card: () => sel("c-card","card","Rank by",[["apr","Lowest purchase APR"],["intro","Longest 0% intro"]]) +
+    `<label class="check"><input id="c-nofee" data-k="nofee" type="checkbox" ${S.nofee?"checked":""}> No annual fee</label><label class="check"><input id="c-intro" data-k="intro" type="checkbox" ${S.intro?"checked":""}> Has 0% intro APR</label>`,
+  mort: () => sel("c-mort","mort","Loan",[["30-year fixed","30-year fixed"],["15-year fixed","15-year fixed"],["5/6 ARM","5/6 ARM"]]),
+};
+function sel(id, k, label, opts){ return `<div class="field"><label class="label" for="${id}">${label}</label><select id="${id}" data-k="${k}">${opts.map(([v,t])=>`<option value="${v}" ${String(v)===String(S[k])?"selected":""}>${t}</option>`).join("")}</select></div>`; }
+const scen = document.getElementById("scenario");
+function buildScenario(){ scen.innerHTML = P[S.pt].ctl.map(c => CTL[c]()).join(""); }
+scen.addEventListener("input", e => { const el = e.target, k = el.dataset.k; if (!k) return;
+  S[k] = el.type === "checkbox" ? el.checked : el.type === "number" ? Math.max(0, +el.value || 0) : (/^\d+$/.test(el.value) && k !== "state" ? +el.value : el.value); render(); });
+scen.addEventListener("click", e => { const c = e.target.closest(".chip"); if (!c) return; S.term = +c.dataset.v;
+  c.parentElement.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === c)); render(); });
+
+/* consumer view */
+function renderSaver(){
+  const p = S.pt, list = best(p), top = list[0], cfg = P[p];
+  const b = cfg.benchKey ? cfg.benchKey() : null;
+  document.getElementById("s-summary").innerHTML = list.length
+    ? `<span><b>${list.length}</b> institutions · ${esc(cfg.title())}${S.state ? " · " + esc(S.state) : " · national"}</span>
+       <span>Best: <b>${esc(INST[top.i].name)} ${fmtv(p, cfg.metric(top))}</b></span>${b != null ? `<span>FDIC national average <b>${pct(b)}</b></span>` : ""}`
+    : `<span>Nothing in the tracked set matches. Try another term, amount or location.</span>`;
+  document.getElementById("s-list").innerHTML = list.length ? list.slice(0, 30).map((r, k) => {
+    const i = INST[r.i];
+    const badges = [`<span class="badge b-type">${kindName(i)}</span>`, r.promo ? `<span class="badge b-promo">Special</span>` : "",
+      r.rel ? `<span class="badge b-rel">Needs another account</span>` : "", r.ver ? "" : `<span class="badge b-unv">Unverified</span>`].join("");
+    const unit = cfg.sub ? cfg.sub() : cfg.unit;
+    return `<article class="res ${k===0?"top1":""}"><span class="rk">${String(k+1).padStart(2,"0")}</span>
+      <div class="nm">${esc(i.name)} ${badges}</div>
+      <div class="big num">${fmtv(p, cfg.metric(r))}<small>${esc(unit)}</small></div>
+      <div class="meta">${cfg.meta(r).filter(Boolean).map(m=>`<span>${m}</span>`).join("")}
+        <span>Read ${fmtDate(r.at)} · <a href="${esc(r.src)}" target="_blank" rel="noopener">${esc(host(r.src))}</a></span></div></article>`;
+  }).join("") : `<div class="empty">No matching offers.</div>`;
+}
+
+/* bank view */
+const bMe = document.getElementById("b-me");
+function fillMe(){
+  const ids = [...new Set((ROWS[S.pt]||[]).map(r => r.i))].sort((a,b) => INST[a].name.localeCompare(INST[b].name));
+  const prev = +bMe.value, pick = ids.includes(prev) ? prev : (ids.find(id => INST[id].name === "Navy Federal") || ids.find(id => INST[id].name === "Fremont Bank") || ids[0]);
+  bMe.innerHTML = ids.map(id => `<option value="${id}" ${id===pick?"selected":""}>${esc(INST[id].name)}</option>`).join("");
+}
+["b-me","b-size","b-seg"].forEach(id => document.getElementById(id).addEventListener("input", renderBank));
+function peerKeep(){
+  const size = document.getElementById("b-size").value, seg = document.getElementById("b-seg").value;
+  const [lo, hi] = size === "all" ? [0, Infinity] : size.split("-").map(v => v === "" ? Infinity : +v * 1e9);
+  return i => (seg === "all" || i.seg === seg) && (size === "all" || (i.assets != null && i.assets >= lo && i.assets < hi));
+}
+function renderBank(){
+  const p = S.pt, cfg = P[p], me = +bMe.value, keep = peerKeep(), dir = better(p);
+  const meRow = best(p, i => i.id === me, true)[0];
+  const peers = best(p, i => keep(i) && i.id !== me);
+  const vals = peers.map(r => cfg.metric(r)), med = median(vals), top = peers[0];
+  const all = meRow ? [...peers, meRow].sort((a,b) => dir === "high" ? cfg.metric(b) - cfg.metric(a) : cfg.metric(a) - cfg.metric(b)) : peers;
+  const rank = meRow ? all.findIndex(r => r.i === me) + 1 : null;
+  const mv = meRow ? cfg.metric(meRow) : null;
+  const beats = meRow && vals.length ? Math.round(100 * vals.filter(v => dir === "high" ? v < mv : v > mv).length / vals.length) : null;
+  const diff = meRow && med != null ? mv - med : null;
+  const name = INST[me] ? INST[me].name : "—";
+  const b = cfg.benchKey ? cfg.benchKey() : null;
+  document.getElementById("b-kpis").innerHTML = `
+    <div class="kpi you"><span class="label">${esc(name)}</span><span class="v num">${meRow ? fmtv(p, mv) : "—"}</span><span class="s">${meRow ? esc(meRow.p) : "No offer matching this scenario"}</span></div>
+    <div class="kpi"><span class="label">Rank among peers</span><span class="v num">${rank ? "#" + rank : "—"}<span style="font-size:15px;color:var(--muted)"> of ${all.length}</span></span><span class="s">${beats != null ? "Better than " + beats + "% of peers" : "Not ranked"}</span></div>
+    <div class="kpi"><span class="label">Peer median</span><span class="v num">${med != null ? fmtv(p, med) : "—"}</span><span class="s">${diff != null ? fmtDiff(p, diff) + " you vs median" : peers.length + " peers"}${b != null ? " · FDIC avg " + pct(b) : ""}</span></div>
+    <div class="kpi"><span class="label">Peer leader</span><span class="v num">${top ? fmtv(p, cfg.metric(top)) : "—"}</span><span class="s">${top ? esc(INST[top.i].name) : "No peers match"}</span></div>`;
+  document.getElementById("b-strip-sub").textContent = `${cfg.title()} · ${peers.length} peers${S.state ? " in " + S.state : ", national offers"}. ${dir === "high" ? "Further right is better." : "Further left is better."}`;
+  document.getElementById("b-strip").innerHTML = strip(p, peers, meRow, med, b);
+  const cp = document.getElementById("b-curve-panel");
+  if (cfg.curve){ cp.hidden = false; document.getElementById("b-curve-title").textContent = p === "cd" ? "Your CD rates across terms" : "Your auto loan rates across terms";
+    document.getElementById("b-curve-sub").textContent = "Your best rate at each term against the peer median and leader."; document.getElementById("b-curve").innerHTML = curve(p, me, keep); }
+  else cp.hidden = true;
+  document.getElementById("b-tbl-sub").textContent = `Best qualifying offer per institution for: ${cfg.title()}.`;
+  document.getElementById("b-tbl").innerHTML = `<thead><tr><th>#</th><th>Institution</th><th>Segment</th><th class="r">Assets</th><th>Market</th><th>Offer</th><th class="r">${esc(cfg.unit || cfg.sub())}</th><th>Read</th></tr></thead><tbody>` +
+    all.map((r, k) => { const i = INST[r.i]; return `<tr class="${r.i===me?"me":""}"><td class="num">${k+1}</td>
+      <td><a href="${esc(r.src)}" target="_blank" rel="noopener">${esc(i.name)}</a>${r.promo?' <span class="badge b-promo">Special</span>':""}${r.rel?' <span class="badge b-rel">Relationship</span>':""}${r.ver?"":' <span class="badge b-unv">Unverified</span>'}</td>
+      <td>${esc(i.seg || "")}</td><td class="r num">${bn(i.assets)}</td><td>${r.mk === "US" ? "National" : esc(r.mk)}</td>
+      <td>${esc(r.p)}</td><td class="r num"><b>${fmtv(p, cfg.metric(r))}</b></td><td class="num note">${fmtDate(r.at)}</td></tr>`; }).join("") + `</tbody>`;
+  const scenario = Object.fromEntries(cfg.ctl.flatMap(c => ({term:[["term_months",S.term]],amt:[["deposit_usd",S.amt]],state:[["market",S.state||"national"]],rel:[["include_relationship_rates",S.rel]],
+    chk:[["rank_by",S.chk==="fee"?"monthly_fee":"overdraft_fee"]],btype:[["account",S.btype]],vehicle:[["vehicle",S.vehicle]],lterm:[["term_months",S.lterm]],laamt:[["amount_usd",S.laamt]],
+    heq:[["product",S.heq==="line"?"heloc":"home_equity_loan"]],pamt:[["amount_usd",S.pamt]],lterm2:[["term_months",S.lterm2]],card:[["rank_by",S.card==="apr"?"purchase_apr":"intro_months"],["no_annual_fee",S.nofee],["has_0_intro",S.intro]],mort:[["loan",S.mort]]})[c] || []));
+  const req = {product: p, institution: name, scenario, peer_group: {asset_size: document.getElementById("b-size").value, segment: document.getElementById("b-seg").value}};
+  const res = {as_of: "2026-10-16", your_value: mv, rank, of: all.length, better_than_pct: beats, peer_median: med != null ? +med.toFixed(2) : null,
+    peer_leader: top ? {institution: INST[top.i].name, value: cfg.metric(top), source: top.src} : null, fdic_national_average: b ?? undefined};
+  document.getElementById("b-mcp").textContent = "compare_offers(" + JSON.stringify(req, null, 2) + ")\n\n→ " + JSON.stringify(res, null, 2);
+  const g = DATA.gaps[p] || DATA.gaps[p === "money_market" ? "savings" : ""] || [];
+  document.getElementById("b-gaps").innerHTML = g.length ? g.map(([n, why]) => `<div class="gap"><b>${esc(n)}</b>${esc(why)}</div>`).join("") : `<p class="note">No known gaps recorded for this product.</p>`;
+}
+function strip(p, peers, meRow, med, b){
+  const cfg = P[p], vals = peers.map(r => cfg.metric(r)).concat(meRow ? [cfg.metric(meRow)] : []).concat(b != null ? [b] : []);
+  if (!vals.length) return `<p class="note">No peers match these filters.</p>`;
+  const W = 520, H = 124, L = 16, R = 16, lo = Math.min(0, Math.floor(Math.min(...vals))), hi = Math.max(1, Math.ceil(Math.max(...vals) * 1.02));
+  const x = v => L + (v - lo) / (hi - lo || 1) * (W - L - R);
+  const step = (hi - lo) > 20 ? Math.ceil((hi - lo) / 6 / 5) * 5 : (hi - lo) > 8 ? 2 : 1;
+  let g = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Peer distribution">`;
+  for (let v = lo; v <= hi; v += step) g += `<line x1="${x(v)}" x2="${x(v)}" y1="22" y2="86" stroke="var(--line)"/><text x="${x(v)}" y="102" text-anchor="middle">${tick(p, v)}</text>`;
+  const stack = {}; peers.forEach(r => { const v = cfg.metric(r), k = Math.round(x(v) / 7); stack[k] = (stack[k] || 0) + 1;
+    g += `<circle cx="${x(v)}" cy="${78 - (stack[k]-1) * 9}" r="4" fill="var(--accent)" opacity=".75"><title>${esc(INST[r.i].name)} ${fmtv(p, v)}</title></circle>`; });
+  if (b != null) g += `<line x1="${x(b)}" x2="${x(b)}" y1="16" y2="86" stroke="var(--bench)" stroke-width="1.5"/><text x="${Math.max(40, x(b))}" y="12" text-anchor="middle" style="fill:var(--bench)">FDIC avg ${pct(b)}</text>`;
+  if (med != null) g += `<line x1="${x(med)}" x2="${x(med)}" y1="22" y2="86" stroke="var(--ink)" stroke-dasharray="3 3"/>`;
+  if (meRow){ const v = cfg.metric(meRow); g += `<circle cx="${x(v)}" cy="78" r="7" fill="var(--you)" stroke="var(--surface)" stroke-width="2"><title>You ${fmtv(p, v)}</title></circle>
+    <text x="${Math.min(W-36, Math.max(36, x(v)))}" y="120" text-anchor="middle" style="fill:var(--you);font-weight:600">you ${fmtv(p, v)}</text>`; }
+  return g + `</svg><div class="summary"><span style="color:var(--accent)">● Peers</span><span>┈ Peer median</span>${b != null ? '<span style="color:var(--bench)">│ FDIC national average</span>' : ""}</div>`;
+}
+function curve(p, me, keep){
+  const terms = p === "cd" ? [3,6,12,18,24,36,60] : [36,48,60,72,84], key = p === "cd" ? "term" : "lterm", saved = S[key];
+  const series = {you: [], med: [], top: []}, dir = better(p);
+  terms.forEach(t => { S[key] = t;
+    const m = best(p, i => i.id === me, true)[0], v = best(p, i => keep(i) && i.id !== me).map(r => P[p].metric(r));
+    series.you.push(m ? P[p].metric(m) : null); series.med.push(median(v)); series.top.push(v.length ? (dir === "high" ? Math.max(...v) : Math.min(...v)) : null); });
+  S[key] = saved;
+  const all = [].concat(...Object.values(series)).filter(v => v != null);
+  if (!all.length) return `<p class="note">No data for these filters.</p>`;
+  const W = 520, H = 200, L = 36, R = 12, T = 12, B = 30, hi = Math.ceil(Math.max(...all) + .5), lo = Math.max(0, Math.floor(Math.min(...all) - .5));
+  const x = k => L + k * (W - L - R) / (terms.length - 1), y = v => T + (1 - (v - lo) / (hi - lo || 1)) * (H - T - B);
+  let g = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Rate by term">`;
+  for (let v = lo; v <= hi; v++) g += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${v}%</text>`;
+  terms.forEach((t, k) => g += `<text x="${x(k)}" y="${H-10}" text-anchor="middle">${t < 12 ? t + "m" : p === "cd" ? t/12 + "y" : t + "m"}</text>`);
+  const line = (vals, color, dash, w) => { let d = "", pen = false;
+    vals.forEach((v, k) => { if (v == null) { pen = false; return; } d += (pen ? "L" : "M") + x(k) + " " + y(v) + " "; pen = true; });
+    return `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ""}/>` +
+      vals.map((v, k) => v == null ? "" : `<circle cx="${x(k)}" cy="${y(v)}" r="${w+1.5}" fill="${color}"><title>${terms[k]} months: ${pct(v)}</title></circle>`).join(""); };
+  g += line(series.top, "var(--accent)", "", 1.5) + line(series.med, "var(--muted)", "4 3", 1.5) + line(series.you, "var(--you)", "", 2.5);
+  return g + `</svg><div class="summary"><span style="color:var(--you)">● You</span><span style="color:var(--muted)">┈ Peer median</span><span style="color:var(--accent)">● Peer leader</span><span>Gaps mean no qualifying offer at that term.</span></div>`;
+}
+
+/* views */
+function render(){ renderSaver(); fillMe(); renderBank(); }
+function show(v){
+  try { localStorage.setItem("thetruth-view", v); } catch {}
+  document.getElementById("view-saver").hidden = v !== "saver"; document.getElementById("view-bank").hidden = v !== "bank";
+  document.getElementById("tab-saver").setAttribute("aria-pressed", v === "saver"); document.getElementById("tab-bank").setAttribute("aria-pressed", v === "bank");
+}
+document.getElementById("tab-saver").onclick = () => show("saver");
+document.getElementById("tab-bank").onclick = () => show("bank");
+document.getElementById("n-inst").textContent = DATA.inst.length;
+buildScenario(); render();
+let start = location.hash === "#banks" ? "bank" : "saver";
+try { if (!location.hash) start = localStorage.getItem("thetruth-view") || start; } catch {}
+show(start);
+</script>

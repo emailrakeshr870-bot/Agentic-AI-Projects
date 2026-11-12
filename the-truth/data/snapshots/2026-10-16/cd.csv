@@ -1,0 +1,381 @@
+institution,segment,hq_state,product_name,term_months,apy,min_deposit_usd,max_deposit_usd,is_promo,requires_relationship,market,capture_zip,notes,source_url,captured_at
+Alliant,credit union,IL,Certificate,12,4.3,,,0,0,national,,,https://www.alliantcreditunion.org/rates/account-rates/certificates-of-deposit,2026-10-16T18:56:34+00:00
+Alliant,credit union,IL,Certificate,60,3.65,,,0,0,national,,,https://www.alliantcreditunion.org/rates/account-rates/certificates-of-deposit,2026-10-16T18:56:34+00:00
+Ally,online/fintech,UT,No Penalty CD,11,2.8,0.0,,0,0,,,no-penalty CD; page rates as of 2026-10-16,https://www.ally.com/bank/cd-rates/,2026-10-16T18:42:04+00:00
+Ally,online/fintech,UT,High Yield CD,18,4.4,0.0,,0,0,national,,,https://www.ally.com/bank/view-rates/,2026-10-17T03:22:52+00:00
+Ally,online/fintech,UT,Raise Your Rate CD,24,3.0,0.0,,0,0,,,"bump-up CD, 1 raise allowed; page rates as of 2026-10-16",https://www.ally.com/bank/cd-rates/,2026-10-16T18:42:04+00:00
+Ally,online/fintech,UT,High Yield CD,36,4.1,0.0,,0,0,,,only default-displayed term captured; other terms behind term selector; page rates as of 2026-10-16,https://www.ally.com/bank/cd-rates/,2026-10-16T18:42:04+00:00
+Amerant,community,FL,15-Month CD Offer,15,4.5,10000.0,,1,0,local:FL,,,https://www.amerantbank.com/products/personal/personal-savings/certificates-of-deposits/,2026-10-16T19:01:20+00:00
+America First,credit union,UT,Regular Certificate,3,3.95,500.0,,0,0,national,,term range 3-5 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,6,4.0,500.0,,0,0,national,,term range 6-11 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,12,4.05,500.0,,0,0,national,,term range 12-17 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,18,4.1,500.0,,0,0,national,,term range 18-23 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,24,4.5,500.0,,0,0,national,,term range 24-29 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,30,4.35,500.0,,0,0,national,,term range 30-35 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,36,4.4,500.0,,0,0,national,,term range 36-47 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,48,4.45,500.0,,0,0,national,,term range 48-59 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+America First,credit union,UT,Regular Certificate,60,4.5,500.0,,0,0,national,,term range 60 months,https://www.americafirst.com/accounts/certificate-accounts/regular-cd.html,2026-10-16T18:57:33+00:00
+American Express,online/fintech,UT,CD,10,4.4,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,11,3.65,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,12,3.65,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,14,3.65,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,18,3.65,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,22,4.4,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,24,3.65,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,36,2.25,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,48,2.25,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+American Express,online/fintech,UT,CD,60,3.0,0.0,,0,0,national,,,https://www.americanexpress.com/en-us/banking/online-savings/cd-account/,2026-10-16T18:51:27+00:00
+Apple Bank,community,NY,CD,3,2.75,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,6,3.0,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,7,3.0,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,9,3.0,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,12,3.0,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,15,2.5,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,18,2.5,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,24,2.5,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,36,2.5,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+Apple Bank,community,NY,CD,60,2.5,1000.0,,0,0,local:NY,,,https://www.applebank.com/personal/savings/certificates-of-deposit,2026-10-16T19:00:09+00:00
+BECU,credit union,WA,CD with Member Advantage,12,3.5,500.0,99999.99,0,1,national,,term range 12-17 months; Member Advantage requires qualifying BECU relationship; page rates as of 2026-10-07,https://www.becu.org/rates/deposit-rates,2026-10-16T18:53:44+00:00
+BECU,credit union,WA,CD,12,2.25,500.0,,0,0,national,,term range 12-17 months; page rates as of 2026-10-07,https://www.becu.org/rates/deposit-rates,2026-10-16T18:53:44+00:00
+BECU,credit union,WA,CD with Member Advantage,36,1.95,500.0,,0,1,national,,term range 36-47 months; Member Advantage requires qualifying BECU relationship; page rates as of 2026-10-07,https://www.becu.org/rates/deposit-rates,2026-10-16T18:53:44+00:00
+BECU,credit union,WA,CD,36,1.45,500.0,,0,0,national,,term range 36-47 months; page rates as of 2026-10-07,https://www.becu.org/rates/deposit-rates,2026-10-16T18:53:44+00:00
+Barclays US,online/fintech,DE,Online CD,6,4.0,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,9,4.0,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,12,4.5,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,18,4.5,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,24,4.75,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,36,4.5,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,48,4.5,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Barclays US,online/fintech,DE,Online CD,60,4.75,0.0,,0,0,national,,page rates as of 2026-10-07,https://banking.us.barclays/online-cds.html,2026-10-16T19:05:33+00:00
+Bread Savings,online/fintech,UT,CD,3,3.95,,,0,0,national,,,https://opensavings.breadfinancial.com/products?customerCategory=personal&productType=all,2026-10-16T19:06:12+00:00
+CIT Bank,online/fintech,NC,Term CD,6,3.75,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,6,3.75,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,12,4.0,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,12,4.0,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,13,3.25,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,13,3.25,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,18,2.75,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,18,2.75,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,24,0.4,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,24,0.4,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,36,0.4,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,36,0.4,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,48,0.5,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,48,0.5,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+CIT Bank,online/fintech,NC,Term CD,60,0.5,,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T18:51:27+00:00
+CIT Bank,online/fintech,NC,Term CD,60,0.5,1000.0,,0,0,national,,,https://www.cit.com/cit-bank/bank/cds/term-cds,2026-10-16T19:31:41+00:00
+Capital One,large national,VA,360 CD,6,3.3,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,9,3.75,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,11,4.4,0.0,,1,0,,,limited-time special; page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,12,4.0,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,18,3.6,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,24,3.5,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,30,3.5,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,36,3.5,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,48,3.5,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Capital One,large national,VA,360 CD,60,3.6,0.0,,0,0,,,page rates as of 2026-10-15,https://www.capitalone.com/bank/cds/online-cds/,2026-10-16T18:39:58+00:00
+Chase,large national,OH,CD (relationship rate),2,0.5,1000.0,99999.99,0,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Chase,large national,OH,CD (relationship rate),2,0.5,100000.0,,0,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Chase,large national,OH,CD (relationship rate),8,3.5,1000.0,99999.99,1,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Chase,large national,OH,CD (relationship rate),8,4.0,100000.0,,1,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Chase,large national,OH,CD (relationship rate),13,3.2,1000.0,99999.99,1,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Chase,large national,OH,CD (relationship rate),13,3.7,100000.0,,1,1,zip:94105,94105,featured term; requires linked Chase checking; page rates as of 2026-10-16,https://www.chase.com/personal/savings/bank-cd,2026-10-16T19:12:28+00:00
+Citi,large national,SD,Fixed Rate CD,3,0.05,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,4,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,5,2.5,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,6,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,7,4.0,,99999.99,0,0,zip:94105,94105,,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,7,4.15,100000.0,,0,0,zip:94105,94105,,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,8,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,9,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,10,0.05,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,11,0.05,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,12,4.25,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,13,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,14,0.1,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,15,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,18,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,24,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,30,0.5,,99999.99,0,0,zip:94105,94105,,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,30,1.01,100000.0,,0,0,zip:94105,94105,,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,36,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,48,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citi,large national,SD,Fixed Rate CD,60,2.0,,,0,0,zip:94105,94105,all balance ranges,https://www.citi.com/banking/current-interest-rates/cd,2026-10-16T19:16:19+00:00
+Citizens,regional,RI,Online CD,5,4.25,25000.0,,1,1,zip:02919,02919,new money; requires Citizens Quest or Private Client checking,https://www.citizensbank.com/savings/cds-certificates-of-deposit/online-certificate-of-deposit.aspx,2026-10-16T19:06:12+00:00
+Citizens,regional,RI,Online CD,10,4.4,25000.0,,1,1,zip:02919,02919,new money; requires Citizens Quest or Private Client checking,https://www.citizensbank.com/savings/cds-certificates-of-deposit/online-certificate-of-deposit.aspx,2026-10-16T19:06:12+00:00
+Citizens,regional,RI,Online CD,14,3.1,1000.0,,0,1,zip:02919,02919,requires Citizens Quest or Private Client checking,https://www.citizensbank.com/savings/cds-certificates-of-deposit/online-certificate-of-deposit.aspx,2026-10-16T19:06:12+00:00
+City National Bank,regional,CA,CD,1,0.05,,,0,0,CA,,32-59 days,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,2,0.05,,,0,0,CA,,60-89 days,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,3,2.78,,,0,0,CA,,90-179 days,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,5,3.09,,,0,0,CA,,5-month liquid CD,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,6,2.84,,,0,0,CA,,180-269 days,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,Special 6-Month Fixed Rate CD,6,4.23,10000.0,,1,0,CA,,new money required,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,9,3.3,,,0,0,CA,,270-364 days,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,11,3.3,,,0,0,CA,,,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,12,2.02,,,0,0,CA,,12-23 months,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,Special 12-Month Fixed Rate CD,12,4.39,2500.0,,1,0,CA,,new money required,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,24,1.76,,,0,0,CA,,24-35 months,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,36,1.56,,,0,0,CA,,36-47 months,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,48,1.41,,,0,0,CA,,48-59 months,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+City National Bank,regional,CA,CD,60,1.31,,,0,0,CA,,60+ months,https://www.cnb.com/personal-banking/accounts/certificates-of-deposit.html,2026-10-16T19:00:09+00:00
+EverBank,online/fintech,FL,Performance CD,3,3.6,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,6,3.6,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,7,3.6,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,9,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,12,3.5,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,13,4.1,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,18,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,24,4.35,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,25,3.65,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,30,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,36,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,3.5-Year Bump Rate CD,42,3.4,,,0,0,national,,bump-rate CD,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,48,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+EverBank,online/fintech,FL,Performance CD,60,3.4,,,0,0,national,,,https://www.everbank.com/rates?accounts=cds,2026-10-16T18:51:27+00:00
+First Tech,credit union,CA,Share Certificate,3,3.0,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,3,3.25,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,6,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,6,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,9,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,9,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,12,3.5,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,12,3.75,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,13,3.45,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,13,3.55,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,18,3.5,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,18,3.75,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,24,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,24,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,36,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Bump Up Certificate,36,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,48,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,48,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,60,3.25,500.0,99999.99,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+First Tech,credit union,CA,Share Certificate,60,3.5,100000.0,,0,0,national,,,https://www.firsttechfed.com/application/share-certificates,2026-10-16T18:56:34+00:00
+Fremont Bank,community,CA,Personal CD,1,0.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,3,3.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,4,3.35,2500.0,1000000.0,1,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,6,3.0,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Premier CD,6,3.7,2500.0,1000000.0,0,1,local:CA,,Premier relationship tier; page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Premier 6 Month Relationship CD,6,4.0,2500.0,1000000.0,0,1,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,7,2.75,2500.0,1000000.0,1,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,9,3.3,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,10,3.75,2500.0,1000000.0,1,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,11,2.5,2500.0,1000000.0,1,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,12,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Premier CD,12,2.0,2500.0,,0,1,local:CA,,Premier relationship tier; page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,13,1.0,2500.0,1000000.0,1,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,18,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,24,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,36,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,48,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Fremont Bank,community,CA,Personal CD,60,1.25,2500.0,1000000.0,0,0,local:CA,,page rates as of 2026-10-16,https://www.fremontbank.com/personal/savings/certificate-of-deposits/rates,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,1,1.3,100000.0,,0,0,TX,,30-day term; page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,2,1.4,100000.0,,0,0,TX,,60-day term; page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,3,3.3,1000.0,99999.99,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,3,3.65,100000.0,,0,0,TX,,90-day term; page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Jumbo CD,3,4.0,500000.0,,0,0,TX,,90-day; opened in person only; page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,6,3.2,1000.0,99999.99,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,6,3.6,100000.0,,0,0,TX,,180-day term; page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,12,2.9,1000.0,99999.99,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,12,3.35,100000.0,,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,24,2.6,1000.0,99999.99,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+Frost,regional,TX,Personal CD,24,3.1,100000.0,,0,0,TX,,page rates as of 2026-10-16,https://www.frostbank.com/personal/banking/savings-options/certificate-of-deposit,2026-10-16T18:58:46+00:00
+KeyBank,regional,OH,Tiered Long-Term CD (Relationship Reward),12,4.0,10000.0,99999.99,0,1,zip:94080,94080,requires Key checking account,https://www.key.com/personal/cd/certificate-of-deposit.html,2026-10-16T19:00:09+00:00
+Live Oak Bank,online/fintech,NC,Personal CD,3,3.0,2500.0,250000.0,0,0,national,,,https://www.liveoak.bank/personal-cd-accounts/,2026-10-16T19:02:26+00:00
+Live Oak Bank,online/fintech,NC,Personal CD,6,4.2,2500.0,250000.0,0,0,national,,,https://www.liveoak.bank/personal-cd-accounts/,2026-10-16T19:02:26+00:00
+Live Oak Bank,online/fintech,NC,Personal CD,9,4.3,2500.0,250000.0,0,0,national,,,https://www.liveoak.bank/personal-cd-accounts/,2026-10-16T19:02:26+00:00
+Live Oak Bank,online/fintech,NC,Personal CD,12,4.4,2500.0,250000.0,0,0,national,,,https://www.liveoak.bank/personal-cd-accounts/,2026-10-16T19:02:26+00:00
+Live Oak Bank,online/fintech,NC,Personal CD,18,4.2,2500.0,250000.0,0,0,national,,,https://www.liveoak.bank/personal-cd-accounts/,2026-10-16T19:02:26+00:00
+M&T Bank,regional,NY,18 Month Select CD,18,3.85,1000.0,,1,1,,,requires qualifying checking account,https://www.mtb.com/personal/savings-and-cds/certificates-of-deposit,2026-10-16T19:01:20+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,6,3.95,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,9,4.3,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,12,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,18,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,24,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,36,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,48,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,60,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Marcus by Goldman Sachs,online/fintech,NY,High-Yield CD,72,4.4,500.0,,0,0,,,page rates as of 2026-10-16,https://www.marcus.com/us/en/savings/high-yield-cds,2026-10-16T18:35:50+00:00
+Mountain America,credit union,UT,Standard Certificate,6,4.0,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,12,4.05,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,18,4.15,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,24,4.5,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,30,4.35,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,36,4.4,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,48,4.45,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Mountain America,credit union,UT,Standard Certificate,60,4.5,500.0,,0,0,national,,,https://www.macu.com/rates/certificates,2026-10-16T19:05:33+00:00
+Navy Federal,credit union,VA,Standard Certificate,3,1.5,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,3,1.5,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,3,1.55,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,12,4.05,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,12,4.05,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,12,4.1,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,EasyStart Certificate,12,4.0,50.0,,0,0,,,add-on deposits allowed; page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Special EasyStart Certificate,12,4.35,50.0,3000.0,1,1,,,requires Navy Federal checking + direct deposit; page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,18,4.1,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,18,4.1,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,18,4.15,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,EasyStart Certificate,18,3.7,50.0,,0,0,,,add-on deposits allowed; page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,24,3.66,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,24,3.66,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,24,3.7,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,EasyStart Certificate,24,3.6,50.0,,0,0,,,add-on deposits allowed; page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,36,4.1,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,36,4.1,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,36,4.15,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,60,3.85,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,60,3.85,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,60,3.9,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,84,3.85,1000.0,19999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,84,3.85,20000.0,99999.99,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+Navy Federal,credit union,VA,Standard Certificate,84,3.9,100000.0,,0,0,,,page rates as of 2026-10-16,https://www.navyfederal.org/checking-savings/savings/certificates.html,2026-10-16T18:35:18+00:00
+PenFed,credit union,VA,Money Market Certificate,6,2.7,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,12,3.2,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,15,3.2,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,18,3.2,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,24,3.4,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,36,3.4,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,48,3.4,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,60,3.5,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+PenFed,credit union,VA,Money Market Certificate,84,3.5,1000.0,,0,0,national,,page rates as of 2026-10-09,https://www.penfed.org/current-rates,2026-10-16T18:53:44+00:00
+Popular Direct,online/fintech,NY,CD,6,4.35,10000.0,,0,0,national,,,https://www.populardirect.com/products/cds/,2026-10-16T19:02:26+00:00
+Popular Direct,online/fintech,NY,CD,12,4.5,10000.0,,0,0,national,,,https://www.populardirect.com/products/cds/,2026-10-16T19:02:26+00:00
+Popular Direct,online/fintech,NY,CD,18,4.65,10000.0,,0,0,national,,,https://www.populardirect.com/products/cds/,2026-10-16T19:02:26+00:00
+RBFCU,credit union,TX,Certificate,6,3.65,1000.0,,0,0,national,,term range 6-11 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,12,3.7,1000.0,,0,0,national,,term range 12-23 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,SuperSaver Certificate,18,3.75,1000.0,4999.99,1,0,national,,featured 18-month special; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,SuperSaver Certificate,18,3.79,5000.0,19999.99,1,0,national,,featured 18-month special; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,SuperSaver Certificate,18,3.86,20000.0,74999.99,1,0,national,,featured 18-month special; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,SuperSaver Certificate,18,3.91,75000.0,,1,0,national,,featured 18-month special; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,24,3.7,1000.0,,0,0,national,,term range 24-35 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,36,3.6,1000.0,,0,0,national,,term range 36-47 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,48,3.51,1000.0,,0,0,national,,term range 48-59 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,60,3.51,1000.0,,0,0,national,,term range 60-71 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,72,3.45,1000.0,,0,0,national,,term range 72-83 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+RBFCU,credit union,TX,Certificate,84,3.36,1000.0,,0,0,national,,term range 84 months; page rates as of 2026-10-16,https://www.rbfcu.org/banking/savings-account/certificates,2026-10-16T18:57:33+00:00
+Redwood CU,credit union,CA,Certificate,12,4.3,,,0,1,local:CA,,'up to' rate; requires active RCU checking,https://www.redwoodcu.org/accounts/certificates/,2026-10-16T18:57:33+00:00
+SECU,credit union,NC,Share Term Certificate,6,3.85,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,12,4.0,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,18,4.3,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,24,4.3,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,30,4.0,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,36,4.0,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,48,4.0,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+SECU,credit union,NC,Share Term Certificate,60,4.0,250.0,,0,0,,,simple interest paid monthly; page rates as of 2026-10-01,https://www.ncsecu.org/pdfs/rates/SECUShareAndDepositAccountRateSummary.pdf,2026-10-16T18:40:18+00:00
+Sallie Mae,online/fintech,UT,CD,6,3.2,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,9,3.2,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,11,4.1,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,12,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,13,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,15,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,18,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,24,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,30,4.4,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,36,4.45,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+Sallie Mae,online/fintech,UT,CD,60,4.5,2500.0,,0,0,national,,page rates as of 2026-10-16,https://www.salliemae.com/savings/rate-table/,2026-10-16T19:02:26+00:00
+SchoolsFirst,credit union,CA,Share Certificate,1,3.15,500.0,19999.99,0,0,national,,term range 30 days,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,1,3.2,20000.0,49999.99,0,0,national,,term range 30 days,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,1,3.25,50000.0,99999.99,0,0,national,,term range 30 days,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,1,3.3,100000.0,249999.99,0,0,national,,term range 30 days,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,1,3.35,250000.0,,0,0,national,,term range 30 days,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,3,3.55,500.0,19999.99,0,0,national,,term range 3-5 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,3,3.6,20000.0,49999.99,0,0,national,,term range 3-5 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,3,3.65,50000.0,99999.99,0,0,national,,term range 3-5 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,3,3.7,100000.0,249999.99,0,0,national,,term range 3-5 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,3,3.75,250000.0,,0,0,national,,term range 3-5 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,6,3.85,500.0,19999.99,0,0,national,,term range 6-11 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,6,3.9,20000.0,49999.99,0,0,national,,term range 6-11 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,6,3.95,50000.0,99999.99,0,0,national,,term range 6-11 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,6,4.0,100000.0,249999.99,0,0,national,,term range 6-11 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,6,4.05,250000.0,,0,0,national,,term range 6-11 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,6-Month Add-On Promotional Share Certificate,6,4.1,500.0,,1,0,national,,add-on deposits allowed,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,12,3.95,500.0,19999.99,0,0,national,,term range 12-17 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,12,4.0,20000.0,49999.99,0,0,national,,term range 12-17 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,12,4.05,50000.0,99999.99,0,0,national,,term range 12-17 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,12,4.1,100000.0,249999.99,0,0,national,,term range 12-17 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,12,4.15,250000.0,,0,0,national,,term range 12-17 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,18,4.0,500.0,19999.99,0,0,national,,term range 18-23 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,18,4.05,20000.0,49999.99,0,0,national,,term range 18-23 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,18,4.1,50000.0,99999.99,0,0,national,,term range 18-23 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,18,4.15,100000.0,249999.99,0,0,national,,term range 18-23 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,18,4.2,250000.0,,0,0,national,,term range 18-23 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,19-Month Promotional Share Certificate,19,4.3,500.0,,1,0,national,,,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,24,4.0,500.0,19999.99,0,0,national,,term range 24-35 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,24,4.05,20000.0,49999.99,0,0,national,,term range 24-35 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,24,4.1,50000.0,99999.99,0,0,national,,term range 24-35 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,24,4.15,100000.0,249999.99,0,0,national,,term range 24-35 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,24,4.2,250000.0,,0,0,national,,term range 24-35 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,36,4.0,500.0,19999.99,0,0,national,,term range 36-47 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,36,4.05,20000.0,49999.99,0,0,national,,term range 36-47 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,36,4.1,50000.0,99999.99,0,0,national,,term range 36-47 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,36,4.15,100000.0,249999.99,0,0,national,,term range 36-47 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,36,4.2,250000.0,,0,0,national,,term range 36-47 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,48,4.0,500.0,19999.99,0,0,national,,term range 48-59 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,48,4.05,20000.0,49999.99,0,0,national,,term range 48-59 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,48,4.1,50000.0,99999.99,0,0,national,,term range 48-59 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,48,4.15,100000.0,249999.99,0,0,national,,term range 48-59 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,48,4.2,250000.0,,0,0,national,,term range 48-59 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,60,4.1,500.0,19999.99,0,0,national,,term range 60 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,60,4.15,20000.0,49999.99,0,0,national,,term range 60 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,60,4.2,50000.0,99999.99,0,0,national,,term range 60 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,60,4.25,100000.0,249999.99,0,0,national,,term range 60 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+SchoolsFirst,credit union,CA,Share Certificate,60,4.3,250000.0,,0,0,national,,term range 60 months,https://www.schoolsfirstfcu.org/rates/dividend/,2026-10-16T18:53:44+00:00
+Synchrony,online/fintech,UT,CD,12,4.2,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+Synchrony,online/fintech,UT,CD,13,4.4,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+Synchrony,online/fintech,UT,CD,16,4.3,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+Synchrony,online/fintech,UT,CD,18,4.35,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+Synchrony,online/fintech,UT,CD,24,4.35,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+Synchrony,online/fintech,UT,CD,60,4.5,0.0,,0,0,national,,page rates as of 2026-10-16,https://www.synchrony.com/banking/products/cd,2026-10-16T18:51:27+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),3,2.0,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,3,1.99,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),6,2.0,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,6,1.99,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD No Catch CD,6,0.05,250.0,,0,0,,,no-penalty CD,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),9,3.51,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,9,3.49,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),10,2.0,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,10,1.99,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),12,4.15,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,12,4.14,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD No Catch CD,12,0.05,250.0,,0,0,,,no-penalty CD,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),18,4.25,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,18,4.24,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),24,4.3,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,24,4.29,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),36,2.0,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,36,1.99,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD (promotional),60,2.0,250.0,,1,0,,,same APY across all balance tiers; renews at non-promo rate,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+TD Bank,large national,DE,TD Choice CD,60,1.99,250.0,,0,0,,,,https://www.td.com/content/dam/tdb/document/pdf/personal-banking/certificates-of-deposit/td-cd-rate-sheet.pdf,2026-10-16T18:40:18+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,7,3.2,1000.0,24999.99,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,7,3.4,25000.0,99999.99,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,7,3.6,100000.0,,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,11,3.3,1000.0,24999.99,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,11,3.5,25000.0,99999.99,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Tri Counties Bank,community,CA,Trico Advantage CD,11,3.7,100000.0,,1,0,local:CA,,,https://www.tcbk.com/personal/accounts/certificates-of-deposit,2026-10-16T19:02:26+00:00
+Truist,large national,NC,Special 12-month CD,12,3.25,100000.0,,1,0,,,opened with a banker,https://www.truist.com/savings/certificate-of-deposit,2026-10-16T19:01:20+00:00
+U.S. Bank,large national,OH,Standard CD,1,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,2,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,3,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,6,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,9,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,12,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,18,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,24,0.05,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,36,0.1,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,48,0.15,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+U.S. Bank,large national,OH,Standard CD,60,0.25,500.0,4999.99,0,0,zip:94105,94105,,https://www.usbank.com/bank-accounts/savings-accounts/certificate-of-deposit/standard-cd.html,2026-10-16T19:15:25+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD,3,0.05,2500.0,,0,0,zip:94105,94105,same APY across all balance tiers,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD (relationship),3,0.06,2500.0,,0,1,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD,4,3.49,5000.0,,1,0,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD (relationship),4,3.75,5000.0,,1,1,zip:94105,94105,relationship APY with linked Wells Fargo checking,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD,6,0.05,2500.0,,0,0,zip:94105,94105,same APY across all balance tiers,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD (relationship),6,0.06,2500.0,,0,1,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD,7,3.84,5000.0,,1,0,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD (relationship),7,4.1,5000.0,,1,1,zip:94105,94105,relationship APY with linked Wells Fargo checking,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD,11,3.99,5000.0,,1,0,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD (relationship),11,4.25,5000.0,,1,1,zip:94105,94105,relationship APY with linked Wells Fargo checking,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD,12,1.5,2500.0,,0,0,zip:94105,94105,same APY across all balance tiers,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Standard Fixed Rate CD (relationship),12,1.51,2500.0,,0,1,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD,15,3.74,5000.0,,1,0,zip:94105,94105,,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
+Wells Fargo,large national,SD,Special Fixed Rate CD (relationship),15,4.0,5000.0,,1,1,zip:94105,94105,relationship APY with linked Wells Fargo checking,https://www.wellsfargo.com/savings-cds/rates/,2026-10-16T19:11:49+00:00
